@@ -5,7 +5,7 @@ const app: Application = express();
 
 //parser
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: '*', credentials: true }));
 
 app.get('/', (req: Request, res: Response) => {
   res.send('server is running');

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import config from './config';
+import config from './app/config';
 import { Server } from 'http';
 import app from './app';
 
@@ -20,7 +20,7 @@ async function dbConnection() {
 dbConnection();
 
 process.on('uncaughtException', () => {
-  console.log('uncaughtException detected 😈, server closed 👻');
+  console.log('uncaughtException detected, server closed');
   if (server) {
     server.close(() => {
       process.exit(1);
@@ -29,7 +29,7 @@ process.on('uncaughtException', () => {
 });
 
 process.on('unhandledRejection', () => {
-  console.log('unhandledRejection detected 😈, server closed 👻');
+  console.log('unhandledRejection detected, server closed');
   if (server) {
     server.close(() => {
       process.exit(1);
