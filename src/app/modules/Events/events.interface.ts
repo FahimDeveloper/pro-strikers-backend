@@ -8,7 +8,7 @@ export interface IEvent {
   registration_start: Date;
   registration_end: Date;
   total_registrations: number;
-  event_image: string;
+  image: string;
   event_description: string;
   price: number;
 }

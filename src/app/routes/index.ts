@@ -7,6 +7,7 @@ import { AppointmentRoutes } from '../modules/AppointmentSchedule/appointmentSch
 import { FacilityRoutes } from '../modules/FacilitySchedule/facilitySchedule.route';
 import { VoucherRoute } from '../modules/Voucher/voucher.route';
 import { PostRoutes } from '../modules/Post/post.route';
+import { EventRoutes } from '../modules/Events/events.route';
 
 const router = express.Router();
 
@@ -38,6 +39,10 @@ const mainRoutes = [
   {
     path: '/vouchers',
     route: VoucherRoute,
+  },
+  {
+    path: '/events',
+    route: EventRoutes,
   },
   {
     path: '/posts',

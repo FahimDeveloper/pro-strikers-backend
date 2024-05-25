@@ -35,7 +35,7 @@ const eventSchema = new Schema<IEvent>(
       type: Date,
       required: true,
     },
-    event_image: {
+    image: {
       type: String,
       required: true,
     },
@@ -51,4 +51,4 @@ const eventSchema = new Schema<IEvent>(
   { timestamps: true },
 );
 
-export const EventModel = model<IEvent>('Event', eventSchema);
+export const Event = model<IEvent>('Event', eventSchema);
