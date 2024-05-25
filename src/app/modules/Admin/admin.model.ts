@@ -1,37 +1,54 @@
 import { Schema, model } from 'mongoose';
-import { AdminMethods, TAdmin } from './admin.interface';
+import { AdminMethods, IAdmin } from './admin.interface';
 
-const adminSchema = new Schema<TAdmin, AdminMethods>(
+const adminSchema = new Schema<IAdmin, AdminMethods>(
   {
-    user: {
-      type: Schema.Types.ObjectId,
-      required: [true, 'User id is required'],
-      unique: true,
-      ref: 'User',
+    first_name: {
+      type: String,
+      required: true,
+    },
+    last_name: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: true,
       unique: true,
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ['superAdmin', 'admin', 'trainer'],
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {
-    toJSON: {
-      virtuals: true,
-    },
+    timestamps: true,
     versionKey: false,
   },
 );
 
-// adminSchema.pre('aggregate', function (next) {
-//   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-//   next();
-// });
+adminSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 //checking if user is already exist!
-adminSchema.statics.isUserExists = async function (email: string) {
-  const existingUser = await AdminModel.findOne({ email });
+adminSchema.statics.isAdminExists = async function (email: string) {
+  const existingUser = await Admin.findOne({ email });
   return existingUser;
 };
 
-export const AdminModel = model<TAdmin, AdminMethods>('Admin', adminSchema);
+export const Admin = model<IAdmin, AdminMethods>('Admin', adminSchema);

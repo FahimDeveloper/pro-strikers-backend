@@ -11,8 +11,6 @@ import handleZodError from '../errors/handleZodError';
 import { TErrorSources } from '../interface/error';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.log(err.statusCode);
-  //setting default values
   let statusCode = 500;
   let message = 'Something went wrong!';
   let errorSources: TErrorSources = [
@@ -62,13 +60,20 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   }
 
   //ultimate return
-  return res.status(statusCode).json({
-    success: false,
-    message,
-    errorSources,
-    err,
-    stack: config.NODE_ENV === 'development' ? err?.stack : null,
-  });
+  if (config.node_env === 'development') {
+    return res.status(statusCode).json({
+      message,
+      err,
+      errorSources,
+      stack: config.node_env === 'development' ? err?.stack : null,
+    });
+  } else {
+    return res.status(statusCode).json({
+      message,
+      err,
+      errorSources,
+    });
+  }
 };
 
 export default globalErrorHandler;

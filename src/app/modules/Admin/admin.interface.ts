@@ -1,10 +1,16 @@
 import { Model, Types } from 'mongoose';
 
-export type TAdmin = {
-  user: Types.ObjectId;
+export interface IAdmin {
+  first_name: string;
+  last_name: string;
+  image: string;
   email: string;
-};
+  role: 'superAdmin' | 'admin' | 'trainer';
+  description: string;
+  password: string;
+  isDeleted: boolean;
+}
 
-export interface AdminMethods extends Model<TAdmin> {
-  isUserExists(id: string): Promise<TAdmin | null>;
+export interface AdminMethods extends Model<IAdmin> {
+  isAdminExists(email: string): Promise<IAdmin | null>;
 }

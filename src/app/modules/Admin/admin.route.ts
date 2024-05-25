@@ -1,20 +1,44 @@
 import express from 'express';
-import auth from '../../middlewares/auth';
-import { USER_ROLE } from '../User/user.constant';
 import { AdminControllers } from './admin.controller';
+import { ROLE } from '../../utils/role';
+import authMiddleware from '../../middlewares/authMiddleware';
+import validateRequest from '../../middlewares/validateRequest';
+import { adminValidations } from './admin.validation';
 
-const router = express.Router();
+const route = express.Router();
 
-router.get(
+route.get(
   '/',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  AdminControllers.getAllAdmins,
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.getAllAdminUsers,
 );
 
-router.get(
+route.get('/trainers', AdminControllers.getAllTrainers);
+
+route.get(
   '/:id',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  AdminControllers.getSingleAdmin,
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.getSingleAdminUser,
 );
 
-export const AdminRoutes = router;
+route.post(
+  '/create',
+  validateRequest(adminValidations.createValidation),
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.createAdminUser,
+);
+
+route.patch(
+  '/update/:id',
+  validateRequest(adminValidations.createValidation),
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.updateAdminUser,
+);
+
+route.delete(
+  '/delete/:id',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.deleteAdminUser,
+);
+
+export const AdminRoutes = route;

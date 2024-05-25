@@ -1,16 +1,92 @@
 import { z } from 'zod';
 
-export const createAdminValidationSchema = z.object({
+const createValidation = z.object({
   body: z.object({
-    password: z
+    first_name: z.string({
+      invalid_type_error: 'first name must be string',
+      required_error: 'first name is required',
+    }),
+    last_name: z.string({
+      invalid_type_error: 'last name must be string',
+      required_error: 'last name is required',
+    }),
+    image: z.string({
+      invalid_type_error: 'image must be string',
+      required_error: 'image is required',
+    }),
+    email: z
       .string({
-        invalid_type_error: 'Password must be string',
+        invalid_type_error: 'email must be string',
+        required_error: 'email is required',
       })
-      .max(20, { message: 'Password can not be more than 20 characters' }),
-    email: z.string().email(),
+      .email({ message: 'Please enter a valid email address' }),
+    role: z.enum(['superAdmin', 'admin', 'trainer']),
+    description: z.string({
+      invalid_type_error: 'description must be string',
+      required_error: 'description is required',
+    }),
+    password: z.string({
+      invalid_type_error: 'password must be string',
+      required_error: 'password is required',
+    }),
+    isDeleted: z.boolean({
+      invalid_type_error: 'isDeleted must be boolean',
+      required_error: 'isDeleted is required',
+    }),
   }),
 });
 
-export const AdminValidations = {
-  createAdminValidationSchema,
+const updateValidation = z.object({
+  body: z.object({
+    first_name: z
+      .string({
+        invalid_type_error: 'first name must be string',
+        required_error: 'first name is required',
+      })
+      .optional(),
+    last_name: z
+      .string({
+        invalid_type_error: 'last name must be string',
+        required_error: 'last name is required',
+      })
+      .optional(),
+    image: z
+      .string({
+        invalid_type_error: 'image must be string',
+        required_error: 'image is required',
+      })
+      .optional(),
+    email: z
+      .string({
+        invalid_type_error: 'email must be string',
+        required_error: 'email is required',
+      })
+      .email({ message: 'Please enter a valid email address' })
+      .optional(),
+    role: z.enum(['superAdmin', 'admin', 'trainer']).optional(),
+    description: z
+      .string({
+        invalid_type_error: 'description must be string',
+        required_error: 'description is required',
+      })
+      .optional(),
+    password: z
+      .string({
+        invalid_type_error: 'password must be string',
+        required_error: 'password is required',
+      })
+      .optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false)
+      .optional(),
+  }),
+});
+
+export const adminValidations = {
+  createValidation,
+  updateValidation,
 };

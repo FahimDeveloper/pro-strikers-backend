@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const loginValidationSchema = z.object({
+const loginValidation = z.object({
   body: z.object({
     email: z.string({ required_error: 'Gmail is required.' }),
     password: z.string({ required_error: 'Password is required' }),
@@ -16,13 +16,13 @@ const loginValidationSchema = z.object({
 //   }),
 // });
 
-// const refreshTokenValidationSchema = z.object({
-//   cookies: z.object({
-//     refreshToken: z.string({
-//       required_error: 'Refresh token is required!',
-//     }),
-//   }),
-// });
+const refreshTokenValidation = z.object({
+  cookies: z.object({
+    refreshToken: z.string({
+      required_error: 'Refresh token is required!',
+    }),
+  }),
+});
 
 // const forgetPasswordValidationSchema = z.object({
 //   body: z.object({
@@ -44,7 +44,8 @@ const loginValidationSchema = z.object({
 // });
 
 export const AuthValidation = {
-  loginValidationSchema,
+  loginValidation,
+  refreshTokenValidation,
   // changePasswordValidationSchema,
   // refreshTokenValidationSchema,
   // forgetPasswordValidationSchema,

@@ -3,21 +3,36 @@ import config from '../../config';
 import AppError from '../../errors/AppError';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { AuthServices } from './auth.service';
+import { AuthServices } from './auth.services';
 
 const loginUser = catchAsync(async (req, res) => {
-  const result = await AuthServices.loginUser(req.body);
+  const result = await AuthServices.loginUserIntoDB(req.body);
 
-  // const { accessToken } = result;
+  const { accessToken, refreshToken } = result;
 
-  // res.cookie('refreshToken', refreshToken, {
-  //   // secure: config.NODE_ENV === 'production',
-  //   httpOnly: true,
-  //   sameSite: 'none',
-  //   maxAge: 1000 * 60 * 60 * 24 * 365,
-  // });
+  res.cookie('refreshToken', refreshToken, {
+    // secure: config.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
 
-  sendResponse(res, httpStatus.OK, 'User is logged in successfully!', result);
+  sendResponse(res, httpStatus.OK, 'logged in successfully!', accessToken);
+});
+
+const loginAdmin = catchAsync(async (req, res) => {
+  const result = await AuthServices.loginAdminIntoDB(req.body);
+
+  const { accessToken, refreshToken } = result;
+
+  res.cookie('refreshToken', refreshToken, {
+    // secure: config.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
+
+  sendResponse(res, httpStatus.OK, 'logged in successfully!', accessToken);
 });
 
 // const changePassword = catchAsync(async (req, res) => {
@@ -73,6 +88,7 @@ const loginUser = catchAsync(async (req, res) => {
 
 export const AuthControllers = {
   loginUser,
+  loginAdmin,
   // changePassword,
   // refreshToken,
   // forgetPassword,
