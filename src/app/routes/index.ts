@@ -6,6 +6,7 @@ import { CourseRoutes } from '../modules/CourseSchedule/courseSchedule.route';
 import { AppointmentRoutes } from '../modules/AppointmentSchedule/appointmentSchedule.route';
 import { FacilityRoutes } from '../modules/FacilitySchedule/facilitySchedule.route';
 import { VoucherRoute } from '../modules/Voucher/voucher.route';
+import { PostRoutes } from '../modules/Post/post.route';
 
 const router = express.Router();
 
@@ -37,6 +38,10 @@ const mainRoutes = [
   {
     path: '/vouchers',
     route: VoucherRoute,
+  },
+  {
+    path: '/posts',
+    route: PostRoutes,
   },
 ];
 
