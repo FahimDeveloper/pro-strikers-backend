@@ -47,7 +47,6 @@ const createValidation = z.object({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
-    isDeleted: z.boolean().default(false),
   }),
 });
 
@@ -116,7 +115,6 @@ const updateValidation = z.object({
         required_error: 'price is required',
       })
       .optional(),
-    isDeleted: z.boolean().default(false).optional(),
   }),
 });
 

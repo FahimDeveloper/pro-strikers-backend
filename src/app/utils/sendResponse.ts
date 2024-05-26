@@ -10,7 +10,7 @@ const sendResponse = <T>(
   return res.status(statusCode).json({
     total: total,
     message: message,
-    result: result,
+    results: result,
   });
 };
 

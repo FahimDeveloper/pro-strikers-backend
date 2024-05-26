@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { IAdmin } from './admin.interface';
 import { Admin } from './admin.model';
 
@@ -16,9 +17,14 @@ const getAllTrainersFromDB = async () => {
   return result;
 };
 
-const getAllAdminUsersFromDB = async () => {
-  const result = await Admin.find();
-  return result;
+const getAllAdminUsersFromDB = async (query: Record<string, unknown>) => {
+  const adminQuery = new QueryBuilder(Admin.find().select('-password'), query)
+    .search(['email', 'first_name', 'last_name'])
+    .filter()
+    .paginate();
+  const result = await adminQuery?.modelQuery;
+  const count = await adminQuery?.countTotal();
+  return { ...result, count };
 };
 
 const getSingleAdminUserFromDB = async (id: string) => {

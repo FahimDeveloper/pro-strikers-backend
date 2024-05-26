@@ -69,7 +69,6 @@ const createValidation = z.object({
         invalid_type_error: 'schedules are must be an array of objects',
       },
     ),
-    isDeleted: z.boolean().default(false).optional(),
   }),
 });
 
@@ -145,7 +144,6 @@ const updateValidation = z.object({
         },
       )
       .optional(),
-    isDeleted: z.boolean().default(false).optional(),
   }),
 });
 

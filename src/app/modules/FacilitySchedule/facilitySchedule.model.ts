@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 import {
   IFacilityDaySchedule,
   IFacilitySchedule,
-  ILaneFacilities,
 } from './facilitySchedule.interface';
 
 const facilityScheduleDaySchema = new Schema<IFacilityDaySchedule>(
@@ -20,23 +19,6 @@ const facilityScheduleDaySchema = new Schema<IFacilityDaySchedule>(
     },
     end_time: {
       type: String,
-    },
-  },
-  { _id: false },
-);
-const facilityScheduleLaneSchema = new Schema<ILaneFacilities>(
-  {
-    lane_type: {
-      type: String,
-      required: true,
-    },
-    lane_name: {
-      type: String,
-      required: true,
-    },
-    price: {
-      type: Number,
-      required: true,
     },
   },
   { _id: false },
@@ -68,12 +50,11 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
       type: Number,
       required: true,
     },
-    lane_facilities: [facilityScheduleLaneSchema],
-    schedules: [facilityScheduleDaySchema],
-    isDeleted: {
-      type: Boolean,
-      default: false,
+    lane: {
+      type: String,
+      required: true,
     },
+    schedules: [facilityScheduleDaySchema],
   },
   { timestamps: true },
 );

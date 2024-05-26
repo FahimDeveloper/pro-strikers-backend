@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { IClassSchedule } from './classSchedule.interface';
 import { ClassSchedule } from './classSchedule.model';
 
@@ -14,9 +15,20 @@ const updateClassIntoDB = async (
   return result;
 };
 
-const getAllClassesFromDB = async () => {
-  const result = await ClassSchedule.find();
-  return result;
+const getAllClassesFromDB = async (query: Record<string, unknown>) => {
+  const classQuery = new QueryBuilder(
+    ClassSchedule.find().populate('trainer').select('first_name'),
+    query,
+  )
+    .search(['class_name'])
+    .filter()
+    .paginate();
+  const result = await classQuery?.modelQuery;
+  const count = await classQuery?.countTotal();
+  return {
+    count,
+    ...result,
+  };
 };
 
 const getSingleClassFromDB = async (id: string) => {
@@ -25,10 +37,7 @@ const getSingleClassFromDB = async (id: string) => {
 };
 
 const deleteClassFromDB = async (id: string) => {
-  const result = await ClassSchedule.findOneAndUpdate(
-    { _id: id },
-    { isDeleted: true },
-  );
+  const result = await ClassSchedule.findByIdAndDelete(id);
   return result;
 };
 

@@ -14,7 +14,7 @@ const updateAdminUser = catchAsync(async (req, res) => {
 });
 
 const getAllAdminUsers = catchAsync(async (req, res) => {
-  const result = await AdminServices.getAllAdminUsersFromDB();
+  const result = await AdminServices.getAllAdminUsersFromDB(req.query);
   sendResponse(res, httpStatus.OK, 'Admins are retrieved succesfully', result);
 });
 

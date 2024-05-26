@@ -9,7 +9,7 @@ const createCourse = catchAsync(async (req, res) => {
 });
 
 const getAllCourses = catchAsync(async (req, res) => {
-  const result = await CourseScheduleServices.getAllCoursesFromDB();
+  const result = await CourseScheduleServices.getAllCoursesFromDB(req.query);
   sendResponse(res, httpStatus.OK, 'Course fetch succesfully', result);
 });
 

@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface IAppointmentSchedule {
+  _id: Types.ObjectId;
   appointment_name: string;
   appointment_type: string;
   sport: string;

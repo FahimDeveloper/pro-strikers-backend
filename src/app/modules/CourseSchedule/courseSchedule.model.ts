@@ -6,6 +6,7 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
     class_name: {
       type: String,
       required: true,
+      index: true,
     },
     sport: {
       type: String,
@@ -42,11 +43,6 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
     price: {
       type: Number,
       required: true,
-    },
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
     },
   },
   { timestamps: true },

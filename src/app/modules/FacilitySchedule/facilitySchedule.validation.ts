@@ -31,22 +31,10 @@ const createValidation = z.object({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
-    lane_facilities: z.array(
-      z.object({
-        lane_type: z.string({
-          invalid_type_error: 'lane type must be string',
-          required_error: 'lane type is required',
-        }),
-        lane_name: z.string({
-          invalid_type_error: 'lane name must be string',
-          required_error: 'lane name is required',
-        }),
-        price: z.number({
-          invalid_type_error: 'price must be number',
-          required_error: 'price is required',
-        }),
-      }),
-    ),
+    lane: z.string({
+      invalid_type_error: 'lane must be string',
+      required_error: 'lane is required',
+    }),
     schedules: z.array(
       z.object({
         day: z.string({
@@ -120,23 +108,11 @@ const updateValidation = z.object({
         required_error: 'price is required',
       })
       .optional(),
-    lane_facilities: z
-      .array(
-        z.object({
-          lane_type: z.string({
-            invalid_type_error: 'lane type must be string',
-            required_error: 'lane type is required',
-          }),
-          lane_name: z.string({
-            invalid_type_error: 'lane name must be string',
-            required_error: 'lane name is required',
-          }),
-          price: z.number({
-            invalid_type_error: 'price must be number',
-            required_error: 'price is required',
-          }),
-        }),
-      )
+    lane: z
+      .string({
+        invalid_type_error: 'lane must be string',
+        required_error: 'lane is required',
+      })
       .optional(),
     schedules: z
       .array(

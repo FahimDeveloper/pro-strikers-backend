@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { IUser } from './user.interface';
 import { User } from './user.model';
 
@@ -11,9 +12,14 @@ const updateUserIntoDB = async (id: string, payload: Partial<IUser>) => {
   return result;
 };
 
-const getAllUsersFromDB = async () => {
-  const result = await User.find();
-  return result;
+const getAllUsersFromDB = async (query: Record<string, unknown>) => {
+  const userQuery = new QueryBuilder(User.find().select('-password'), query)
+    .search(['email', 'first_name', 'last_name'])
+    .filter()
+    .paginate();
+  const result = await userQuery?.modelQuery;
+  const count = await userQuery?.countTotal();
+  return { ...result, count };
 };
 
 const getSingleUserFromDB = async (id: string) => {

@@ -1,21 +1,16 @@
-import mongoose from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface IFacilitySchedule {
+  _id: Types.ObjectId;
   facility_name: string;
   category: string;
   facility_duration: number;
-  trainer: mongoose.Types.ObjectId;
+  trainer: Types.ObjectId;
   description: string;
   price: number;
-  lane_facilities: Array<ILaneFacilities>;
+  lane: string;
   schedules: Array<IFacilityDaySchedule>;
   isDeleted: boolean;
-}
-
-export interface ILaneFacilities {
-  lane_type: string;
-  lane_name: string;
-  price: number;
 }
 
 export interface IFacilityDaySchedule {

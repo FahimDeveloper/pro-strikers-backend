@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface IClassSchedule {
+  _id: Types.ObjectId;
   class_name: string;
   sport: string;
   description: string;

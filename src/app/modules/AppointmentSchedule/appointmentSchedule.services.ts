@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { IAppointmentSchedule } from './appointmentSchedule.interface';
 import { AppointmentSchedule } from './appointmentSchedule.model';
 
@@ -14,9 +15,20 @@ const updateAppointmentIntoDB = async (
   return result;
 };
 
-const getAllAppointmentsFromDB = async () => {
-  const result = await AppointmentSchedule.find();
-  return result;
+const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
+  const appointmentQuery = new QueryBuilder(
+    AppointmentSchedule.find().populate('trainer').select('first_name'),
+    query,
+  )
+    .search(['appointment_name'])
+    .filter()
+    .paginate();
+  const result = await appointmentQuery?.modelQuery;
+  const count = await appointmentQuery?.countTotal();
+  return {
+    count,
+    ...result,
+  };
 };
 
 const getSingleAppointmentFromDB = async (id: string) => {

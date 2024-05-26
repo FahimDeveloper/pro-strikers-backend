@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { ICourseSchedule } from './courseSchedule.interface';
 import { CourseSchedule } from './courseSchedule.model';
 
@@ -14,9 +15,18 @@ const updateCourseIntoDB = async (
   return result;
 };
 
-const getAllCoursesFromDB = async () => {
-  const result = await CourseSchedule.find();
-  return result;
+const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
+  const courseQuery = new QueryBuilder(
+    CourseSchedule.find().populate('trainer'),
+    query,
+  )
+    .search(['course_name'])
+    .filter()
+    .rangeFilter()
+    .paginate();
+  const result = await courseQuery?.modelQuery;
+  const count = await courseQuery?.countTotal();
+  return { ...result, count };
 };
 
 const getSingleCourseFromDB = async (id: string) => {
@@ -25,10 +35,7 @@ const getSingleCourseFromDB = async (id: string) => {
 };
 
 const deleteCourseFromDB = async (id: string) => {
-  const result = await CourseSchedule.findOneAndUpdate(
-    { _id: id },
-    { isDeleted: true },
-  );
+  const result = await CourseSchedule.findByIdAndDelete(id);
   return result;
 };
 

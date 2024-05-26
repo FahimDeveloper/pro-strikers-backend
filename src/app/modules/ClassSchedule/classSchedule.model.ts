@@ -56,11 +56,6 @@ const classScheduleSchema = new Schema<IClassSchedule>(
       required: true,
     },
     schedules: [classScheduleDaySchema],
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   { versionKey: false, timestamps: true },
 );

@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { IFacilitySchedule } from './facilitySchedule.interface';
 import { FacilitySchedule } from './facilitySchedule.model';
 
@@ -14,9 +15,20 @@ const updateFacilityIntoDB = async (
   return result;
 };
 
-const getAllFacilitiesFromDB = async () => {
-  const result = await FacilitySchedule.find();
-  return result;
+const getAllFacilitiesFromDB = async (query: Record<string, unknown>) => {
+  const facilityQuery = new QueryBuilder(
+    FacilitySchedule.find().populate('trainer').select('first_name'),
+    query,
+  )
+    .search(['facility_name'])
+    .filter()
+    .paginate();
+  const result = await facilityQuery?.modelQuery;
+  const count = await facilityQuery?.countTotal();
+  return {
+    count,
+    ...result,
+  };
 };
 
 const getSingleFacilityFromDB = async (id: string) => {
@@ -25,10 +37,7 @@ const getSingleFacilityFromDB = async (id: string) => {
 };
 
 const deleteFacilityFromDB = async (id: string) => {
-  const result = await FacilitySchedule.findOneAndUpdate(
-    { _id: id },
-    { isDeleted: true },
-  );
+  const result = await FacilitySchedule.findByIdAndDelete(id);
   return result;
 };
 
