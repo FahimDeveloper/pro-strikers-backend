@@ -8,8 +8,8 @@ import catchAsync from '../utils/catchAsync';
 import { Admin } from '../modules/Admin/admin.model';
 import { IRole } from '../utils/role';
 
-const authMiddleware = (...requiredRoles: Partial<IRole[]>) => {
-  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
+  catchAsync(async (req, res, next) => {
     const token = req.headers.authorization;
     if (!token) {
       throw new AppError(
@@ -19,19 +19,19 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) => {
     }
 
     const decoded = jwt.verify(
-      token,
+      token.split(' ')[1],
       config.jwt_access_secret as string,
     ) as JwtPayload;
 
     const { role, email } = decoded;
-    let user;
+
     if (role === 'user') {
-      user = await User.isUserExistsByEmail(email);
+      const user = await User.isUserExistsByEmail(email);
       if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'The user not found!');
       }
     } else if (role === 'admin' || role === 'superAdmin') {
-      user = await Admin.isAdminExists(email);
+      const user = await Admin.isAdminExists(email);
       if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'The user not found!');
       }
@@ -41,9 +41,8 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) => {
       throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
     }
 
-    req.user = decoded as JwtPayload & { role: string };
+    req.user = decoded;
     next();
   });
-};
 
 export default authMiddleware;

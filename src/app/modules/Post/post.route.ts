@@ -5,7 +5,7 @@ import { ROLE } from '../../utils/role';
 
 const route = express.Router();
 
-route.get('/', PostControllers.getAllPost);
+route.get('/', PostControllers.getAllPosts);
 route.get('/:id', PostControllers.getSinglePost);
 route.post(
   '/create',

@@ -23,16 +23,20 @@ const loginUser = catchAsync(async (req, res) => {
 const loginAdmin = catchAsync(async (req, res) => {
   const result = await AuthServices.loginAdminIntoDB(req.body);
 
-  const { accessToken, refreshToken } = result;
+  const { accessToken, refreshToken, user } = result;
 
   res.cookie('refreshToken', refreshToken, {
     // secure: config.NODE_ENV === 'production',
+    secure: true,
     httpOnly: true,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 * 365,
   });
 
-  sendResponse(res, httpStatus.OK, 'logged in successfully!', accessToken);
+  sendResponse(res, httpStatus.OK, 'logged in successfully!', {
+    user,
+    accessToken,
+  });
 });
 
 // const changePassword = catchAsync(async (req, res) => {

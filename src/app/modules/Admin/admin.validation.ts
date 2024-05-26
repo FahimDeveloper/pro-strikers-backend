@@ -29,10 +29,6 @@ const createValidation = z.object({
       invalid_type_error: 'password must be string',
       required_error: 'password is required',
     }),
-    isDeleted: z.boolean({
-      invalid_type_error: 'isDeleted must be boolean',
-      required_error: 'isDeleted is required',
-    }),
   }),
 });
 
@@ -75,13 +71,6 @@ const updateValidation = z.object({
         invalid_type_error: 'password must be string',
         required_error: 'password is required',
       })
-      .optional(),
-    isDeleted: z
-      .boolean({
-        invalid_type_error: 'isDeleted must be boolean',
-        required_error: 'isDeleted is required',
-      })
-      .default(false)
       .optional(),
   }),
 });

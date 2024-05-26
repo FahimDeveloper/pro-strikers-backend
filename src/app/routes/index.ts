@@ -8,10 +8,15 @@ import { FacilityRoutes } from '../modules/FacilitySchedule/facilitySchedule.rou
 import { VoucherRoute } from '../modules/Voucher/voucher.route';
 import { PostRoutes } from '../modules/Post/post.route';
 import { EventRoutes } from '../modules/Events/events.route';
+import { AuthRoutes } from '../modules/Auth/auth.route';
 
 const router = express.Router();
 
 const mainRoutes = [
+  {
+    path: '/auth',
+    route: AuthRoutes,
+  },
   {
     path: '/admins',
     route: AdminRoutes,
@@ -21,19 +26,19 @@ const mainRoutes = [
     route: UserRoutes,
   },
   {
-    path: '/classes',
+    path: '/schedule/classes',
     route: ClassRoutes,
   },
   {
-    path: '/courses',
+    path: 'schedule/courses',
     route: CourseRoutes,
   },
   {
-    path: '/appointments',
+    path: 'schedule/appointments',
     route: AppointmentRoutes,
   },
   {
-    path: '/facilities',
+    path: 'schedule/facilities',
     route: FacilityRoutes,
   },
   {

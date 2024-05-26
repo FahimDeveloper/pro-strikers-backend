@@ -61,7 +61,7 @@ const userSchema = new Schema<IUser, UserModel>(
     },
     plan: {
       type: String,
-      enum: ['monthly', 'yearly'],
+      enum: ['no plan', 'monthly', 'yearly'],
     },
   },
   {

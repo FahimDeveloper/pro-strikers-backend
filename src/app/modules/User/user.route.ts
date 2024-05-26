@@ -19,7 +19,12 @@ route.get(
   validateRequest(UserValidations.createValidation),
   UserControllers.getSingleUser,
 );
-route.post('/create', UserControllers.createUser);
+route.post(
+  '/create',
+  authMiddleware(ROLE.admin),
+  validateRequest(UserValidations.createValidation),
+  UserControllers.createUser,
+);
 route.patch(
   '/update/:id',
   authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),

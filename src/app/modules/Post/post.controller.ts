@@ -5,12 +5,12 @@ import sendResponse from '../../utils/sendResponse';
 
 const getAllPosts = catchAsync(async (req, res) => {
   const result = await PostServices.getAllPostFromDB();
-  sendResponse(res, httpStatus.OK, 'Post fetched succesfully', result);
+  sendResponse(res, httpStatus.OK, 'Posts fetched succesfully', result);
 });
 
 const getSinglePost = catchAsync(async (req, res) => {
   const result = await PostServices.getSinglePostFromDB(req.params.id);
-  sendResponse(res, httpStatus.OK, 'Posts fetched succesfully', result);
+  sendResponse(res, httpStatus.OK, 'Post fetched succesfully', result);
 });
 
 const createPost = catchAsync(async (req, res) => {

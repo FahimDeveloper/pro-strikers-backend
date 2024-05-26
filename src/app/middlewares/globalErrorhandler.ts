@@ -9,8 +9,10 @@ import handleDuplicateError from '../errors/handleDuplicateError';
 import handleValidationError from '../errors/handleValidationError';
 import handleZodError from '../errors/handleZodError';
 import { TErrorSources } from '../interface/error';
+import { handleJsonWebTokenError } from '../errors/handleJsonWebTokenError';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  console.log(err, 'error message');
   let statusCode = 500;
   let message = 'Something went wrong!';
   let errorSources: TErrorSources = [
@@ -32,6 +34,11 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     errorSources = simplifiedError?.errorSources;
   } else if (err?.name === 'CastError') {
     const simplifiedError = handleCastError(err);
+    statusCode = simplifiedError?.statusCode;
+    message = simplifiedError?.message;
+    errorSources = simplifiedError?.errorSources;
+  } else if (err?.name === 'JsonWebTokenError') {
+    const simplifiedError = handleJsonWebTokenError(err);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
@@ -63,14 +70,12 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (config.node_env === 'development') {
     return res.status(statusCode).json({
       message,
-      err,
       errorSources,
       stack: config.node_env === 'development' ? err?.stack : null,
     });
   } else {
     return res.status(statusCode).json({
       message,
-      err,
       errorSources,
     });
   }

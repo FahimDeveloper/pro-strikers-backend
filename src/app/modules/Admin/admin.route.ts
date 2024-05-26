@@ -15,17 +15,17 @@ route.get(
 
 route.get('/trainers', AdminControllers.getAllTrainers);
 
+route.post(
+  '/create',
+  validateRequest(adminValidations.createValidation),
+  // authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.createAdminUser,
+);
+
 route.get(
   '/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   AdminControllers.getSingleAdminUser,
-);
-
-route.post(
-  '/create',
-  validateRequest(adminValidations.createValidation),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  AdminControllers.createAdminUser,
 );
 
 route.patch(

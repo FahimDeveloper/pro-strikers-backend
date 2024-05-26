@@ -49,7 +49,7 @@ const loginAdminIntoDB = async (payload: ILogin) => {
     throw new AppError(httpStatus.NOT_FOUND, 'user not found!');
   }
 
-  const passwordMatch = await User.isPasswordMatched(
+  const passwordMatch = await Admin.isPasswordMatched(
     payload?.password,
     user?.password,
   );
@@ -74,7 +74,10 @@ const loginAdminIntoDB = async (payload: ILogin) => {
     config.jwt_refresh_expires_in as string,
   );
 
+  const { _id, first_name, last_name, image, email, role } = user;
+
   return {
+    user: { _id, first_name, last_name, image, email, role },
     accessToken,
     refreshToken,
   };

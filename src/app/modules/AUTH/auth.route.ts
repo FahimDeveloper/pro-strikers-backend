@@ -6,7 +6,7 @@ import { AuthValidation } from './auth.validation';
 const router = express.Router();
 
 router.post(
-  '/users/login',
+  '/user/login',
   validateRequest(AuthValidation.loginValidation),
   AuthControllers.loginUser,
 );
@@ -14,7 +14,7 @@ router.post(
 router.post(
   '/admin/login',
   validateRequest(AuthValidation.loginValidation),
-  AuthControllers.loginUser,
+  AuthControllers.loginAdmin,
 );
 
 // router.post(
