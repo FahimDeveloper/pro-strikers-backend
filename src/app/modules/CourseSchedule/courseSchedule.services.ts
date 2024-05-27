@@ -16,17 +16,14 @@ const updateCourseIntoDB = async (
 };
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
-  const courseQuery = new QueryBuilder(
-    CourseSchedule.find().populate('trainer'),
-    query,
-  )
+  const courseQuery = new QueryBuilder(CourseSchedule.find(), query)
     .search(['course_name'])
     .filter()
     .rangeFilter()
     .paginate();
   const result = await courseQuery?.modelQuery;
   const count = await courseQuery?.countTotal();
-  return { ...result, count };
+  return { result, count };
 };
 
 const getSingleCourseFromDB = async (id: string) => {

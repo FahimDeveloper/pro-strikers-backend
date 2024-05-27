@@ -7,22 +7,22 @@ const createValidation = z.object({
       invalid_type_error: 'facility name must be string',
       required_error: 'facility name is required',
     }),
-    category: z.string({
-      invalid_type_error: 'category must be string',
-      required_error: 'category is required',
+    sport: z.string({
+      invalid_type_error: 'sport must be string',
+      required_error: 'sport is required',
+    }),
+    facility: z.string({
+      invalid_type_error: 'facility must be string',
+      required_error: 'facility is required',
     }),
     facility_duration: z.number({
-      invalid_type_error: 'facility duration must be string',
+      invalid_type_error: 'facility duration must be number',
       required_error: 'facility duration is required',
     }),
-    trainer: z
-      .string({
-        invalid_type_error: 'trainer must be string',
-        required_error: 'trainer is required',
-      })
-      .refine(value => mongoose.Types.ObjectId.isValid(value), {
-        message: 'Invalid ObjectId',
-      }),
+    trainer: z.string({
+      invalid_type_error: 'trainer must be string',
+      required_error: 'trainer is required',
+    }),
     description: z.string({
       invalid_type_error: 'description must be string',
       required_error: 'description is required',
@@ -49,13 +49,11 @@ const createValidation = z.object({
           .string({
             invalid_type_error: 'start_time must be string',
           })
-          .date()
           .optional(),
         end_time: z
           .string({
             invalid_type_error: 'end_time must be string',
           })
-          .date()
           .optional(),
       }),
       {
@@ -75,10 +73,10 @@ const updateValidation = z.object({
         required_error: 'facility name is required',
       })
       .optional(),
-    category: z
+    sport: z
       .string({
-        invalid_type_error: 'category must be string',
-        required_error: 'category is required',
+        invalid_type_error: 'sport must be string',
+        required_error: 'sport is required',
       })
       .optional(),
     facility_duration: z
@@ -91,9 +89,6 @@ const updateValidation = z.object({
       .string({
         invalid_type_error: 'trainer must be string',
         required_error: 'trainer is required',
-      })
-      .refine(value => mongoose.Types.ObjectId.isValid(value), {
-        message: 'Invalid ObjectId',
       })
       .optional(),
     description: z
@@ -129,13 +124,11 @@ const updateValidation = z.object({
             .string({
               invalid_type_error: 'start_time must be string',
             })
-            .date()
             .optional(),
           end_time: z
             .string({
               invalid_type_error: 'end_time must be string',
             })
-            .date()
             .optional(),
         }),
         {

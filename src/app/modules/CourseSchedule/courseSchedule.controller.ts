@@ -9,8 +9,10 @@ const createCourse = catchAsync(async (req, res) => {
 });
 
 const getAllCourses = catchAsync(async (req, res) => {
-  const result = await CourseScheduleServices.getAllCoursesFromDB(req.query);
-  sendResponse(res, httpStatus.OK, 'Course fetch succesfully', result);
+  const { count, result } = await CourseScheduleServices.getAllCoursesFromDB(
+    req.query,
+  );
+  sendResponse(res, httpStatus.OK, 'Course fetch succesfully', result, count);
 });
 
 const getSingleCourse = catchAsync(async (req, res) => {

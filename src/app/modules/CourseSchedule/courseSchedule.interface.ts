@@ -2,15 +2,15 @@ import { Types } from 'mongoose';
 
 export interface ICourseSchedule {
   _id: Types.ObjectId;
-  class_name: string;
+  course_name: string;
   sport: string;
-  trainer: Types.ObjectId;
+  trainer: string;
   capacity: number;
   description: string;
-  start_date: Date;
-  end_date: Date;
-  start_time: Date;
-  end_time: Date;
+  start_date: string;
+  end_date: string;
+  start_time: string;
+  end_time: string;
   price: number;
   isDeleted: boolean;
 }

@@ -3,7 +3,7 @@ import { ICourseSchedule } from './courseSchedule.interface';
 
 const courseScheduleSchema = new Schema<ICourseSchedule>(
   {
-    class_name: {
+    course_name: {
       type: String,
       required: true,
       index: true,
@@ -13,7 +13,7 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
       required: true,
     },
     trainer: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
     },
     capacity: {
@@ -21,19 +21,19 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
       required: true,
     },
     start_date: {
-      type: Date,
+      type: String,
       required: true,
     },
     end_date: {
-      type: Date,
+      type: String,
       required: true,
     },
     start_time: {
-      type: Date,
+      type: String,
       required: true,
     },
     end_time: {
-      type: Date,
+      type: String,
       required: true,
     },
     description: {

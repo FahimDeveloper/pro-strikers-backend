@@ -16,10 +16,7 @@ const updateClassIntoDB = async (
 };
 
 const getAllClassesFromDB = async (query: Record<string, unknown>) => {
-  const classQuery = new QueryBuilder(
-    ClassSchedule.find().populate('trainer').select('first_name'),
-    query,
-  )
+  const classQuery = new QueryBuilder(ClassSchedule.find(), query)
     .search(['class_name'])
     .filter()
     .paginate();
@@ -27,7 +24,7 @@ const getAllClassesFromDB = async (query: Record<string, unknown>) => {
   const count = await classQuery?.countTotal();
   return {
     count,
-    ...result,
+    result,
   };
 };
 

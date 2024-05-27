@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { z } from 'zod';
 
 const createValidation = z.object({
@@ -19,14 +18,10 @@ const createValidation = z.object({
       invalid_type_error: 'facility must be string',
       required_error: 'facility is required',
     }),
-    trainer: z
-      .string({
-        invalid_type_error: 'trainer must be string',
-        required_error: 'trainer is required',
-      })
-      .refine(value => mongoose.Types.ObjectId.isValid(value), {
-        message: 'Invalid ObjectId',
-      }),
+    trainer: z.string({
+      invalid_type_error: 'trainer must be string',
+      required_error: 'trainer is required',
+    }),
     level: z.string({
       invalid_type_error: 'level must be string',
       required_error: 'level is required',
@@ -54,14 +49,12 @@ const createValidation = z.object({
             invalid_type_error: 'start time must be string',
             required_error: 'start time is required',
           })
-          .date()
           .optional(),
         end_time: z
           .string({
             invalid_type_error: 'end time must be string',
             required_error: 'end time is required',
           })
-          .date()
           .optional(),
       }),
       {
@@ -98,9 +91,6 @@ const updateValidation = z.object({
       .string({
         invalid_type_error: 'trainer must be string',
       })
-      .refine(value => mongoose.Types.ObjectId.isValid(value), {
-        message: 'Invalid ObjectId',
-      })
       .optional(),
     level: z
       .string({
@@ -130,13 +120,11 @@ const updateValidation = z.object({
             .string({
               invalid_type_error: 'start time must be string',
             })
-            .date()
             .optional(),
           end_time: z
             .string({
               invalid_type_error: 'end time must be string',
             })
-            .date()
             .optional(),
         }),
         {

@@ -30,15 +30,15 @@ const mainRoutes = [
     route: ClassRoutes,
   },
   {
-    path: 'schedule/courses',
+    path: '/schedule/courses',
     route: CourseRoutes,
   },
   {
-    path: 'schedule/appointments',
+    path: '/schedule/appointments',
     route: AppointmentRoutes,
   },
   {
-    path: 'schedule/facilities',
+    path: '/schedule/facilities',
     route: FacilityRoutes,
   },
   {

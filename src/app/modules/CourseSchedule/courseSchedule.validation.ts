@@ -1,9 +1,8 @@
-import mongoose from 'mongoose';
 import { z } from 'zod';
 
 const createValidation = z.object({
   body: z.object({
-    class_name: z.string({
+    course_name: z.string({
       invalid_type_error: 'class name must be string',
       required_error: 'class name is required',
     }),
@@ -11,14 +10,10 @@ const createValidation = z.object({
       invalid_type_error: 'sport must be string',
       required_error: 'sport is required',
     }),
-    trainer: z
-      .string({
-        invalid_type_error: 'trainer must be string',
-        required_error: 'trainer is required',
-      })
-      .refine(value => mongoose.Types.ObjectId.isValid(value), {
-        message: 'Invalid ObjectId',
-      }),
+    trainer: z.string({
+      invalid_type_error: 'trainer must be string',
+      required_error: 'trainer is required',
+    }),
     capacity: z.number({
       invalid_type_error: 'capacity must be number',
       required_error: 'capacity is required',
@@ -52,7 +47,7 @@ const createValidation = z.object({
 
 const updateValidation = z.object({
   body: z.object({
-    class_name: z
+    course_name: z
       .string({
         invalid_type_error: 'class name must be string',
         required_error: 'class name is required',
@@ -68,9 +63,6 @@ const updateValidation = z.object({
       .string({
         invalid_type_error: 'trainer must be string',
         required_error: 'trainer is required',
-      })
-      .refine(value => mongoose.Types.ObjectId.isValid(value), {
-        message: 'Invalid ObjectId',
       })
       .optional(),
     capacity: z

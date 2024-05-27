@@ -60,9 +60,7 @@ class QueryBuilder<T> {
   async countTotal() {
     const totalQueries = this.modelQuery.getFilter();
     const total = await this.modelQuery.model.countDocuments(totalQueries);
-    return {
-      total,
-    };
+    return total;
   }
 }
 

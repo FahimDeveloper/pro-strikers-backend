@@ -15,10 +15,10 @@ const appointmentScheduleDaySchema = new Schema<IAppointmentDaySchedule>(
       required: true,
     },
     start_time: {
-      type: Date,
+      type: String,
     },
     end_time: {
-      type: Date,
+      type: String,
     },
   },
   { _id: false },
@@ -39,11 +39,11 @@ const appointmentScheduleSchema = new Schema<IAppointmentSchedule>(
       required: true,
     },
     appointment_duration: {
-      type: Number,
+      type: String,
       required: true,
     },
     trainer: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
     },
     description: {
@@ -55,10 +55,6 @@ const appointmentScheduleSchema = new Schema<IAppointmentSchedule>(
       required: true,
     },
     schedules: [appointmentScheduleDaySchema],
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
   },
   { timestamps: true, versionKey: false },
 );

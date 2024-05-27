@@ -16,10 +16,7 @@ const updateAppointmentIntoDB = async (
 };
 
 const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
-  const appointmentQuery = new QueryBuilder(
-    AppointmentSchedule.find().populate('trainer').select('first_name'),
-    query,
-  )
+  const appointmentQuery = new QueryBuilder(AppointmentSchedule.find(), query)
     .search(['appointment_name'])
     .filter()
     .paginate();
@@ -27,7 +24,7 @@ const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
   const count = await appointmentQuery?.countTotal();
   return {
     count,
-    ...result,
+    result,
   };
 };
 
@@ -37,10 +34,7 @@ const getSingleAppointmentFromDB = async (id: string) => {
 };
 
 const deleteAppointmentFromDB = async (id: string) => {
-  const result = await AppointmentSchedule.findOneAndUpdate(
-    { _id: id },
-    { isDeleted: true },
-  );
+  const result = await AppointmentSchedule.findByIdAndDelete(id);
   return result;
 };
 

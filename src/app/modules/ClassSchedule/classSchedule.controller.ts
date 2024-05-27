@@ -9,8 +9,10 @@ const createClass = catchAsync(async (req, res) => {
 });
 
 const getAllClasses = catchAsync(async (req, res) => {
-  const result = await ClassScheduleServices.getAllClassesFromDB(req.query);
-  sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result);
+  const { count, result } = await ClassScheduleServices.getAllClassesFromDB(
+    req.query,
+  );
+  sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result, count);
 });
 
 const getSingleClass = catchAsync(async (req, res) => {

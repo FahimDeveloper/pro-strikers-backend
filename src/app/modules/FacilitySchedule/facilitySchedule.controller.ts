@@ -9,10 +9,9 @@ const createFacility = catchAsync(async (req, res) => {
 });
 
 const getAllFacilities = catchAsync(async (req, res) => {
-  const result = await FacilityScheduleServices.getAllFacilitiesFromDB(
-    req.query,
-  );
-  sendResponse(res, httpStatus.OK, 'Facility fetch succesfully', result);
+  const { result, count } =
+    await FacilityScheduleServices.getAllFacilitiesFromDB(req.query);
+  sendResponse(res, httpStatus.OK, 'Facility fetch succesfully', result, count);
 });
 
 const getSingleFacility = catchAsync(async (req, res) => {

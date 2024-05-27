@@ -5,11 +5,11 @@ const sendResponse = <T>(
   statusCode: number,
   message: string,
   result?: T | T[],
-  total?: number,
+  count?: number,
 ) => {
   return res.status(statusCode).json({
-    total: total,
     message: message,
+    count: count,
     results: result,
   });
 };

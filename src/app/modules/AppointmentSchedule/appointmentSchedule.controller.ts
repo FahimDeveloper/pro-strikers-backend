@@ -9,10 +9,15 @@ const createAppointment = catchAsync(async (req, res) => {
 });
 
 const getAllAppointments = catchAsync(async (req, res) => {
-  const result = await AppointmentScheduleServices.getAllAppointmentsFromDB(
-    req.query,
+  const { count, result } =
+    await AppointmentScheduleServices.getAllAppointmentsFromDB(req.query);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Appointment fetch succesfully',
+    result,
+    count,
   );
-  sendResponse(res, httpStatus.OK, 'Appointment fetch succesfully', result);
 });
 
 const getSingleAppointment = catchAsync(async (req, res) => {

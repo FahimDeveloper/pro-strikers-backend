@@ -30,7 +30,11 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
       type: String,
       required: true,
     },
-    category: {
+    sport: {
+      type: String,
+      required: true,
+    },
+    facility: {
       type: String,
       required: true,
     },

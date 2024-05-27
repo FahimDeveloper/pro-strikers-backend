@@ -15,18 +15,14 @@ const createValidation = z.object({
       invalid_type_error: 'sport must be string',
       required_error: 'sport is required',
     }),
-    appointment_duration: z.number({
+    appointment_duration: z.string({
       invalid_type_error: 'appointment duration must be number',
       required_error: 'appointment duration is required',
     }),
-    trainer: z
-      .string({
-        invalid_type_error: 'trainer must be string',
-        required_error: 'trainer is required',
-      })
-      .refine(value => mongoose.Types.ObjectId.isValid(value), {
-        message: 'Invalid ObjectId',
-      }),
+    trainer: z.string({
+      invalid_type_error: 'trainer must be string',
+      required_error: 'trainer is required',
+    }),
     description: z.string({
       invalid_type_error: 'description must be string',
       required_error: 'description is required',
@@ -49,13 +45,11 @@ const createValidation = z.object({
           .string({
             invalid_type_error: 'start_time must be string',
           })
-          .date()
           .optional(),
         end_time: z
           .string({
             invalid_type_error: 'end_time must be string',
           })
-          .date()
           .optional(),
       }),
       {
@@ -63,7 +57,6 @@ const createValidation = z.object({
         invalid_type_error: 'schedules are must be an array of objects',
       },
     ),
-    isDeleted: z.boolean().optional().default(false),
   }),
 });
 
@@ -85,7 +78,7 @@ const updateValidation = z.object({
       })
       .optional(),
     appointment_duration: z
-      .number({
+      .string({
         invalid_type_error: 'appointment duration must be number',
         required_error: 'appointment duration is required',
       })
@@ -94,9 +87,6 @@ const updateValidation = z.object({
       .string({
         invalid_type_error: 'trainer must be string',
         required_error: 'trainer is required',
-      })
-      .refine(value => mongoose.Types.ObjectId.isValid(value), {
-        message: 'Invalid ObjectId',
       })
       .optional(),
     description: z
@@ -122,13 +112,11 @@ const updateValidation = z.object({
             .string({
               invalid_type_error: 'start_time must be string',
             })
-            .date()
             .optional(),
           end_time: z
             .string({
               invalid_type_error: 'end_time must be string',
             })
-            .date()
             .optional(),
         }),
         {
@@ -136,7 +124,6 @@ const updateValidation = z.object({
         },
       )
       .optional(),
-    isDeleted: z.boolean().default(false).optional(),
   }),
 });
 

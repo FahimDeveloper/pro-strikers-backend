@@ -6,12 +6,11 @@ export interface IClassSchedule {
   sport: string;
   description: string;
   facility: string;
-  trainer: Types.ObjectId;
+  trainer: string;
   level: string;
   capacity: number;
   price: number;
   schedules: IClassDaySchedule[];
-  isDeleted: boolean;
 }
 
 export interface IClassDaySchedule {

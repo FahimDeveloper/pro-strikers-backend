@@ -27,7 +27,7 @@ const getAllFacilitiesFromDB = async (query: Record<string, unknown>) => {
   const count = await facilityQuery?.countTotal();
   return {
     count,
-    ...result,
+    result,
   };
 };
 

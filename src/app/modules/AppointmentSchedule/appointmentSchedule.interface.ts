@@ -5,17 +5,16 @@ export interface IAppointmentSchedule {
   appointment_name: string;
   appointment_type: string;
   sport: string;
-  appointment_duration: number;
-  trainer: Types.ObjectId;
+  appointment_duration: string;
+  trainer: string;
   description: string;
   price: number;
   schedules: IAppointmentDaySchedule[];
-  isDeleted: boolean;
 }
 
 export interface IAppointmentDaySchedule {
   day: string;
   active: boolean;
-  start_time: Date;
-  end_time: Date;
+  start_time: string;
+  end_time: string;
 }
