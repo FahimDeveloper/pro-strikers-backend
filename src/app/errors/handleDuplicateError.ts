@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TErrorSources, TGenericErrorResponse } from '../interface/error';
+import fs from 'fs';
 
-const handleDuplicateError = (err: any): TGenericErrorResponse => {
+const handleDuplicateError = (err: any, file: any): TGenericErrorResponse => {
   // Extract value within double quotes using regex
   const match = err.message.match(/"([^"]*)"/);
 
@@ -16,7 +17,9 @@ const handleDuplicateError = (err: any): TGenericErrorResponse => {
   ];
 
   const statusCode = 400;
-
+  if (file) {
+    fs.unlinkSync(file);
+  }
   return {
     statusCode,
     message: 'Invalid ID',

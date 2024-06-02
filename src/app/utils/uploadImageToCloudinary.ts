@@ -11,19 +11,14 @@ export const uploadImageIntoCloduinary = async (file: any) => {
     api_key: config.cloudinary_api_key,
     api_secret: config.cloudinary_api_secret,
   });
-  try {
-    if (!path) {
-      throw new AppError(httpStatus.NOT_FOUND, 'image path not found');
-    }
-    const result = await cloudinary.uploader.upload(path, {
-      resource_type: 'image',
-    });
-    fs.unlinkSync(path);
-    return {
-      url: result.url,
-    };
-  } catch (err) {
-    fs.unlinkSync(path);
-    throw new AppError(httpStatus.NOT_FOUND, 'image upload failed');
+  if (!path) {
+    throw new AppError(httpStatus.NOT_FOUND, 'image path not found');
   }
+  const result = await cloudinary.uploader.upload(path, {
+    resource_type: 'image',
+  });
+  fs.unlinkSync(path);
+  return {
+    url: result.url,
+  };
 };

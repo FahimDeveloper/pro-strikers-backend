@@ -29,7 +29,7 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
     role: {
       type: String,
       required: true,
-      enum: ['superAdmin', 'admin', 'trainer'],
+      enum: ['super-admin', 'admin', 'trainer'],
     },
     password: {
       type: String,

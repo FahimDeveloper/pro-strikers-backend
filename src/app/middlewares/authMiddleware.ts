@@ -7,11 +7,14 @@ import { User } from '../modules/User/user.model';
 import catchAsync from '../utils/catchAsync';
 import { Admin } from '../modules/Admin/admin.model';
 import { IRole, ROLE } from '../utils/role';
+import fs from 'fs';
 
 const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
   catchAsync(async (req, res, next) => {
     const token = req.headers.authorization;
+    const file = req.file?.path;
     if (!token) {
+      fs.unlinkSync(file as string);
       throw new AppError(
         httpStatus.UNAUTHORIZED,
         'The request not authorized!',
@@ -27,11 +30,13 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
     if (role === ROLE.user) {
       const user = await User.isUserExistsByEmail(email);
       if (!user) {
+        fs.unlinkSync(file as string);
         throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
       }
     } else if (role === ROLE.admin || role === ROLE.superAdmin) {
       const user = await Admin.isAdminExists(email);
       if (!user) {
+        fs.unlinkSync(file as string);
         throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
       }
     }

@@ -23,7 +23,7 @@ const createValidation = z.object({
       invalid_type_error: 'password must be string',
       required_error: 'password is required',
     }),
-    role: z.enum(['user']),
+    role: z.enum(['user']).default('user'),
     phone: z.string({
       invalid_type_error: 'phone must be string',
       required_error: 'phone is required',
@@ -36,7 +36,7 @@ const createValidation = z.object({
       invalid_type_error: 'type must be boolean',
       required_error: 'membership is required',
     }),
-    active: z.boolean({
+    activity: z.boolean({
       invalid_type_error: 'type must be boolean',
     }),
     issue_date: z
@@ -106,7 +106,7 @@ const updateValidation = z.object({
           required_error: 'membership is required',
         })
         .optional(),
-      active: z
+      activity: z
         .boolean({
           invalid_type_error: 'type must be boolean',
         })

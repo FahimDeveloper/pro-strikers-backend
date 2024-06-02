@@ -12,7 +12,7 @@ import { TErrorSources } from '../interface/error';
 import { handleJsonWebTokenError } from '../errors/handleJsonWebTokenError';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.log(err, 'error message');
+  const file = req.file?.path;
   let statusCode = 500;
   let message = 'Something went wrong!';
   let errorSources: TErrorSources = [
@@ -23,7 +23,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   ];
 
   if (err instanceof ZodError) {
-    const simplifiedError = handleZodError(err);
+    const simplifiedError = handleZodError(err, file);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
@@ -33,7 +33,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
   } else if (err?.name === 'CastError') {
-    const simplifiedError = handleCastError(err);
+    const simplifiedError = handleCastError(err, file);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
@@ -41,12 +41,12 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     err?.name === 'JsonWebTokenError' ||
     err?.name === 'TokenExpiredError'
   ) {
-    const simplifiedError = handleJsonWebTokenError(err);
+    const simplifiedError = handleJsonWebTokenError(err, file);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
   } else if (err?.code === 11000) {
-    const simplifiedError = handleDuplicateError(err);
+    const simplifiedError = handleDuplicateError(err, file);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
