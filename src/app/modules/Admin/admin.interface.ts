@@ -4,12 +4,12 @@ export interface IAdmin {
   _id: Types.ObjectId;
   first_name: string;
   last_name: string;
-  image: File;
+  image: string;
   email: string;
   phone: string;
   date_of_birth: string;
   gender: 'male' | 'female';
-  role: 'superAdmin' | 'admin' | 'trainer';
+  role: 'super-admin' | 'admin' | 'trainer';
   description: string;
   password: string;
 }
