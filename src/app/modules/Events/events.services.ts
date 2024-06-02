@@ -1,14 +1,29 @@
 import QueryBuilder from '../../builder/QueryBuilder';
+import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { IEvent } from './events.interface';
 import { Event } from './events.model';
 
-const createEventIntoDB = async (payload: IEvent) => {
-  const result = await Event.create(payload);
+const createEventIntoDB = async (payload: IEvent, file: any) => {
+  const { url } = await uploadImageIntoCloduinary(file);
+  const result = await Event.create({ ...payload, image: url });
   return result;
 };
 
-const updateEventIntoDB = async (id: string, payload: Partial<IEvent>) => {
-  const result = await Event.findByIdAndUpdate(id, payload);
+const updateEventIntoDB = async (
+  id: string,
+  payload: Partial<IEvent>,
+  file: any,
+) => {
+  let result;
+  if (file?.path) {
+    const { url } = await uploadImageIntoCloduinary(file);
+    result = await Event.findByIdAndUpdate(id, {
+      ...payload,
+      image: url,
+    });
+  } else {
+    result = await Event.findByIdAndUpdate(id, payload);
+  }
   return result;
 };
 

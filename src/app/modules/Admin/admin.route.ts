@@ -45,7 +45,6 @@ route.patch(
     next();
   },
   validateRequest(adminValidations.updateValidation),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
   AdminControllers.updateAdminUser,
 );
 

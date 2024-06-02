@@ -1,9 +1,16 @@
+import QueryBuilder from '../../builder/QueryBuilder';
+import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { IPost } from './post.interface';
 import { Post } from './post.model';
 
-const getAllPostFromDB = async () => {
-  const result = await Post.find();
-  return result;
+const getAllPostFromDB = async (query: Record<string, unknown>) => {
+  const postQuery = new QueryBuilder(Post.find(), query)
+    .search(['title'])
+    .filter()
+    .paginate();
+  const result = await postQuery?.modelQuery;
+  const count = await postQuery?.countTotal();
+  return { result, count };
 };
 
 const getSinglePostFromDB = async (id: string) => {
@@ -11,13 +18,27 @@ const getSinglePostFromDB = async (id: string) => {
   return result;
 };
 
-const createPostIntoDB = async (payload: IPost) => {
-  const result = await Post.create(payload);
+const createPostIntoDB = async (payload: IPost, file: any) => {
+  const { url } = await uploadImageIntoCloduinary(file);
+  const result = await Post.create({ ...payload, image: url });
   return result;
 };
 
-const updatePostIntoDB = async (id: string, payload: IPost) => {
-  const result = await Post.findByIdAndUpdate(id, payload);
+const updatePostIntoDB = async (
+  id: string,
+  payload: Partial<IPost>,
+  file: any,
+) => {
+  let result;
+  if (file?.path) {
+    const { url } = await uploadImageIntoCloduinary(file);
+    result = await Post.findByIdAndUpdate(id, {
+      ...payload,
+      image: url,
+    });
+  } else {
+    result = await Post.findByIdAndUpdate(id, payload);
+  }
   return result;
 };
 

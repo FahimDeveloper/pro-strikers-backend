@@ -4,7 +4,8 @@ import sendResponse from '../../utils/sendResponse';
 import { EventServices } from './events.services';
 
 const createEvent = catchAsync(async (req, res) => {
-  const result = await EventServices.createEventIntoDB(req.body);
+  const file = req.file;
+  const result = await EventServices.createEventIntoDB(req.body, file);
   sendResponse(res, httpStatus.CREATED, 'Event created successfully', result);
 });
 
@@ -25,7 +26,12 @@ const getSingleEvent = catchAsync(async (req, res) => {
 });
 
 const updateEvent = catchAsync(async (req, res) => {
-  const result = await EventServices.updateEventIntoDB(req.params.id, req.body);
+  const file = req.file;
+  const result = await EventServices.updateEventIntoDB(
+    req.params.id,
+    req.body,
+    file,
+  );
   sendResponse(res, httpStatus.OK, 'Event updated successfully', result);
 });
 
