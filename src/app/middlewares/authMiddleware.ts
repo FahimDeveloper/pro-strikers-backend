@@ -48,6 +48,9 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
     }
 
     if (requiredRoles && !requiredRoles.includes(role)) {
+      if (file) {
+        fs.unlinkSync(file as string);
+      }
       throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
     }
 
