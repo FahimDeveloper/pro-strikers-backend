@@ -10,9 +10,9 @@ const createValidation = z.object({
       invalid_type_error: 'event type must be string',
       required_error: 'event type is required',
     }),
-    event_sport: z.string({
-      invalid_type_error: 'event sport must be string',
-      required_error: 'event sport is required',
+    sport: z.string({
+      invalid_type_error: 'sport must be string',
+      required_error: 'sport is required',
     }),
     start_date: z.string().date(),
     end_date: z.string().date(),
@@ -22,17 +22,23 @@ const createValidation = z.object({
     }),
     registration_start: z.string().date(),
     registration_end: z.string().date(),
-    total_registrations: z.number({
+    registration: z.number({
       invalid_type_error: 'total registrations must be number',
       required_error: 'total registrations is required',
     }),
-    image: z.string({
-      invalid_type_error: 'event image must be string',
-      required_error: 'event image is required',
+    image: z
+      .string({
+        invalid_type_error: 'event image must be string',
+        required_error: 'event image is required',
+      })
+      .optional(),
+    allowed_registrations: z.string({
+      invalid_type_error: 'allowed registrations must be string',
+      required_error: 'allowed registrations is required',
     }),
-    event_description: z.string({
-      invalid_type_error: 'event description must be string',
-      required_error: 'event description is required',
+    description: z.string({
+      invalid_type_error: 'description must be string',
+      required_error: 'description is required',
     }),
     price: z.number({
       invalid_type_error: 'price must be number',
@@ -55,10 +61,10 @@ const updateValidation = z.object({
         required_error: 'event type is required',
       })
       .optional(),
-    event_sport: z
+    sport: z
       .string({
-        invalid_type_error: 'event sport must be string',
-        required_error: 'event sport is required',
+        invalid_type_error: 'sport must be string',
+        required_error: 'sport is required',
       })
       .optional(),
     start_date: z.string().date(),
@@ -71,7 +77,7 @@ const updateValidation = z.object({
       .optional(),
     registration_start: z.string().date(),
     registration_end: z.string().date(),
-    total_registrations: z
+    registration: z
       .number({
         invalid_type_error: 'total registrations must be number',
         required_error: 'total registrations is required',
@@ -83,10 +89,16 @@ const updateValidation = z.object({
         required_error: 'event image is required',
       })
       .optional(),
-    event_description: z
+    allowed_registrations: z
       .string({
-        invalid_type_error: 'event description must be string',
-        required_error: 'event description is required',
+        invalid_type_error: 'allowed registrations must be string',
+        required_error: 'allowed registrations is required',
+      })
+      .optional(),
+    description: z
+      .string({
+        invalid_type_error: 'description must be string',
+        required_error: 'description is required',
       })
       .optional(),
     price: z

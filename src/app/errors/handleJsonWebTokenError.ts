@@ -12,10 +12,10 @@ export const handleJsonWebTokenError = (err: TJsonWebTokenError) => {
     },
   ];
 
-  const statusCode = 400;
+  const statusCode = 401;
   return {
     statusCode,
-    message: 'Invalid Token',
+    message: 'unauthorized',
     errorSources,
   };
 };

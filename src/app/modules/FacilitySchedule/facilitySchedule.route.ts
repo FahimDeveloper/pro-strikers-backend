@@ -29,7 +29,7 @@ route.post(
 route.patch(
   '/update/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  validateRequest(facilityScheduleValidations.createValidation),
+  validateRequest(facilityScheduleValidations.updateValidation),
   FacilitySheduleControllers.updateFacility,
 );
 

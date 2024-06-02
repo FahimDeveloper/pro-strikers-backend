@@ -1,8 +1,8 @@
 export const ROLE = {
   user: 'user',
-  superAdmin: 'superAdmin',
+  superAdmin: 'super-admin',
   admin: 'admin',
   trainer: 'trainer',
 } as const;
 
-export type IRole = keyof typeof ROLE;
+export type IRole = 'user' | 'super-admin' | 'admin' | 'trainer';

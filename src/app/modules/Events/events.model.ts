@@ -11,16 +11,16 @@ const eventSchema = new Schema<IEvent>(
       type: String,
       required: true,
     },
-    event_sport: {
+    sport: {
       type: String,
       required: true,
     },
     start_date: {
-      type: Date,
+      type: String,
       required: true,
     },
     end_date: {
-      type: Date,
+      type: String,
       required: true,
     },
     location: {
@@ -28,18 +28,25 @@ const eventSchema = new Schema<IEvent>(
       required: true,
     },
     registration_start: {
-      type: Date,
+      type: String,
       required: true,
     },
     registration_end: {
-      type: Date,
+      type: String,
       required: true,
     },
     image: {
       type: String,
+    },
+    allowed_registrations: {
+      type: Number,
       required: true,
     },
-    event_description: {
+    registration: {
+      type: Number,
+      required: true,
+    },
+    description: {
       type: String,
       required: true,
     },

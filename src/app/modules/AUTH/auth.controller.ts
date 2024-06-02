@@ -51,17 +51,17 @@ const loginAdmin = catchAsync(async (req, res) => {
 //   });
 // });
 
-// const refreshToken = catchAsync(async (req, res) => {
-//   const { refreshToken } = req.cookies;
-//   const result = await AuthServices.refreshToken(refreshToken);
-
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Access token is retrieved successfully!',
-//     data: result,
-//   });
-// });
+const refreshToken = catchAsync(async (req, res) => {
+  const { refreshToken } = req.cookies;
+  if (!refreshToken) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'The request not authorized!');
+  }
+  const { user, accessToken } = await AuthServices.refreshToken(refreshToken);
+  sendResponse(res, httpStatus.OK, 'Access token is retrieved successfully!', {
+    user,
+    accessToken,
+  });
+});
 
 // const forgetPassword = catchAsync(async (req, res) => {
 //   const userId = req.body.id;
@@ -93,8 +93,8 @@ const loginAdmin = catchAsync(async (req, res) => {
 export const AuthControllers = {
   loginUser,
   loginAdmin,
+  refreshToken,
   // changePassword,
-  // refreshToken,
   // forgetPassword,
   // resetPassword,
 };

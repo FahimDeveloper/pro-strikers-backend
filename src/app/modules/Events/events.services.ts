@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { IEvent } from './events.interface';
 import { Event } from './events.model';
 
@@ -11,9 +12,14 @@ const updateEventIntoDB = async (id: string, payload: Partial<IEvent>) => {
   return result;
 };
 
-const getAllEventsFromDB = async () => {
-  const result = await Event.find();
-  return result;
+const getAllEventsFromDB = async (query: Record<string, unknown>) => {
+  const eventsQuery = new QueryBuilder(Event.find(), query)
+    .search(['event_name'])
+    .filter()
+    .paginate();
+  const result = await eventsQuery?.modelQuery;
+  const count = await eventsQuery?.countTotal();
+  return { result, count };
 };
 
 const getSingleEventFromDB = async (id: string) => {

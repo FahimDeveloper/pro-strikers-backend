@@ -9,8 +9,10 @@ const createVoucher = catchAsync(async (req, res) => {
 });
 
 const getAllVouchers = catchAsync(async (req, res) => {
-  const result = await VoucherServices.getAllVouchersFromDB();
-  sendResponse(res, httpStatus.OK, 'Vouchers fetch succesfully', result);
+  const { result, count } = await VoucherServices.getAllVouchersFromDB(
+    req.query,
+  );
+  sendResponse(res, httpStatus.OK, 'Vouchers fetch succesfully', result, count);
 });
 
 const getSingleVoucher = catchAsync(async (req, res) => {

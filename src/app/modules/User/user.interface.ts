@@ -13,12 +13,11 @@ export interface IUser {
   phone: string;
   date_of_birth: Date;
   membership: boolean;
-  active?: boolean;
+  activity: boolean;
   issue_date?: Date;
   expiry_date?: Date;
-  package_name?: string;
-  plan?: 'monthly' | 'yearly';
-  isDeleted: boolean;
+  package_name: string;
+  plan: string;
 }
 
 export interface UserModel extends Model<IUser> {

@@ -5,7 +5,7 @@ export interface IAppointmentSchedule {
   appointment_name: string;
   appointment_type: string;
   sport: string;
-  appointment_duration: string;
+  appointment_duration: number;
   trainer: string;
   description: string;
   price: number;

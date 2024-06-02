@@ -47,8 +47,9 @@ const userSchema = new Schema<IUser, UserModel>(
       type: Boolean,
       required: true,
     },
-    active: {
+    activity: {
       type: Boolean,
+      required: true,
     },
     issue_date: {
       type: Date,
@@ -58,10 +59,12 @@ const userSchema = new Schema<IUser, UserModel>(
     },
     package_name: {
       type: String,
+      required: true,
     },
     plan: {
       type: String,
       enum: ['no plan', 'monthly', 'yearly'],
+      required: true,
     },
   },
   {

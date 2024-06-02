@@ -10,9 +10,15 @@ const createValidation = z.object({
       invalid_type_error: 'last name must be string',
       required_error: 'last name is required',
     }),
-    image: z.string({
-      invalid_type_error: 'image must be string',
-      required_error: 'image is required',
+    image: z.any(),
+    phone: z.string({
+      invalid_type_error: 'phone must be string',
+      required_error: 'phone is required',
+    }),
+    gender: z.enum(['male', 'female']),
+    date_of_birth: z.string({
+      invalid_type_error: 'date_of_birth must be string',
+      required_error: 'date_of_birth is required',
     }),
     email: z
       .string({
@@ -20,7 +26,7 @@ const createValidation = z.object({
         required_error: 'email is required',
       })
       .email({ message: 'Please enter a valid email address' }),
-    role: z.enum(['superAdmin', 'admin', 'trainer']),
+    role: z.enum(['super-admin', 'admin', 'trainer']),
     description: z.string({
       invalid_type_error: 'description must be string',
       required_error: 'description is required',
@@ -46,12 +52,10 @@ const updateValidation = z.object({
         required_error: 'last name is required',
       })
       .optional(),
-    image: z
-      .string({
-        invalid_type_error: 'image must be string',
-        required_error: 'image is required',
-      })
-      .optional(),
+    image: z.any().optional(),
+    phone: z.string().optional(),
+    gender: z.enum(['male', 'female']).optional(),
+    date_of_birth: z.string().optional(),
     email: z
       .string({
         invalid_type_error: 'email must be string',
@@ -59,7 +63,7 @@ const updateValidation = z.object({
       })
       .email({ message: 'Please enter a valid email address' })
       .optional(),
-    role: z.enum(['superAdmin', 'admin', 'trainer']).optional(),
+    role: z.enum(['super-admin', 'admin', 'trainer']).optional(),
     description: z
       .string({
         invalid_type_error: 'description must be string',

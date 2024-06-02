@@ -26,6 +26,10 @@ const voucherSchema = new Schema<IVoucher>({
     type: String,
     required: true,
   },
+  used: {
+    type: Number,
+    required: true,
+  },
   description: {
     type: String,
     required: true,

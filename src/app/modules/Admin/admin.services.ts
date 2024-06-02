@@ -1,14 +1,37 @@
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { IAdmin } from './admin.interface';
 import { Admin } from './admin.model';
+import AppError from '../../errors/AppError';
+import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
+import fs from 'fs';
 
-const createAdminUserIntoDB = async (payload: IAdmin) => {
-  const result = await Admin.create(payload);
+const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
+  const findAdminUser = await Admin.isAdminExists(payload.email);
+  if (findAdminUser) {
+    fs.unlinkSync(file?.path);
+    throw new AppError(httpStatus.CONFLICT, 'Admin user already exists!');
+  }
+  const { url } = await uploadImageIntoCloduinary(file);
+  const result = await Admin.create({ ...payload, image: url });
   return result;
 };
 
-const updateAdminUserIntoDB = async (id: string, payload: Partial<IAdmin>) => {
-  const result = await Admin.findByIdAndUpdate(id, payload);
+const updateAdminUserIntoDB = async (
+  id: string,
+  payload: Partial<IAdmin>,
+  file: any,
+) => {
+  let result;
+  if (file?.path) {
+    const { url } = await uploadImageIntoCloduinary(file);
+    result = await Admin.findByIdAndUpdate(id, {
+      ...payload,
+      image: url,
+    });
+  } else {
+    result = await Admin.findByIdAndUpdate(id, payload);
+  }
   return result;
 };
 
@@ -24,7 +47,7 @@ const getAllAdminUsersFromDB = async (query: Record<string, unknown>) => {
     .paginate();
   const result = await adminQuery?.modelQuery;
   const count = await adminQuery?.countTotal();
-  return { ...result, count };
+  return { result, count };
 };
 
 const getSingleAdminUserFromDB = async (id: string) => {

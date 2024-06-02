@@ -4,18 +4,28 @@ import sendResponse from '../../utils/sendResponse';
 import { AdminServices } from './admin.services';
 
 const createAdminUser = catchAsync(async (req, res) => {
-  await AdminServices.createAdminUserIntoDB(req.body);
+  const file = req.file;
+  await AdminServices.createAdminUserIntoDB(req.body, file);
   sendResponse(res, httpStatus.CREATED, 'Admin user created succesfully');
 });
 
 const updateAdminUser = catchAsync(async (req, res) => {
-  await AdminServices.updateAdminUserIntoDB(req.params.id, req.body);
+  const file = req.file;
+  await AdminServices.updateAdminUserIntoDB(req.params.id, req.body, file);
   sendResponse(res, httpStatus.OK, 'Admin user updated succesfully');
 });
 
 const getAllAdminUsers = catchAsync(async (req, res) => {
-  const result = await AdminServices.getAllAdminUsersFromDB(req.query);
-  sendResponse(res, httpStatus.OK, 'Admins are retrieved succesfully', result);
+  const { result, count } = await AdminServices.getAllAdminUsersFromDB(
+    req.query,
+  );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Admins are retrieved succesfully',
+    result,
+    count,
+  );
 });
 
 const getAllTrainers = catchAsync(async (req, res) => {

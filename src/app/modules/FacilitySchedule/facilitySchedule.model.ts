@@ -43,7 +43,7 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
       required: true,
     },
     trainer: {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
     },
     description: {

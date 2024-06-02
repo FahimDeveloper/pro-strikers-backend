@@ -9,8 +9,14 @@ const createEvent = catchAsync(async (req, res) => {
 });
 
 const getAllEvents = catchAsync(async (req, res) => {
-  const result = await EventServices.getAllEventsFromDB();
-  sendResponse(res, httpStatus.OK, 'Events fetched successfully', result);
+  const { result, count } = await EventServices.getAllEventsFromDB(req.query);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Events fetched successfully',
+    result,
+    count,
+  );
 });
 
 const getSingleEvent = catchAsync(async (req, res) => {

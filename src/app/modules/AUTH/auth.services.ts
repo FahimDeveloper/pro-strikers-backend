@@ -1,10 +1,11 @@
 import httpStatus from 'http-status';
 import config from '../../config';
-import { createToken } from '../../utils/auth';
+import { createToken, verifyToken } from '../../utils/auth';
 import { User } from '../User/user.model';
 import AppError from '../../errors/AppError';
 import { ILogin } from './auth.interface';
 import { Admin } from '../Admin/admin.model';
+import { ROLE } from '../../utils/role';
 
 const loginUserIntoDB = async (payload: ILogin) => {
   const user = await User.isUserExistsByEmail(payload.email);
@@ -62,17 +63,35 @@ const loginAdminIntoDB = async (payload: ILogin) => {
     role: user.role,
   };
 
-  const accessToken = createToken(
-    jwtPayload,
-    config.jwt_access_secret as string,
-    config.jwt_access_expires_in as string,
-  );
+  let accessToken;
+  if (payload?.remember) {
+    accessToken = createToken(
+      jwtPayload,
+      config.jwt_access_secret as string,
+      config.jwt_remember_access_expires_in as string,
+    );
+  } else {
+    accessToken = createToken(
+      jwtPayload,
+      config.jwt_access_secret as string,
+      config.jwt_access_expires_in as string,
+    );
+  }
 
-  const refreshToken = createToken(
-    jwtPayload,
-    config.jwt_refresh_secret as string,
-    config.jwt_refresh_expires_in as string,
-  );
+  let refreshToken;
+  if (payload?.remember) {
+    refreshToken = createToken(
+      jwtPayload,
+      config.jwt_refresh_secret as string,
+      config.jwt_remember_refresh_expires_in as string,
+    );
+  } else {
+    refreshToken = createToken(
+      jwtPayload,
+      config.jwt_refresh_secret as string,
+      config.jwt_refresh_expires_in as string,
+    );
+  }
 
   const { _id, first_name, last_name, image, email, role } = user;
 
@@ -135,54 +154,77 @@ const loginAdminIntoDB = async (payload: ILogin) => {
 //   return null;
 // };
 
-// const refreshToken = async (token: string) => {
-//   // checking if the given token is valid
-//   const decoded = verifyToken(token, config.jwt_refresh_secret as string);
+const refreshToken = async (token: string) => {
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
+  let user;
+  let jwtPayload;
+  if (
+    decoded.role === ROLE.admin ||
+    decoded.role === ROLE.superAdmin ||
+    decoded.role === ROLE.trainer
+  ) {
+    user = await Admin.isAdminExists(decoded.email);
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+    }
+    jwtPayload = {
+      email: user?.email,
+      role: user?.role,
+    };
+  } else if (decoded.role === ROLE.user) {
+    user = await User.isUserExistsByEmail(decoded.email);
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+    }
+    jwtPayload = {
+      email: user?.email,
+      role: user?.role,
+    };
+  }
 
-//   const { userId, iat } = decoded;
+  const accessToken = createToken(
+    jwtPayload!,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string,
+  );
+  const { _id, first_name, last_name, image, email, role } = user!;
+  return {
+    user: { _id, first_name, last_name, image, email, role },
+    accessToken,
+  };
+};
 
-//   // checking if the user is exist
-//   const user = await User.isUserExistsByCustomId(userId);
-
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+// catchAsync(async (req, res, next) => {
+//   const token = req.headers.authorization;
+//   if (!token) {
+//     throw new AppError(
+//       httpStatus.UNAUTHORIZED,
+//       'The request not authorized!',
+//     );
 //   }
-//   // checking if the user is already deleted
-//   const isDeleted = user?.isDeleted;
 
-//   if (isDeleted) {
-//     throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
-//   }
-
-//   // checking if the user is blocked
-//   const userStatus = user?.status;
-
-//   if (userStatus === 'blocked') {
-//     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
-//   }
-
-//   if (
-//     user.passwordChangedAt &&
-//     User.isJWTIssuedBeforePasswordChanged(user.passwordChangedAt, iat as number)
-//   ) {
-//     throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
-//   }
-
-//   const jwtPayload = {
-//     userId: user.id,
-//     role: user.role,
-//   };
-
-//   const accessToken = createToken(
-//     jwtPayload,
+//   const decoded = jwt.verify(
+//     token.split(' ')[1],
 //     config.jwt_access_secret as string,
-//     config.jwt_access_expires_in as string,
-//   );
+//   ) as JwtPayload;
 
-//   return {
-//     accessToken,
-//   };
-// };
+//   const { role, email } = decoded;
+
+//   if (role === 'user') {
+//     const user = await User.isUserExistsByEmail(email);
+//     if (!user) {
+//       throw new AppError(httpStatus.NOT_FOUND, 'The user not found!');
+//     }
+//   } else if (role === 'admin' || role === 'superAdmin') {
+//     const user = await Admin.isAdminExists(email);
+//     if (!user) {
+//       throw new AppError(httpStatus.NOT_FOUND, 'The user not found!');
+//     }
+//   }
+
+//   if (requiredRoles && !requiredRoles.includes(role)) {
+//     throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
+//   }
 
 // const forgetPassword = async (userId: string) => {
 //   // checking if the user is exist
@@ -281,8 +323,8 @@ const loginAdminIntoDB = async (payload: ILogin) => {
 export const AuthServices = {
   loginUserIntoDB,
   loginAdminIntoDB,
+  refreshToken,
   // changePassword,
-  // refreshToken,
   // forgetPassword,
   // resetPassword,
 };

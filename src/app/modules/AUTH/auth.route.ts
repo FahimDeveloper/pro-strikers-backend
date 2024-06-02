@@ -17,6 +17,8 @@ router.post(
   AuthControllers.loginAdmin,
 );
 
+router.post('/refresh-token', AuthControllers.refreshToken);
+
 // router.post(
 //   '/change-password',
 //   auth(
@@ -27,12 +29,6 @@ router.post(
 //   ),
 //   validateRequest(AuthValidation.changePasswordValidationSchema),
 //   AuthControllers.changePassword,
-// );
-
-// router.post(
-//   '/refresh-token',
-//   validateRequest(AuthValidation.refreshTokenValidationSchema),
-//   AuthControllers.refreshToken,
 // );
 
 // router.post(

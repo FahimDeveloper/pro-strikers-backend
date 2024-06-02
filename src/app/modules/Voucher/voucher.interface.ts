@@ -5,5 +5,6 @@ export interface IVoucher {
   start_date: string;
   end_date: string;
   voucher_code: string;
+  used: number;
   description: string;
 }

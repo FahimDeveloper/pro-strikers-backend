@@ -26,6 +26,10 @@ const createValidation = z.object({
       invalid_type_error: 'voucher code must be string',
       required_error: 'voucher code is required',
     }),
+    used: z.number({
+      invalid_type_error: 'used must be number',
+      required_error: 'used is required',
+    }),
     description: z.string({
       invalid_type_error: 'description must be string',
       required_error: 'description is required',

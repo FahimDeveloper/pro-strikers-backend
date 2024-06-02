@@ -37,7 +37,10 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
-  } else if (err?.name === 'JsonWebTokenError') {
+  } else if (
+    err?.name === 'JsonWebTokenError' ||
+    err?.name === 'TokenExpiredError'
+  ) {
     const simplifiedError = handleJsonWebTokenError(err);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;

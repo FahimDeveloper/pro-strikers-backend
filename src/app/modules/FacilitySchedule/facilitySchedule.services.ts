@@ -16,10 +16,7 @@ const updateFacilityIntoDB = async (
 };
 
 const getAllFacilitiesFromDB = async (query: Record<string, unknown>) => {
-  const facilityQuery = new QueryBuilder(
-    FacilitySchedule.find().populate('trainer').select('first_name'),
-    query,
-  )
+  const facilityQuery = new QueryBuilder(FacilitySchedule.find(), query)
     .search(['facility_name'])
     .filter()
     .paginate();

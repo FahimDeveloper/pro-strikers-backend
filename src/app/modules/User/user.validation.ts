@@ -99,7 +99,6 @@ const updateValidation = z.object({
           invalid_type_error: 'type must be string',
           required_error: 'type is required',
         })
-        .date()
         .optional(),
       membership: z
         .boolean({

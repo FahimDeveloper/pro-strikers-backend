@@ -81,7 +81,7 @@ const updateValidation = z.object({
       .optional(),
     facility_duration: z
       .number({
-        invalid_type_error: 'facility duration must be string',
+        invalid_type_error: 'facility duration must be number',
         required_error: 'facility duration is required',
       })
       .optional(),

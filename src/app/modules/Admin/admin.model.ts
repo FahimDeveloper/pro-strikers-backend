@@ -23,12 +23,19 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
       unique: true,
       index: true,
     },
+    phone: { type: String, required: true },
+    gender: { type: String, required: true },
+    date_of_birth: { type: String, required: true },
     role: {
       type: String,
       required: true,
       enum: ['superAdmin', 'admin', 'trainer'],
     },
     password: {
+      type: String,
+      required: true,
+    },
+    description: {
       type: String,
       required: true,
     },
