@@ -21,7 +21,7 @@ route.post(
   validateRequest(EventValidations.createValidation),
   EventControllers.createEvent,
 );
-route.post(
+route.patch(
   '/update/:id',
   upload.single('image'),
   authMiddleware(ROLE.admin, ROLE.superAdmin),

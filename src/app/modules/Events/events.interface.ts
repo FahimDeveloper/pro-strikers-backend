@@ -11,7 +11,7 @@ export interface IEvent {
   registration_end: string;
   allowed_registrations: number;
   registration: number;
-  image?: string;
+  image: string;
   description: string;
   price: number;
 }

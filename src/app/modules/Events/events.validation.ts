@@ -14,26 +14,21 @@ const createValidation = z.object({
       invalid_type_error: 'sport must be string',
       required_error: 'sport is required',
     }),
-    start_date: z.string().date(),
-    end_date: z.string().date(),
+    start_date: z.string(),
+    end_date: z.string(),
     location: z.string({
       invalid_type_error: 'location must be string',
       required_error: 'location is required',
     }),
-    registration_start: z.string().date(),
-    registration_end: z.string().date(),
+    registration_start: z.string(),
+    registration_end: z.string(),
     registration: z.number({
       invalid_type_error: 'total registrations must be number',
       required_error: 'total registrations is required',
     }),
-    image: z
-      .string({
-        invalid_type_error: 'event image must be string',
-        required_error: 'event image is required',
-      })
-      .optional(),
-    allowed_registrations: z.string({
-      invalid_type_error: 'allowed registrations must be string',
+    image: z.any().optional(),
+    allowed_registrations: z.number({
+      invalid_type_error: 'allowed registrations must be number',
       required_error: 'allowed registrations is required',
     }),
     description: z.string({
@@ -67,31 +62,26 @@ const updateValidation = z.object({
         required_error: 'sport is required',
       })
       .optional(),
-    start_date: z.string().date(),
-    end_date: z.string().date(),
+    start_date: z.string(),
+    end_date: z.string(),
     location: z
       .string({
         invalid_type_error: 'location must be string',
         required_error: 'location is required',
       })
       .optional(),
-    registration_start: z.string().date(),
-    registration_end: z.string().date(),
+    registration_start: z.string(),
+    registration_end: z.string(),
     registration: z
       .number({
         invalid_type_error: 'total registrations must be number',
         required_error: 'total registrations is required',
       })
       .optional(),
-    image: z
-      .string({
-        invalid_type_error: 'event image must be string',
-        required_error: 'event image is required',
-      })
-      .optional(),
+    image: z.any().optional(),
     allowed_registrations: z
-      .string({
-        invalid_type_error: 'allowed registrations must be string',
+      .number({
+        invalid_type_error: 'allowed registrations must be number',
         required_error: 'allowed registrations is required',
       })
       .optional(),

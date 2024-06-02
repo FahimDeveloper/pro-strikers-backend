@@ -37,6 +37,7 @@ const eventSchema = new Schema<IEvent>(
     },
     image: {
       type: String,
+      required: true,
     },
     allowed_registrations: {
       type: Number,

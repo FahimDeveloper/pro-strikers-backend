@@ -6,9 +6,10 @@ const createValidation = z.object({
       invalid_type_error: 'title must be string',
       required_error: 'title must be required',
     }),
-    image: z.string({
-      invalid_type_error: 'image must be string',
-      required_error: 'image must be required',
+    image: z.any(),
+    category: z.string({
+      invalid_type_error: 'category must be string',
+      required_error: 'category must be required',
     }),
     description: z.string({
       invalid_type_error: 'descripton must be string',
@@ -29,10 +30,11 @@ const updateValidation = z.object({
         required_error: 'title must be required',
       })
       .optional(),
-    image: z
+    image: z.any().optional(),
+    category: z
       .string({
-        invalid_type_error: 'image must be string',
-        required_error: 'image must be required',
+        invalid_type_error: 'category must be string',
+        required_error: 'category must be required',
       })
       .optional(),
     description: z
