@@ -13,7 +13,7 @@ async function dbConnection() {
       ? config.database_url
       : config.database_local_url;
   try {
-    await mongoose.connect(config.database_local_url as string);
+    await mongoose.connect(url as string);
     app.listen(port, () => {
       console.log(`app server listening on ${port}`);
     });
