@@ -14,7 +14,9 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
     const token = req.headers.authorization;
     const file = req.file?.path;
     if (!token) {
-      fs.unlinkSync(file as string);
+      if (file) {
+        fs.unlinkSync(file as string);
+      }
       throw new AppError(
         httpStatus.UNAUTHORIZED,
         'The request not authorized!',
@@ -30,13 +32,17 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
     if (role === ROLE.user) {
       const user = await User.isUserExistsByEmail(email);
       if (!user) {
-        fs.unlinkSync(file as string);
+        if (file) {
+          fs.unlinkSync(file as string);
+        }
         throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
       }
     } else if (role === ROLE.admin || role === ROLE.superAdmin) {
       const user = await Admin.isAdminExists(email);
       if (!user) {
-        fs.unlinkSync(file as string);
+        if (file) {
+          fs.unlinkSync(file as string);
+        }
         throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
       }
     }

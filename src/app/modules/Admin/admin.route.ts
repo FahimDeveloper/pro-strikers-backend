@@ -21,6 +21,7 @@ route.post(
   upload.single('image'),
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
     req.body = JSON.parse(req.body.data);
     next();
   },
