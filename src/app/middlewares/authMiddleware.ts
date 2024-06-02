@@ -27,12 +27,12 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
     if (role === ROLE.user) {
       const user = await User.isUserExistsByEmail(email);
       if (!user) {
-        throw new AppError(httpStatus.NOT_FOUND, 'The user not found!');
+        throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
       }
     } else if (role === ROLE.admin || role === ROLE.superAdmin) {
       const user = await Admin.isAdminExists(email);
       if (!user) {
-        throw new AppError(httpStatus.NOT_FOUND, 'The user not found!');
+        throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
       }
     }
 
