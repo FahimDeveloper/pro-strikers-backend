@@ -6,7 +6,6 @@ import AppError from '../errors/AppError';
 
 export const uploadImageIntoCloduinary = async (file: any) => {
   const path = file?.path;
-  console.log(path);
   cloudinary.config({
     cloud_name: config.cloudinary_cloud_name,
     api_key: config.cloudinary_api_key,
