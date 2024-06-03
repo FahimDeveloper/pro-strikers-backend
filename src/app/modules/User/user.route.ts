@@ -50,7 +50,7 @@ route.patch(
   UserControllers.updateUser,
 );
 route.delete(
-  '/:id',
+  '/delete/:id',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
   UserControllers.deleteUser,
 );

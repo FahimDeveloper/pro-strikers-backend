@@ -5,6 +5,7 @@ import { User } from './user.model';
 import AppError from '../../errors/AppError';
 import fs from 'fs';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
+import { deleteImageIntoCloduinary } from '../../utils/DeleteImageFromCloudinary';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
@@ -64,6 +65,8 @@ const getSingleUserFromDB = async (id: string) => {
 };
 
 const deleteUserFromDB = async (id: string) => {
+  const { image }: { image: string } = await User.findById(id).select('image');
+  await deleteImageIntoCloduinary(image);
   const result = await User.findByIdAndDelete(id);
   return result;
 };
