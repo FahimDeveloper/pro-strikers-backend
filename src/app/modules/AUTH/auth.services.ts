@@ -6,6 +6,10 @@ import AppError from '../../errors/AppError';
 import { ILogin } from './auth.interface';
 import { Admin } from '../Admin/admin.model';
 import { ROLE } from '../../utils/role';
+import { sendEmail } from '../../utils/sendEmail';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { ResetPassService } from '../ResetPass/resetPass.services';
+import bcrypt from 'bcrypt';
 
 const loginUserIntoDB = async (payload: ILogin) => {
   const user = await User.isUserExistsByEmail(payload.email);
@@ -194,137 +198,104 @@ const refreshToken = async (token: string) => {
   };
 };
 
-// catchAsync(async (req, res, next) => {
-//   const token = req.headers.authorization;
-//   if (!token) {
-//     throw new AppError(
-//       httpStatus.UNAUTHORIZED,
-//       'The request not authorized!',
-//     );
-//   }
+const verifyLink = async (payload: string) => {
+  const { email, role } = jwt.verify(
+    payload,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+  if (!email && !role) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'The link already expired');
+  }
+  return;
+};
 
-//   const decoded = jwt.verify(
-//     token.split(' ')[1],
-//     config.jwt_access_secret as string,
-//   ) as JwtPayload;
+const verifyCode = async ({ token, code }: { token: string; code: number }) => {
+  const { email, role } = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+  if (!email && !role) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'code already expired');
+  }
+  const result = await ResetPassService.verifyResetCode({ email, code });
+  if (!result) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'code not valid');
+  }
+  return result;
+};
 
-//   const { role, email } = decoded;
+const forgetPasswordForAdmin = async (email: string) => {
+  const user = await Admin.isAdminExists(email);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User is not found!');
+  }
+  const jwtPayload = {
+    email: user.email,
+    role: user.role,
+  };
 
-//   if (role === 'user') {
-//     const user = await User.isUserExistsByEmail(email);
-//     if (!user) {
-//       throw new AppError(httpStatus.NOT_FOUND, 'The user not found!');
-//     }
-//   } else if (role === 'admin' || role === 'superAdmin') {
-//     const user = await Admin.isAdminExists(email);
-//     if (!user) {
-//       throw new AppError(httpStatus.NOT_FOUND, 'The user not found!');
-//     }
-//   }
+  const resetToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    '15m',
+  );
+  const ui_link =
+    process.env.NODE_ENV === 'production'
+      ? config.reset_pass_ui_link
+      : config.reset_pass_local_ui_link;
+  const link = `${ui_link}/${user._id}/${resetToken}`;
+  await sendEmail({ email, link });
+};
 
-//   if (requiredRoles && !requiredRoles.includes(role)) {
-//     throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
-//   }
+const resetCodeSend = async (email: string) => {
+  const code = Math.floor(Math.random() * 9000) + 1000;
+  await ResetPassService.createResetCode({ email, code });
+  await sendEmail({ email, code });
+};
 
-// const forgetPassword = async (userId: string) => {
-//   // checking if the user is exist
-//   const user = await User.isUserExistsByCustomId(userId);
+const resetAdminPasswordIntoDB = async (
+  payload: { email: string; password: string },
+  token: string,
+) => {
+  const user = await Admin.isAdminExists(payload?.email);
 
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
-//   }
-//   // checking if the user is already deleted
-//   const isDeleted = user?.isDeleted;
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User is not found !');
+  }
 
-//   if (isDeleted) {
-//     throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
-//   }
+  const decoded = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
 
-//   // checking if the user is blocked
-//   const userStatus = user?.status;
+  if (payload.email !== decoded.email) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized!');
+  }
 
-//   if (userStatus === 'blocked') {
-//     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
-//   }
+  const newHashedPassword = await bcrypt.hash(
+    payload.password,
+    Number(config.bcrypt_salt_rounds),
+  );
 
-//   const jwtPayload = {
-//     userId: user.id,
-//     role: user.role,
-//   };
-
-//   const resetToken = createToken(
-//     jwtPayload,
-//     config.jwt_access_secret as string,
-//     '10m',
-//   );
-
-//   const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken} `;
-
-//   sendEmail(user.email, resetUILink);
-
-//   console.log(resetUILink);
-// };
-
-// const resetPassword = async (
-//   payload: { id: string; newPassword: string },
-//   token: string,
-// ) => {
-//   // checking if the user is exist
-//   const user = await User.isUserExistsByCustomId(payload?.id);
-
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
-//   }
-//   // checking if the user is already deleted
-//   const isDeleted = user?.isDeleted;
-
-//   if (isDeleted) {
-//     throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
-//   }
-
-//   // checking if the user is blocked
-//   const userStatus = user?.status;
-
-//   if (userStatus === 'blocked') {
-//     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
-//   }
-
-//   const decoded = jwt.verify(
-//     token,
-//     config.jwt_access_secret as string,
-//   ) as JwtPayload;
-
-//   //localhost:3000?id=A-0001&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBLTAwMDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDI4NTA2MTcsImV4cCI6MTcwMjg1MTIxN30.-T90nRaz8-KouKki1DkCSMAbsHyb9yDi0djZU3D6QO4
-
-//   if (payload.id !== decoded.userId) {
-//     console.log(payload.id, decoded.userId);
-//     throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
-//   }
-
-//   //hash new password
-//   const newHashedPassword = await bcrypt.hash(
-//     payload.newPassword,
-//     Number(config.bcrypt_salt_rounds),
-//   );
-
-//   await User.findOneAndUpdate(
-//     {
-//       id: decoded.userId,
-//       role: decoded.role,
-//     },
-//     {
-//       password: newHashedPassword,
-//       needsPasswordChange: false,
-//       passwordChangedAt: new Date(),
-//     },
-//   );
-// };
+  await Admin.findOneAndUpdate(
+    {
+      email: decoded.email,
+      role: decoded.role,
+    },
+    {
+      password: newHashedPassword,
+    },
+  );
+};
 
 export const AuthServices = {
   loginUserIntoDB,
   loginAdminIntoDB,
   refreshToken,
-  // changePassword,
-  // forgetPassword,
+  resetCodeSend,
+  verifyLink,
+  verifyCode,
+  resetAdminPasswordIntoDB,
+  forgetPasswordForAdmin,
   // resetPassword,
 };

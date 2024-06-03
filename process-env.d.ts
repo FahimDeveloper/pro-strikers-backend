@@ -16,5 +16,6 @@ declare namespace NodeJS {
     CLOUDINARY_CLOUD_NAME: string;
     CLOUDINARY_API_KEY: number;
     CLOUDINARY_API_SECRET: string;
+    RESET_PASS_UI_LINK: string;
   };
 }

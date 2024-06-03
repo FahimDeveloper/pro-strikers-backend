@@ -63,38 +63,50 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
-// const forgetPassword = catchAsync(async (req, res) => {
-//   const userId = req.body.id;
-//   const result = await AuthServices.forgetPassword(userId);
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Reset link is generated successfully!',
-//     data: result,
-//   });
-// });
+const adminForgetPassword = catchAsync(async (req, res) => {
+  await AuthServices.forgetPasswordForAdmin(req.body.email);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Check your email and reset your password within 15 minutes',
+  );
+});
 
-// const resetPassword = catchAsync(async (req, res) => {
-//   const token = req.headers.authorization;
+const sendResetCode = catchAsync(async (req, res) => {
+  await AuthServices.resetCodeSend(req.body.email);
+  sendResponse(res, httpStatus.OK, 'Check your email');
+});
 
-//   if (!token) {
-//     throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
-//   }
+const verifyUiLink = catchAsync(async (req, res) => {
+  await AuthServices.verifyLink(req.body.token);
+  sendResponse(res, httpStatus.OK, 'Success');
+});
 
-//   const result = await AuthServices.resetPassword(req.body, token);
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Password reset successfully!',
-//     data: result,
-//   });
-// });
+const verifyResetCode = catchAsync(async (req, res) => {
+  await AuthServices.verifyCode(req.body);
+  sendResponse(res, httpStatus.OK, 'Success');
+});
+
+const resetAdminPassword = catchAsync(async (req, res) => {
+  const token = req.body.token;
+
+  if (!token) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
+  }
+
+  await AuthServices.resetAdminPasswordIntoDB(req.body.data, token);
+  sendResponse(res, httpStatus.OK, 'Password reset successfully!');
+});
 
 export const AuthControllers = {
   loginUser,
   loginAdmin,
   refreshToken,
+  adminForgetPassword,
+  sendResetCode,
+  verifyUiLink,
+  verifyResetCode,
+  resetAdminPassword,
   // changePassword,
   // forgetPassword,
-  // resetPassword,
 };

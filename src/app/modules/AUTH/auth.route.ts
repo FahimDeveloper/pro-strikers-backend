@@ -19,6 +19,16 @@ router.post(
 
 router.post('/refresh-token', AuthControllers.refreshToken);
 
+router.post('/admin/forgot-password', AuthControllers.adminForgetPassword);
+
+router.post('/forgot-password/send-code', AuthControllers.sendResetCode);
+
+router.get('/forgot-password/link-verify', AuthControllers.verifyUiLink);
+
+router.get('/forgot-password/code-verify', AuthControllers.verifyResetCode);
+
+router.get('/admin/reset-password', AuthControllers.resetAdminPassword);
+
 // router.post(
 //   '/change-password',
 //   auth(
