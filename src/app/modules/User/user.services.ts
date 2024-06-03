@@ -5,7 +5,7 @@ import { User } from './user.model';
 import AppError from '../../errors/AppError';
 import fs from 'fs';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
-import { deleteImageIntoCloduinary } from '../../utils/DeleteImageFromCloudinary';
+import { deleteImageIntoCloduinary } from '../../utils/deleteImageFromCloudinary';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);

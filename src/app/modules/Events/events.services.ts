@@ -1,5 +1,5 @@
 import QueryBuilder from '../../builder/QueryBuilder';
-import { deleteImageIntoCloduinary } from '../../utils/DeleteImageFromCloudinary';
+import { deleteImageIntoCloduinary } from '../../utils/deleteImageFromCloudinary';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { IEvent } from './events.interface';
 import { Event } from './events.model';

@@ -5,7 +5,7 @@ import { Admin } from './admin.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import fs from 'fs';
-import { deleteImageIntoCloduinary } from '../../utils/DeleteImageFromCloudinary';
+import { deleteImageIntoCloduinary } from '../../utils/deleteImageFromCloudinary';
 
 const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   const findAdminUser = await Admin.isAdminExists(payload.email);
