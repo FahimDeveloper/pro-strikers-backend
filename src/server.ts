@@ -9,9 +9,9 @@ let server: Server;
 
 async function dbConnection() {
   const url =
-    config.node_env !== 'production'
-      ? config.database_local_url
-      : config.database_url;
+    config.node_env === 'production'
+      ? config.database_url
+      : config.database_local_url;
   try {
     await mongoose.connect(url as string);
     app.listen(port, () => {
