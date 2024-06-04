@@ -32,4 +32,5 @@ export const sendEmail = async ({ email, link, code }: TProp) => {
       text: `Use this code ${code} to reset your password`,
     });
   }
+  return;
 };
