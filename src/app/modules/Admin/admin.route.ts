@@ -34,19 +34,19 @@ route.get(
   AdminControllers.getSingleAdminUser,
 );
 
-// route.patch(
-//   '/update/:id',
-//   upload.single('image'),
-//   authMiddleware(ROLE.superAdmin, ROLE.admin),
-//   (req: Request, res: Response, next: NextFunction) => {
-//     if (req.body.data) {
-//       req.body = JSON.parse(req.body.data);
-//     }
-//     next();
-//   },
-//   validateRequest(adminValidations.updateValidation),
-//   AdminControllers.updateAdminUser,
-// );
+route.patch(
+  '/update/:id',
+  upload.single('image'),
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
+    next();
+  },
+  validateRequest(adminValidations.updateValidation),
+  AdminControllers.updateAdminUser,
+);
 
 // route.delete(
 //   '/delete/:id',

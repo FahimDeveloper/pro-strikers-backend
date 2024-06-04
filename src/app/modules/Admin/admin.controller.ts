@@ -9,11 +9,11 @@ const createAdminUser = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'Admin user created succesfully');
 });
 
-// const updateAdminUser = catchAsync(async (req, res) => {
-//   const file = req.file;
-//   await AdminServices.updateAdminUserIntoDB(req.params.id, req.body, file);
-//   sendResponse(res, httpStatus.OK, 'Admin user updated succesfully');
-// });
+const updateAdminUser = catchAsync(async (req, res) => {
+  const file = req.file;
+  await AdminServices.updateAdminUserIntoDB(req.params.id, req.body, file);
+  sendResponse(res, httpStatus.OK, 'Admin user updated succesfully');
+});
 
 const getAllAdminUsers = catchAsync(async (req, res) => {
   const { result, count } = await AdminServices.getAllAdminUsersFromDB(
@@ -50,7 +50,7 @@ const getSingleAdminUser = catchAsync(async (req, res) => {
 
 export const AdminControllers = {
   createAdminUser,
-  // updateAdminUser,
+  updateAdminUser,
   getAllTrainers,
   getAllAdminUsers,
   getSingleAdminUser,

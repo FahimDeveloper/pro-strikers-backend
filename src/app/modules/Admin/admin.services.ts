@@ -18,23 +18,23 @@ const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   return result;
 };
 
-// const updateAdminUserIntoDB = async (
-//   id: string,
-//   payload: Partial<IAdmin>,
-//   file: any,
-// ) => {
-//   let result;
-//   if (file?.path) {
-//     const { url } = await uploadImageIntoCloduinary(file);
-//     result = await Admin.findByIdAndUpdate(id, {
-//       ...payload,
-//       image: url,
-//     });
-//   } else {
-//     result = await Admin.findByIdAndUpdate(id, payload);
-//   }
-//   return result;
-// };
+const updateAdminUserIntoDB = async (
+  id: string,
+  payload: Partial<IAdmin>,
+  file: any,
+) => {
+  let result;
+  if (file?.path) {
+    const { url } = await uploadImageIntoCloduinary(file);
+    result = await Admin.findByIdAndUpdate(id, {
+      ...payload,
+      image: url,
+    });
+  } else {
+    result = await Admin.findByIdAndUpdate(id, payload);
+  }
+  return result;
+};
 
 const getAllTrainersFromDB = async () => {
   const result = await Admin.find({ role: 'trainer' }).select('_id full_name');
@@ -66,7 +66,7 @@ const getSingleAdminUserFromDB = async (id: string) => {
 export const AdminServices = {
   getAllTrainersFromDB,
   createAdminUserIntoDB,
-  // updateAdminUserIntoDB,
+  updateAdminUserIntoDB,
   getAllAdminUsersFromDB,
   getSingleAdminUserFromDB,
   // deleteAdminUserFromDB,
