@@ -16,23 +16,23 @@ route.get(
 
 // route.get('/trainers', AdminControllers.getAllTrainers);
 
-// route.post(
-//   '/create',
-//   upload.single('image'),
-//   authMiddleware(ROLE.superAdmin, ROLE.admin),
-//   (req: Request, res: Response, next: NextFunction) => {
-//     req.body = JSON.parse(req.body.data);
-//     next();
-//   },
-//   validateRequest(adminValidations.createValidation),
-//   AdminControllers.createAdminUser,
-// );
+route.post(
+  '/create',
+  upload.single('image'),
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
+  validateRequest(adminValidations.createValidation),
+  AdminControllers.createAdminUser,
+);
 
-// route.get(
-//   '/:id',
-//   authMiddleware(ROLE.superAdmin, ROLE.admin),
-//   AdminControllers.getSingleAdminUser,
-// );
+route.get(
+  '/:id',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.getSingleAdminUser,
+);
 
 // route.patch(
 //   '/update/:id',

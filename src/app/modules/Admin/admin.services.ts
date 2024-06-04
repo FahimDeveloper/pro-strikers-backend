@@ -7,16 +7,16 @@ import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import fs from 'fs';
 import { deleteImageIntoCloduinary } from '../../utils/deleteImageFromCloudinary';
 
-// const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
-//   const findAdminUser = await Admin.isAdminExists(payload.email);
-//   if (findAdminUser) {
-//     fs.unlinkSync(file?.path);
-//     throw new AppError(httpStatus.CONFLICT, 'Admin user already exists!');
-//   }
-//   const { url } = await uploadImageIntoCloduinary(file);
-//   const result = await Admin.create({ ...payload, image: url });
-//   return result;
-// };
+const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
+  const findAdminUser = await Admin.isAdminExists(payload.email);
+  if (findAdminUser) {
+    fs.unlinkSync(file?.path);
+    throw new AppError(httpStatus.CONFLICT, 'Admin user already exists!');
+  }
+  const { url } = await uploadImageIntoCloduinary(file);
+  const result = await Admin.create({ ...payload, image: url });
+  return result;
+};
 
 // const updateAdminUserIntoDB = async (
 //   id: string,
@@ -65,7 +65,7 @@ const getSingleAdminUserFromDB = async (id: string) => {
 
 export const AdminServices = {
   // getAllTrainersFromDB,
-  // createAdminUserIntoDB,
+  createAdminUserIntoDB,
   // updateAdminUserIntoDB,
   getAllAdminUsersFromDB,
   getSingleAdminUserFromDB,

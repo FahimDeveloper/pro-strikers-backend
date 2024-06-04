@@ -3,11 +3,11 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { AdminServices } from './admin.services';
 
-// const createAdminUser = catchAsync(async (req, res) => {
-//   const file = req.file;
-//   await AdminServices.createAdminUserIntoDB(req.body, file);
-//   sendResponse(res, httpStatus.CREATED, 'Admin user created succesfully');
-// });
+const createAdminUser = catchAsync(async (req, res) => {
+  const file = req.file;
+  await AdminServices.createAdminUserIntoDB(req.body, file);
+  sendResponse(res, httpStatus.CREATED, 'Admin user created succesfully');
+});
 
 // const updateAdminUser = catchAsync(async (req, res) => {
 //   const file = req.file;
@@ -49,7 +49,7 @@ const getSingleAdminUser = catchAsync(async (req, res) => {
 // });
 
 export const AdminControllers = {
-  // createAdminUser,
+  createAdminUser,
   // updateAdminUser,
   // getAllTrainers,
   getAllAdminUsers,
