@@ -21,7 +21,7 @@ app.use(cookieParser());
 // app.use(cors(corsConfig));
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://prostrikers-admin.netlify.app'],
+    origin: ['http://localhost:5173'],
     credentials: true,
   }),
 );
