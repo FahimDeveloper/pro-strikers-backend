@@ -17,5 +17,7 @@ declare namespace NodeJS {
     CLOUDINARY_API_KEY: number;
     CLOUDINARY_API_SECRET: string;
     RESET_PASS_UI_LINK: string;
+    NODEMAILER_MAIL: string;
+    NODEMAILER_MAIL_PASS: string;
   };
 }

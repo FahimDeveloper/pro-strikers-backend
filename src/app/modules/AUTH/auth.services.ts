@@ -248,9 +248,7 @@ const forgetPasswordForAdmin = async (email: string) => {
 };
 
 const resetCodeSend = async (payload: string) => {
-  console.log(payload);
   const result = await Admin.findById(payload).select('email');
-  console.log(result);
   const code = Math.floor(Math.random() * 9000) + 1000;
   await ResetPassService.createResetCode({
     email: result?.email as string,
