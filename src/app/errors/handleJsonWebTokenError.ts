@@ -19,7 +19,7 @@ export const handleJsonWebTokenError = (err: TJsonWebTokenError, file: any) => {
   }
   return {
     statusCode,
-    message: 'unauthorized',
+    message: err?.message,
     errorSources,
   };
 };

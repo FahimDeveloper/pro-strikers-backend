@@ -23,11 +23,11 @@ router.post('/admin/forgot-password', AuthControllers.adminForgetPassword);
 
 router.post('/forgot-password/send-code', AuthControllers.sendResetCode);
 
-router.get('/forgot-password/link-verify', AuthControllers.verifyUiLink);
+router.get('/forgot-password/link-verify/:token', AuthControllers.verifyUiLink);
 
-router.get('/forgot-password/code-verify', AuthControllers.verifyResetCode);
+router.post('/forgot-password/code-verify', AuthControllers.verifyResetCode);
 
-router.get('/admin/reset-password', AuthControllers.resetAdminPassword);
+router.post('/admin/reset-password', AuthControllers.resetAdminPassword);
 
 // router.post(
 //   '/change-password',

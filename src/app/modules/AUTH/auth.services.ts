@@ -209,7 +209,7 @@ const verifyLink = async (payload: string) => {
   return;
 };
 
-const verifyCode = async ({ token, code }: { token: string; code: number }) => {
+const verifyCode = async ({ token, otp }: { token: string; otp: number }) => {
   const { email, role } = jwt.verify(
     token,
     config.jwt_access_secret as string,
@@ -217,7 +217,7 @@ const verifyCode = async ({ token, code }: { token: string; code: number }) => {
   if (!email && !role) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'code already expired');
   }
-  const result = await ResetPassService.verifyResetCode({ email, code });
+  const result = await ResetPassService.verifyResetCode({ email, code: otp });
   if (!result) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'code not valid');
   }
@@ -247,28 +247,35 @@ const forgetPasswordForAdmin = async (email: string) => {
   await sendEmail({ email, link });
 };
 
-const resetCodeSend = async (email: string) => {
+const resetCodeSend = async (payload: string) => {
+  console.log(payload);
+  const result = await Admin.findById(payload).select('email');
+  console.log(result);
   const code = Math.floor(Math.random() * 9000) + 1000;
-  await ResetPassService.createResetCode({ email, code });
-  await sendEmail({ email, code });
+  await ResetPassService.createResetCode({
+    email: result?.email as string,
+    code,
+  });
+  await sendEmail({ email: result?.email as string, code });
 };
 
-const resetAdminPasswordIntoDB = async (
-  payload: { email: string; password: string },
-  token: string,
-) => {
-  const user = await Admin.isAdminExists(payload?.email);
+const resetAdminPasswordIntoDB = async (payload: {
+  id: string;
+  password: string;
+  token: string;
+}) => {
+  const user = await Admin.findById(payload?.id);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User is not found !');
   }
 
   const decoded = jwt.verify(
-    token,
+    payload.token,
     config.jwt_access_secret as string,
   ) as JwtPayload;
 
-  if (payload.email !== decoded.email) {
+  if (user.email !== decoded.email) {
     throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized!');
   }
 

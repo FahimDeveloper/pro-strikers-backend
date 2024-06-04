@@ -73,12 +73,18 @@ const adminForgetPassword = catchAsync(async (req, res) => {
 });
 
 const sendResetCode = catchAsync(async (req, res) => {
-  await AuthServices.resetCodeSend(req.body.email);
-  sendResponse(res, httpStatus.OK, 'Check your email');
+  console.log(req.body);
+  await AuthServices.resetCodeSend(req.body.id);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'We already send your reset code in your email',
+  );
 });
 
 const verifyUiLink = catchAsync(async (req, res) => {
-  await AuthServices.verifyLink(req.body.token);
+  const { token } = req.params;
+  await AuthServices.verifyLink(token);
   sendResponse(res, httpStatus.OK, 'Success');
 });
 
@@ -94,7 +100,7 @@ const resetAdminPassword = catchAsync(async (req, res) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
   }
 
-  await AuthServices.resetAdminPasswordIntoDB(req.body.data, token);
+  await AuthServices.resetAdminPasswordIntoDB(req.body);
   sendResponse(res, httpStatus.OK, 'Password reset successfully!');
 });
 
