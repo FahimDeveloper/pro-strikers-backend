@@ -5,7 +5,6 @@ import { Admin } from './admin.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import fs from 'fs';
-import { deleteImageIntoCloduinary } from '../../utils/deleteImageFromCloudinary';
 
 const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   const findAdminUser = await Admin.isAdminExists(payload.email);
@@ -57,8 +56,6 @@ const getSingleAdminUserFromDB = async (id: string) => {
 };
 
 const deleteAdminUserFromDB = async (id: string) => {
-  const { image }: { image: string } = await Admin.findById(id).select('image');
-  // await deleteImageIntoCloduinary(image);
   const result = await Admin.findByIdAndDelete(id);
   return result;
 };

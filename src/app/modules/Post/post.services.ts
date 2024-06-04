@@ -1,5 +1,4 @@
 import QueryBuilder from '../../builder/QueryBuilder';
-import { deleteImageIntoCloduinary } from '../../utils/deleteImageFromCloudinary';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { IPost } from './post.interface';
 import { Post } from './post.model';
@@ -44,8 +43,6 @@ const updatePostIntoDB = async (
 };
 
 const deletePostFromDB = async (id: string) => {
-  const { image }: { image: string } = await Post.findById(id).select('image');
-  // await deleteImageIntoCloduinary(image);
   const result = await Post.findByIdAndDelete(id);
   return result;
 };

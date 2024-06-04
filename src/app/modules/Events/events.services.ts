@@ -1,5 +1,4 @@
 import QueryBuilder from '../../builder/QueryBuilder';
-import { deleteImageIntoCloduinary } from '../../utils/deleteImageFromCloudinary';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { IEvent } from './events.interface';
 import { Event } from './events.model';
@@ -44,8 +43,6 @@ const getSingleEventFromDB = async (id: string) => {
 };
 
 const deleteEventFromDB = async (id: string) => {
-  const { image }: { image: string } = await Event.findById(id).select('image');
-  // await deleteImageIntoCloduinary(image);
   const result = await Event.findByIdAndDelete(id);
   return result;
 };
