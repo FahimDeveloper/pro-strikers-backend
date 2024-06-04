@@ -5,7 +5,6 @@ type TProp = { email: string; link?: string; code?: number };
 
 export const sendEmail = async ({ email, link, code }: TProp) => {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
     service: 'gmail',
     port: 587,
     secure: true,
