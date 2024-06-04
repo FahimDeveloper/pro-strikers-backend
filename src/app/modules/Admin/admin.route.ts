@@ -14,44 +14,44 @@ route.get(
   AdminControllers.getAllAdminUsers,
 );
 
-route.get('/trainers', AdminControllers.getAllTrainers);
+// route.get('/trainers', AdminControllers.getAllTrainers);
 
-route.post(
-  '/create',
-  upload.single('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
-    next();
-  },
-  validateRequest(adminValidations.createValidation),
-  AdminControllers.createAdminUser,
-);
+// route.post(
+//   '/create',
+//   upload.single('image'),
+//   authMiddleware(ROLE.superAdmin, ROLE.admin),
+//   (req: Request, res: Response, next: NextFunction) => {
+//     req.body = JSON.parse(req.body.data);
+//     next();
+//   },
+//   validateRequest(adminValidations.createValidation),
+//   AdminControllers.createAdminUser,
+// );
 
-route.get(
-  '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  AdminControllers.getSingleAdminUser,
-);
+// route.get(
+//   '/:id',
+//   authMiddleware(ROLE.superAdmin, ROLE.admin),
+//   AdminControllers.getSingleAdminUser,
+// );
 
-route.patch(
-  '/update/:id',
-  upload.single('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  (req: Request, res: Response, next: NextFunction) => {
-    if (req.body.data) {
-      req.body = JSON.parse(req.body.data);
-    }
-    next();
-  },
-  validateRequest(adminValidations.updateValidation),
-  AdminControllers.updateAdminUser,
-);
+// route.patch(
+//   '/update/:id',
+//   upload.single('image'),
+//   authMiddleware(ROLE.superAdmin, ROLE.admin),
+//   (req: Request, res: Response, next: NextFunction) => {
+//     if (req.body.data) {
+//       req.body = JSON.parse(req.body.data);
+//     }
+//     next();
+//   },
+//   validateRequest(adminValidations.updateValidation),
+//   AdminControllers.updateAdminUser,
+// );
 
-route.delete(
-  '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  AdminControllers.deleteAdminUser,
-);
+// route.delete(
+//   '/delete/:id',
+//   authMiddleware(ROLE.superAdmin, ROLE.admin),
+//   AdminControllers.deleteAdminUser,
+// );
 
 export const AdminRoutes = route;
