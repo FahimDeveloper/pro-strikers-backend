@@ -21,10 +21,10 @@ const mainRoutes = [
   //   path: '/admins',
   //   route: AdminRoutes,
   // },
-  // {
-  //   path: '/users',
-  //   route: UserRoutes,
-  // },
+  {
+    path: '/users',
+    route: UserRoutes,
+  },
   {
     path: '/schedule/classes',
     route: ClassRoutes,
