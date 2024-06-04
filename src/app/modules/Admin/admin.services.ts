@@ -7,39 +7,39 @@ import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import fs from 'fs';
 import { deleteImageIntoCloduinary } from '../../utils/deleteImageFromCloudinary';
 
-const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
-  const findAdminUser = await Admin.isAdminExists(payload.email);
-  if (findAdminUser) {
-    fs.unlinkSync(file?.path);
-    throw new AppError(httpStatus.CONFLICT, 'Admin user already exists!');
-  }
-  const { url } = await uploadImageIntoCloduinary(file);
-  const result = await Admin.create({ ...payload, image: url });
-  return result;
-};
+// const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
+//   const findAdminUser = await Admin.isAdminExists(payload.email);
+//   if (findAdminUser) {
+//     fs.unlinkSync(file?.path);
+//     throw new AppError(httpStatus.CONFLICT, 'Admin user already exists!');
+//   }
+//   const { url } = await uploadImageIntoCloduinary(file);
+//   const result = await Admin.create({ ...payload, image: url });
+//   return result;
+// };
 
-const updateAdminUserIntoDB = async (
-  id: string,
-  payload: Partial<IAdmin>,
-  file: any,
-) => {
-  let result;
-  if (file?.path) {
-    const { url } = await uploadImageIntoCloduinary(file);
-    result = await Admin.findByIdAndUpdate(id, {
-      ...payload,
-      image: url,
-    });
-  } else {
-    result = await Admin.findByIdAndUpdate(id, payload);
-  }
-  return result;
-};
+// const updateAdminUserIntoDB = async (
+//   id: string,
+//   payload: Partial<IAdmin>,
+//   file: any,
+// ) => {
+//   let result;
+//   if (file?.path) {
+//     const { url } = await uploadImageIntoCloduinary(file);
+//     result = await Admin.findByIdAndUpdate(id, {
+//       ...payload,
+//       image: url,
+//     });
+//   } else {
+//     result = await Admin.findByIdAndUpdate(id, payload);
+//   }
+//   return result;
+// };
 
-const getAllTrainersFromDB = async () => {
-  const result = await Admin.find({ role: 'trainer' }).select('_id full_name');
-  return result;
-};
+// const getAllTrainersFromDB = async () => {
+//   const result = await Admin.find({ role: 'trainer' }).select('_id full_name');
+//   return result;
+// };
 
 const getAllAdminUsersFromDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(Admin.find().select('-password'), query)
@@ -56,18 +56,18 @@ const getSingleAdminUserFromDB = async (id: string) => {
   return result;
 };
 
-const deleteAdminUserFromDB = async (id: string) => {
-  const { image }: { image: string } = await Admin.findById(id).select('image');
-  await deleteImageIntoCloduinary(image);
-  const result = await Admin.findByIdAndDelete(id);
-  return result;
-};
+// const deleteAdminUserFromDB = async (id: string) => {
+//   const { image }: { image: string } = await Admin.findById(id).select('image');
+//   await deleteImageIntoCloduinary(image);
+//   const result = await Admin.findByIdAndDelete(id);
+//   return result;
+// };
 
 export const AdminServices = {
-  getAllTrainersFromDB,
-  createAdminUserIntoDB,
-  updateAdminUserIntoDB,
+  // getAllTrainersFromDB,
+  // createAdminUserIntoDB,
+  // updateAdminUserIntoDB,
   getAllAdminUsersFromDB,
   getSingleAdminUserFromDB,
-  deleteAdminUserFromDB,
+  // deleteAdminUserFromDB,
 };
