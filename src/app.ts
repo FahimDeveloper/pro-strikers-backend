@@ -7,30 +7,33 @@ import notFound from './app/middlewares/notFound';
 
 const app: Application = express();
 
-// const corsConfig = {
-//   origin: ['http://localhost:5173', 'https://prostrikers-admin.netlify.app'],
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-// };
-// app.use(express.json());
-// app.use(cookieParser());
-// app.options('', cors(corsConfig));
-// app.use(cors(corsConfig));
-
 //parser
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: ['http://localhost:5173', 'https://prostrikers-admin.netlify.app'],
-    credentials: true,
-  }),
-);
+const corsConfig = {
+  origin: 'https://prostrikers-admin.netlify.app',
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+};
+app.use(express.json());
+app.use(cookieParser());
+app.options('', cors(corsConfig));
+app.use(cors(corsConfig));
+// app.use(
+//   cors({
+//     origin: ['http://localhost:5173', 'https://prostrikers-admin.netlify.app'],
+//     credentials: true,
+//   }),
+// );
 
 app.use('/api/v1', router);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('server is running');
+  try {
+    res.send('server is running');
+  } catch (err) {
+    console.log('error getting server');
+  }
 });
 
 app.use(globalErrorHandler);
