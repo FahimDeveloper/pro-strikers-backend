@@ -73,7 +73,6 @@ const adminForgetPassword = catchAsync(async (req, res) => {
 });
 
 const sendResetCode = catchAsync(async (req, res) => {
-  console.log(req.body);
   await AuthServices.resetCodeSend(req.body.id);
   sendResponse(
     res,
