@@ -245,6 +245,7 @@ const forgetPasswordForAdmin = async (email: string) => {
       : config.reset_pass_local_ui_link;
   const link = `${ui_link}/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
+  return;
 };
 
 const resetCodeSend = async (payload: string) => {
@@ -255,6 +256,7 @@ const resetCodeSend = async (payload: string) => {
     code,
   });
   await sendEmail({ email: result?.email as string, code });
+  return;
 };
 
 const resetAdminPasswordIntoDB = async (payload: {
@@ -291,6 +293,7 @@ const resetAdminPasswordIntoDB = async (payload: {
       password: newHashedPassword,
     },
   );
+  return;
 };
 
 export const AuthServices = {
