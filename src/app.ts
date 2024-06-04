@@ -15,6 +15,7 @@ const corsConfig = {
 };
 app.use(express.json());
 app.use(cookieParser());
+app.options('', cors(corsConfig));
 app.use(cors(corsConfig));
 
 app.use('/api/v1', router);
