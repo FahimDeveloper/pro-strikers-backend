@@ -18,7 +18,7 @@ const corsConfig = {
 app.options('', cors(corsConfig));
 app.use(cors(corsConfig));
 
-app.use('/api/v1', router);
+// app.use('/api/v1', router);
 app.get('/', (req: Request, res: Response) => {
   try {
     res.send('server is running');
