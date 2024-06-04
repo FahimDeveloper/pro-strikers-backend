@@ -63,55 +63,55 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
-// const adminForgetPassword = catchAsync(async (req, res) => {
-//   await AuthServices.forgetPasswordForAdmin(req.body.email);
-//   sendResponse(
-//     res,
-//     httpStatus.OK,
-//     'Check your email and reset your password within 15 minutes',
-//   );
-// });
+const adminForgetPassword = catchAsync(async (req, res) => {
+  await AuthServices.forgetPasswordForAdmin(req.body.email);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Check your email and reset your password within 15 minutes',
+  );
+});
 
-// const sendResetCode = catchAsync(async (req, res) => {
-//   await AuthServices.resetCodeSend(req.body.id);
-//   sendResponse(
-//     res,
-//     httpStatus.OK,
-//     'We already send your reset code in your email',
-//   );
-// });
+const sendResetCode = catchAsync(async (req, res) => {
+  await AuthServices.resetCodeSend(req.body.id);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'We already send your reset code in your email',
+  );
+});
 
-// const verifyUiLink = catchAsync(async (req, res) => {
-//   const { token } = req.params;
-//   await AuthServices.verifyLink(token);
-//   sendResponse(res, httpStatus.OK, 'Success');
-// });
+const verifyUiLink = catchAsync(async (req, res) => {
+  const { token } = req.params;
+  await AuthServices.verifyLink(token);
+  sendResponse(res, httpStatus.OK, 'Success');
+});
 
-// const verifyResetCode = catchAsync(async (req, res) => {
-//   await AuthServices.verifyCode(req.body);
-//   sendResponse(res, httpStatus.OK, 'Success');
-// });
+const verifyResetCode = catchAsync(async (req, res) => {
+  await AuthServices.verifyCode(req.body);
+  sendResponse(res, httpStatus.OK, 'Success');
+});
 
-// const resetAdminPassword = catchAsync(async (req, res) => {
-//   const token = req.body.token;
+const resetAdminPassword = catchAsync(async (req, res) => {
+  const token = req.body.token;
 
-//   if (!token) {
-//     throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
-//   }
+  if (!token) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
+  }
 
-//   await AuthServices.resetAdminPasswordIntoDB(req.body);
-//   sendResponse(res, httpStatus.OK, 'Password reset successfully!');
-// });
+  await AuthServices.resetAdminPasswordIntoDB(req.body);
+  sendResponse(res, httpStatus.OK, 'Password reset successfully!');
+});
 
 export const AuthControllers = {
   loginUser,
   loginAdmin,
   refreshToken,
-  // adminForgetPassword,
-  // sendResetCode,
-  // verifyUiLink,
-  // verifyResetCode,
-  // resetAdminPassword,
+  adminForgetPassword,
+  sendResetCode,
+  verifyUiLink,
+  verifyResetCode,
+  resetAdminPassword,
   // changePassword,
   // forgetPassword,
 };

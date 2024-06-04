@@ -12,6 +12,6 @@ const resetPassSchema = new Schema<IResetPass>(
   { timestamps: true },
 );
 
-// resetPassSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
+resetPassSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
 
 export const ResetPass = model<IResetPass>('ResetPass', resetPassSchema);

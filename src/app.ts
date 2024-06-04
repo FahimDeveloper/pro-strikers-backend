@@ -10,21 +10,13 @@ const app: Application = express();
 //parser
 app.use(express.json());
 app.use(cookieParser());
-// const corsConfig = {
-//   origin: 'https://prostrikers-admin.netlify.app',
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-// };
-// app.use(express.json());
-// app.use(cookieParser());
+const corsConfig = {
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+};
 // app.options('', cors(corsConfig));
-// app.use(cors(corsConfig));
-app.use(
-  cors({
-    origin: ['http://localhost:5173', 'https://prostrikers-admin.netlify.app'],
-    credentials: true,
-  }),
-);
+app.use(cors(corsConfig));
 
 app.use('/api/v1', router);
 app.get('/', (req: Request, res: Response) => {

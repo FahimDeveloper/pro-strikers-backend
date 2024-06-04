@@ -198,112 +198,112 @@ const refreshToken = async (token: string) => {
   };
 };
 
-// const verifyLink = async (payload: string) => {
-//   const { email, role } = jwt.verify(
-//     payload,
-//     config.jwt_access_secret as string,
-//   ) as JwtPayload;
-//   if (!email && !role) {
-//     throw new AppError(httpStatus.UNAUTHORIZED, 'The link already expired');
-//   }
-//   return;
-// };
+const verifyLink = async (payload: string) => {
+  const { email, role } = jwt.verify(
+    payload,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+  if (!email && !role) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'The link already expired');
+  }
+  return;
+};
 
-// const verifyCode = async ({ token, otp }: { token: string; otp: number }) => {
-//   const { email, role } = jwt.verify(
-//     token,
-//     config.jwt_access_secret as string,
-//   ) as JwtPayload;
-//   if (!email && !role) {
-//     throw new AppError(httpStatus.UNAUTHORIZED, 'code already expired');
-//   }
-//   const result = await ResetPassService.verifyResetCode({ email, code: otp });
-//   if (!result) {
-//     throw new AppError(httpStatus.UNAUTHORIZED, 'code not valid');
-//   }
-//   return result;
-// };
+const verifyCode = async ({ token, otp }: { token: string; otp: number }) => {
+  const { email, role } = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+  if (!email && !role) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'code already expired');
+  }
+  const result = await ResetPassService.verifyResetCode({ email, code: otp });
+  if (!result) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'code not valid');
+  }
+  return result;
+};
 
-// const forgetPasswordForAdmin = async (email: string) => {
-//   const user = await Admin.isAdminExists(email);
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'User is not found!');
-//   }
-//   const jwtPayload = {
-//     email: user.email,
-//     role: user.role,
-//   };
+const forgetPasswordForAdmin = async (email: string) => {
+  const user = await Admin.isAdminExists(email);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User is not found!');
+  }
+  const jwtPayload = {
+    email: user.email,
+    role: user.role,
+  };
 
-//   const resetToken = createToken(
-//     jwtPayload,
-//     config.jwt_access_secret as string,
-//     '15m',
-//   );
-//   const ui_link =
-//     process.env.NODE_ENV === 'production'
-//       ? config.reset_pass_ui_link
-//       : config.reset_pass_local_ui_link;
-//   const link = `${ui_link}/${user._id}/${resetToken}`;
-//   await sendEmail({ email, link });
-//   return;
-// };
+  const resetToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    '15m',
+  );
+  const ui_link =
+    process.env.NODE_ENV === 'production'
+      ? config.reset_pass_ui_link
+      : config.reset_pass_local_ui_link;
+  const link = `${ui_link}/${user._id}/${resetToken}`;
+  await sendEmail({ email, link });
+  return;
+};
 
-// const resetCodeSend = async (payload: string) => {
-//   const result = await Admin.findById(payload).select('email');
-//   const code = Math.floor(Math.random() * 9000) + 1000;
-//   await ResetPassService.createResetCode({
-//     email: result?.email as string,
-//     code,
-//   });
-//   await sendEmail({ email: result?.email as string, code });
-//   return;
-// };
+const resetCodeSend = async (payload: string) => {
+  const result = await Admin.findById(payload).select('email');
+  const code = Math.floor(Math.random() * 9000) + 1000;
+  await ResetPassService.createResetCode({
+    email: result?.email as string,
+    code,
+  });
+  await sendEmail({ email: result?.email as string, code });
+  return;
+};
 
-// const resetAdminPasswordIntoDB = async (payload: {
-//   id: string;
-//   password: string;
-//   token: string;
-// }) => {
-//   const user = await Admin.findById(payload?.id);
+const resetAdminPasswordIntoDB = async (payload: {
+  id: string;
+  password: string;
+  token: string;
+}) => {
+  const user = await Admin.findById(payload?.id);
 
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'User is not found !');
-//   }
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User is not found !');
+  }
 
-//   const decoded = jwt.verify(
-//     payload.token,
-//     config.jwt_access_secret as string,
-//   ) as JwtPayload;
+  const decoded = jwt.verify(
+    payload.token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
 
-//   if (user.email !== decoded.email) {
-//     throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized!');
-//   }
+  if (user.email !== decoded.email) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized!');
+  }
 
-//   const newHashedPassword = await bcrypt.hash(
-//     payload.password,
-//     Number(config.bcrypt_salt_rounds),
-//   );
+  const newHashedPassword = await bcrypt.hash(
+    payload.password,
+    Number(config.bcrypt_salt_rounds),
+  );
 
-//   await Admin.findOneAndUpdate(
-//     {
-//       email: decoded.email,
-//       role: decoded.role,
-//     },
-//     {
-//       password: newHashedPassword,
-//     },
-//   );
-//   return;
-// };
+  await Admin.findOneAndUpdate(
+    {
+      email: decoded.email,
+      role: decoded.role,
+    },
+    {
+      password: newHashedPassword,
+    },
+  );
+  return;
+};
 
 export const AuthServices = {
   loginUserIntoDB,
   loginAdminIntoDB,
   refreshToken,
-  // resetCodeSend,
-  // verifyLink,
-  // verifyCode,
-  // resetAdminPasswordIntoDB,
-  // forgetPasswordForAdmin,
+  resetCodeSend,
+  verifyLink,
+  verifyCode,
+  resetAdminPasswordIntoDB,
+  forgetPasswordForAdmin,
   // resetPassword,
 };
