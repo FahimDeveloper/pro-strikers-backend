@@ -45,10 +45,10 @@ const mainRoutes = [
     path: '/vouchers',
     route: VoucherRoute,
   },
-  // {
-  //   path: '/events',
-  //   route: EventRoutes,
-  // },
+  {
+    path: '/events',
+    route: EventRoutes,
+  },
   {
     path: '/posts',
     route: PostRoutes,
