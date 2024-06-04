@@ -21,10 +21,10 @@ const mainRoutes = [
     path: '/admins',
     route: AdminRoutes,
   },
-  // {
-  //   path: '/users',
-  //   route: UserRoutes,
-  // },
+  {
+    path: '/users',
+    route: UserRoutes,
+  },
   {
     path: '/schedule/classes',
     route: ClassRoutes,
@@ -45,14 +45,14 @@ const mainRoutes = [
     path: '/vouchers',
     route: VoucherRoute,
   },
-  // {
-  //   path: '/events',
-  //   route: EventRoutes,
-  // },
-  // {
-  //   path: '/posts',
-  //   route: PostRoutes,
-  // },
+  {
+    path: '/events',
+    route: EventRoutes,
+  },
+  {
+    path: '/posts',
+    route: PostRoutes,
+  },
 ];
 
 mainRoutes.forEach(route => router.use(route.path, route.route));

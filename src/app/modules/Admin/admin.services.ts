@@ -58,7 +58,7 @@ const getSingleAdminUserFromDB = async (id: string) => {
 
 const deleteAdminUserFromDB = async (id: string) => {
   const { image }: { image: string } = await Admin.findById(id).select('image');
-  await deleteImageIntoCloduinary(image);
+  // await deleteImageIntoCloduinary(image);
   const result = await Admin.findByIdAndDelete(id);
   return result;
 };

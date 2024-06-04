@@ -7,8 +7,8 @@ export const deleteImageIntoCloduinary = async (file: string) => {
     api_key: config.cloudinary_api_key,
     api_secret: config.cloudinary_api_secret,
   });
-  const match = file.match(/\/v[^/]+\/([^/]+)\./);
-  if (match && match[1]) {
-    await cloudinary.uploader.destroy(match[1]);
-  }
+  // const match = file.match(/\/v[^/]+\/([^/]+)\./);
+  // if (match && match[1]) {
+  //   await cloudinary.uploader.destroy(match[1]);
+  // }
 };

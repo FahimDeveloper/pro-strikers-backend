@@ -45,7 +45,7 @@ const updatePostIntoDB = async (
 
 const deletePostFromDB = async (id: string) => {
   const { image }: { image: string } = await Post.findById(id).select('image');
-  await deleteImageIntoCloduinary(image);
+  // await deleteImageIntoCloduinary(image);
   const result = await Post.findByIdAndDelete(id);
   return result;
 };
