@@ -8,13 +8,13 @@ import { upload } from '../../middlewares/multer.middleware';
 
 const route = express.Router();
 
-route.get(
-  '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  AdminControllers.getAllAdminUsers,
-);
+// route.get(
+//   '/',
+//   authMiddleware(ROLE.superAdmin, ROLE.admin),
+//   AdminControllers.getAllAdminUsers,
+// );
 
-route.get('/trainers', AdminControllers.getAllTrainers);
+// route.get('/trainers', AdminControllers.getAllTrainers);
 
 // route.post(
 //   '/create',
@@ -28,11 +28,11 @@ route.get('/trainers', AdminControllers.getAllTrainers);
 //   AdminControllers.createAdminUser,
 // );
 
-route.get(
-  '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  AdminControllers.getSingleAdminUser,
-);
+// route.get(
+//   '/:id',
+//   authMiddleware(ROLE.superAdmin, ROLE.admin),
+//   AdminControllers.getSingleAdminUser,
+// );
 
 // route.patch(
 //   '/update/:id',
@@ -48,10 +48,10 @@ route.get(
 //   AdminControllers.updateAdminUser,
 // );
 
-route.delete(
-  '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  AdminControllers.deleteAdminUser,
-);
+// route.delete(
+//   '/delete/:id',
+//   authMiddleware(ROLE.superAdmin, ROLE.admin),
+//   AdminControllers.deleteAdminUser,
+// );
 
 export const AdminRoutes = route;
