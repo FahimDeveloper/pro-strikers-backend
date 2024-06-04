@@ -13,10 +13,10 @@ import { AuthRoutes } from '../modules/Auth/auth.route';
 const router = express.Router();
 
 const mainRoutes = [
-  // {
-  //   path: '/auth',
-  //   route: AuthRoutes,
-  // },
+  {
+    path: '/auth',
+    route: AuthRoutes,
+  },
   // {
   //   path: '/admins',
   //   route: AdminRoutes,
