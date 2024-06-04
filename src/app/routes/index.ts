@@ -17,10 +17,10 @@ const mainRoutes = [
     path: '/auth',
     route: AuthRoutes,
   },
-  // {
-  //   path: '/admins',
-  //   route: AdminRoutes,
-  // },
+  {
+    path: '/admins',
+    route: AdminRoutes,
+  },
   // {
   //   path: '/users',
   //   route: UserRoutes,
