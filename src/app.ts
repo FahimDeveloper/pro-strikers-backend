@@ -15,8 +15,8 @@ app.use(cookieParser());
 //   credentials: true,
 //   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
 // };
-app.use(express.json());
-app.use(cookieParser());
+// app.use(express.json());
+// app.use(cookieParser());
 // app.options('', cors(corsConfig));
 // app.use(cors(corsConfig));
 app.use(
@@ -29,11 +29,7 @@ app.use(
 app.use('/api/v1', router);
 
 app.get('/', (req: Request, res: Response) => {
-  try {
-    res.send('server is running');
-  } catch (err) {
-    console.log('error getting server');
-  }
+  res.send('server is running');
 });
 
 app.use(globalErrorHandler);
