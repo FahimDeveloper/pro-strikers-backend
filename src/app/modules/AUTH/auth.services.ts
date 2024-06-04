@@ -218,7 +218,7 @@ const verifyCode = async ({ token, otp }: { token: string; otp: number }) => {
 const forgetPasswordForAdmin = async (email: string) => {
   const user = await Admin.isAdminExists(email);
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User is not found!');
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
   }
   const jwtPayload = {
     email: user.email,
