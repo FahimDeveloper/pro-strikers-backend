@@ -8,11 +8,11 @@ import { upload } from '../../middlewares/multer.middleware';
 
 const route = express.Router();
 
-// route.get(
-//   '/',
-//   authMiddleware(ROLE.superAdmin, ROLE.admin),
-//   AdminControllers.getAllAdminUsers,
-// );
+route.get(
+  '/',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.getAllAdminUsers,
+);
 
 // route.get('/trainers', AdminControllers.getAllTrainers);
 
