@@ -56,12 +56,12 @@ const getSingleAdminUserFromDB = async (id: string) => {
   return result;
 };
 
-// const deleteAdminUserFromDB = async (id: string) => {
-//   const { image }: { image: string } = await Admin.findById(id).select('image');
-//   await deleteImageIntoCloduinary(image);
-//   const result = await Admin.findByIdAndDelete(id);
-//   return result;
-// };
+const deleteAdminUserFromDB = async (id: string) => {
+  const { image }: { image: string } = await Admin.findById(id).select('image');
+  await deleteImageIntoCloduinary(image);
+  const result = await Admin.findByIdAndDelete(id);
+  return result;
+};
 
 export const AdminServices = {
   getAllTrainersFromDB,
@@ -69,5 +69,5 @@ export const AdminServices = {
   updateAdminUserIntoDB,
   getAllAdminUsersFromDB,
   getSingleAdminUserFromDB,
-  // deleteAdminUserFromDB,
+  deleteAdminUserFromDB,
 };

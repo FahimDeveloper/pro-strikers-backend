@@ -48,10 +48,10 @@ route.patch(
   AdminControllers.updateAdminUser,
 );
 
-// route.delete(
-//   '/delete/:id',
-//   authMiddleware(ROLE.superAdmin, ROLE.admin),
-//   AdminControllers.deleteAdminUser,
-// );
+route.delete(
+  '/delete/:id',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  AdminControllers.deleteAdminUser,
+);
 
 export const AdminRoutes = route;

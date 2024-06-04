@@ -43,10 +43,10 @@ const getSingleAdminUser = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Admin is retrieved succesfully', result);
 });
 
-// const deleteAdminUser = catchAsync(async (req, res) => {
-//   await AdminServices.deleteAdminUserFromDB(req.params.id);
-//   sendResponse(res, httpStatus.OK, 'Admin is deleted succesfully');
-// });
+const deleteAdminUser = catchAsync(async (req, res) => {
+  await AdminServices.deleteAdminUserFromDB(req.params.id);
+  sendResponse(res, httpStatus.OK, 'Admin is deleted succesfully');
+});
 
 export const AdminControllers = {
   createAdminUser,
@@ -54,5 +54,5 @@ export const AdminControllers = {
   getAllTrainers,
   getAllAdminUsers,
   getSingleAdminUser,
-  // deleteAdminUser,
+  deleteAdminUser,
 };
