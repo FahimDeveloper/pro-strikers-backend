@@ -14,7 +14,7 @@ route.get(
   AdminControllers.getAllAdminUsers,
 );
 
-// route.get('/trainers', AdminControllers.getAllTrainers);
+route.get('/trainers', AdminControllers.getAllTrainers);
 
 route.post(
   '/create',

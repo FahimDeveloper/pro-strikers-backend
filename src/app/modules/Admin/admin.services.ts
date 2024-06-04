@@ -36,10 +36,10 @@ const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
 //   return result;
 // };
 
-// const getAllTrainersFromDB = async () => {
-//   const result = await Admin.find({ role: 'trainer' }).select('_id full_name');
-//   return result;
-// };
+const getAllTrainersFromDB = async () => {
+  const result = await Admin.find({ role: 'trainer' }).select('_id full_name');
+  return result;
+};
 
 const getAllAdminUsersFromDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(Admin.find().select('-password'), query)
@@ -64,7 +64,7 @@ const getSingleAdminUserFromDB = async (id: string) => {
 // };
 
 export const AdminServices = {
-  // getAllTrainersFromDB,
+  getAllTrainersFromDB,
   createAdminUserIntoDB,
   // updateAdminUserIntoDB,
   getAllAdminUsersFromDB,
