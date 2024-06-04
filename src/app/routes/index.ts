@@ -49,10 +49,10 @@ const mainRoutes = [
   //   path: '/events',
   //   route: EventRoutes,
   // },
-  {
-    path: '/posts',
-    route: PostRoutes,
-  },
+  // {
+  //   path: '/posts',
+  //   route: PostRoutes,
+  // },
 ];
 
 mainRoutes.forEach(route => router.use(route.path, route.route));
