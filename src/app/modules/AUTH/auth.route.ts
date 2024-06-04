@@ -17,7 +17,7 @@ router.post(
   AuthControllers.loginAdmin,
 );
 
-// router.post('/refresh-token', AuthControllers.refreshToken);
+router.post('/refresh-token', AuthControllers.refreshToken);
 
 // router.post('/admin/forgot-password', AuthControllers.adminForgetPassword);
 
