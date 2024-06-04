@@ -199,24 +199,15 @@ const refreshToken = async (token: string) => {
 };
 
 const verifyLink = async (payload: string) => {
-  const { email, role } = jwt.verify(
-    payload,
-    config.jwt_access_secret as string,
-  ) as JwtPayload;
-  if (!email && !role) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'The link already expired');
-  }
+  jwt.verify(payload, config.jwt_access_secret as string) as JwtPayload;
   return;
 };
 
 const verifyCode = async ({ token, otp }: { token: string; otp: number }) => {
-  const { email, role } = jwt.verify(
+  const { email } = jwt.verify(
     token,
     config.jwt_access_secret as string,
   ) as JwtPayload;
-  if (!email && !role) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'code already expired');
-  }
   const result = await ResetPassService.verifyResetCode({ email, code: otp });
   if (!result) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'code not valid');
@@ -248,14 +239,17 @@ const forgetPasswordForAdmin = async (email: string) => {
   return;
 };
 
-const resetCodeSend = async (payload: string) => {
-  const result = await Admin.findById(payload).select('email');
+const resetCodeSend = async (token: string) => {
+  const { email } = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
   const code = Math.floor(Math.random() * 9000) + 1000;
   await ResetPassService.createResetCode({
-    email: result?.email as string,
+    email: email,
     code,
   });
-  await sendEmail({ email: result?.email as string, code });
+  await sendEmail({ email, code });
   return;
 };
 
@@ -264,20 +258,10 @@ const resetAdminPasswordIntoDB = async (payload: {
   password: string;
   token: string;
 }) => {
-  const user = await Admin.findById(payload?.id);
-
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User is not found !');
-  }
-
   const decoded = jwt.verify(
     payload.token,
     config.jwt_access_secret as string,
   ) as JwtPayload;
-
-  if (user.email !== decoded.email) {
-    throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized!');
-  }
 
   const newHashedPassword = await bcrypt.hash(
     payload.password,

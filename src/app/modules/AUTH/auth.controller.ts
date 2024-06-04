@@ -73,7 +73,7 @@ const adminForgetPassword = catchAsync(async (req, res) => {
 });
 
 const sendResetCode = catchAsync(async (req, res) => {
-  await AuthServices.resetCodeSend(req.body.id);
+  await AuthServices.resetCodeSend(req.body.token);
   sendResponse(
     res,
     httpStatus.OK,
@@ -82,8 +82,7 @@ const sendResetCode = catchAsync(async (req, res) => {
 });
 
 const verifyUiLink = catchAsync(async (req, res) => {
-  const { token } = req.params;
-  await AuthServices.verifyLink(token);
+  await AuthServices.verifyLink(req.params.token);
   sendResponse(res, httpStatus.OK, 'Success');
 });
 

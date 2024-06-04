@@ -4,7 +4,6 @@ import config from '../config';
 type TProp = { email: string; link?: string; code?: number };
 
 export const sendEmail = async ({ email, link, code }: TProp) => {
-  console.log('hello');
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     service: 'gmail',
