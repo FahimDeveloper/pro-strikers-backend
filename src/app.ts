@@ -8,14 +8,14 @@ import notFound from './app/middlewares/notFound';
 const app: Application = express();
 
 //parser
-app.use(
-  cors({
-    origin: ['http://localhost:5173', 'https://prostrikers-admin.netlify.app'],
-    credentials: true,
-  }),
-);
+const corsConfig = {
+  origin: ['http://localhost:5173', 'https://prostrikers-admin.netlify.app'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+};
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors(corsConfig));
 
 app.use('/api/v1', router);
 
