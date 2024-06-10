@@ -11,7 +11,7 @@ const createProduct = catchAsync(async (req, res) => {
 
 const getAllProducts = catchAsync(async (req, res) => {
   const { count, result } = await StoreServices.getAllProductsFromDB(req.query);
-  sendResponse(res, httpStatus.OK, 'Product fetch succesfully', result, count);
+  sendResponse(res, httpStatus.OK, 'Products fetch succesfully', result, count);
 });
 
 const getSingleProduct = catchAsync(async (req, res) => {
