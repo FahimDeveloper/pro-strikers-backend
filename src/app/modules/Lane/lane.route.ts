@@ -9,6 +9,7 @@ const route = express.Router();
 
 route.get('/', LaneControllers.getAllLanes);
 route.get('/:id', LaneControllers.getSingleLane);
+route.get('/lane-title', LaneControllers.getLanes);
 route.post(
   '/create',
   authMiddleware(ROLE.admin, ROLE.superAdmin),

@@ -18,6 +18,11 @@ const getSingleLane = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Lane fetched successfully', result);
 });
 
+const getLanes = catchAsync(async (req, res) => {
+  const result = await LaneServices.getLanesFromDB();
+  sendResponse(res, httpStatus.OK, 'Lanes fetched successfully', result);
+});
+
 const updateLane = catchAsync(async (req, res) => {
   const result = await LaneServices.updateLaneIntoDB(req.params.id, req.body);
   sendResponse(res, httpStatus.OK, 'Lane updated successfully', result);
@@ -33,5 +38,6 @@ export const LaneControllers = {
   getAllLanes,
   getSingleLane,
   updateLane,
+  getLanes,
   deleteLane,
 };

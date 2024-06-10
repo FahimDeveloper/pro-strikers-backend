@@ -28,6 +28,11 @@ const getSingleLaneFromDB = async (id: string) => {
   return result;
 };
 
+const getLanesFromDB = async () => {
+  const result = await Lane.find().select('lane_title');
+  return result;
+};
+
 const deleteLaneFromDB = async (id: string) => {
   const result = await Lane.findByIdAndDelete(id);
   return result;
@@ -39,4 +44,5 @@ export const LaneServices = {
   getAllLanesFromDB,
   getSingleLaneFromDB,
   deleteLaneFromDB,
+  getLanesFromDB,
 };
