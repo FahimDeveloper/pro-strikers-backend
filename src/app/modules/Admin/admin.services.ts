@@ -9,11 +9,14 @@ import fs from 'fs';
 const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   const findAdminUser = await Admin.isAdminExists(payload.email);
   if (findAdminUser) {
-    fs.unlinkSync(file?.path);
     throw new AppError(httpStatus.CONFLICT, 'Admin user already exists!');
   }
-  const { url } = await uploadImageIntoCloduinary(file);
-  const result = await Admin.create({ ...payload, image: url });
+  let result;
+  if (file?.path) {
+    const { url } = await uploadImageIntoCloduinary(file);
+    result = await Admin.create({ ...payload, image: url });
+  }
+  result = await Admin.create(payload);
   return result;
 };
 
