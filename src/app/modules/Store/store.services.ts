@@ -15,9 +15,7 @@ const updateProuctIntoDB = async (
   files: any,
 ) => {
   let result;
-  console.log(files);
-  console.log(payload);
-  if (files.length > 0) {
+  if (files?.length > 0) {
     const imageUrls = await uploadMultipleImageIntoCloduinary(files);
     result = await Store.findByIdAndUpdate(id, {
       ...payload,
