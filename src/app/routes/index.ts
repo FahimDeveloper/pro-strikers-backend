@@ -9,7 +9,14 @@ import { VoucherRoute } from '../modules/Voucher/voucher.route';
 import { PostRoutes } from '../modules/Post/post.route';
 import { EventRoutes } from '../modules/Events/events.route';
 import { AuthRoutes } from '../modules/Auth/auth.route';
-
+import { StoreRoutes } from '../modules/Store/store.route';
+import { LaneRoutes } from '../modules/Lane/lane.route';
+import { OrderRoutes } from '../modules/Orders/order.route';
+import { ClassReservationRoutes } from '../modules/ClassReservation/classReservation.route';
+import { CourseReservationRoutes } from '../modules/CoursesReservation/coursesReservation.route';
+import { FacilityReservationRoutes } from '../modules/FacilityReservation/facilityReservation.route';
+import { AppointmentGroupReservationRoutes } from '../modules/AppointmentGroupReservation/appointmentGroupReservation.route';
+import { AppointmentOneOnOneReservationRoutes } from '../modules/AppointmentOneOnOneReservation/appointmentOneOnOneReservation.route';
 const router = express.Router();
 
 const mainRoutes = [
@@ -52,6 +59,38 @@ const mainRoutes = [
   {
     path: '/posts',
     route: PostRoutes,
+  },
+  {
+    path: '/stores',
+    route: StoreRoutes,
+  },
+  {
+    path: '/lanes',
+    route: LaneRoutes,
+  },
+  {
+    path: '/orders',
+    route: OrderRoutes,
+  },
+  {
+    path: '/reservations/classes',
+    route: ClassReservationRoutes,
+  },
+  {
+    path: '/reservations/courses',
+    route: CourseReservationRoutes,
+  },
+  {
+    path: '/reservations/facilities',
+    route: FacilityReservationRoutes,
+  },
+  {
+    path: '/reservations/appointments/group',
+    route: AppointmentGroupReservationRoutes,
+  },
+  {
+    path: '/reservations/appointments/one-on-one',
+    route: AppointmentOneOnOneReservationRoutes,
   },
 ];
 

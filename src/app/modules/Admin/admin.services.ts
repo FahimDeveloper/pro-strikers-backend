@@ -36,7 +36,9 @@ const updateAdminUserIntoDB = async (
 };
 
 const getAllTrainersFromDB = async () => {
-  const result = await Admin.find({ role: 'trainer' }).select('_id full_name');
+  const result = await Admin.find({ role: 'trainer' }).select(
+    'first_name last_name',
+  );
   return result;
 };
 

@@ -22,6 +22,11 @@ const getSingleClass = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result);
 });
 
+const getClassByDate = catchAsync(async (req, res) => {
+  const result = await ClassScheduleServices.getClassByDateFromDB(req.body);
+  sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result);
+});
+
 const updateClass = catchAsync(async (req, res) => {
   await ClassScheduleServices.updateClassIntoDB(req.params.id, req.body);
   sendResponse(res, httpStatus.OK, 'Class updated succesfully');
@@ -38,4 +43,5 @@ export const ClassSheduleControllers = {
   getSingleClass,
   updateClass,
   deleteClass,
+  getClassByDate,
 };

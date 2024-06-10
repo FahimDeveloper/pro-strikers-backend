@@ -17,6 +17,7 @@ const userSchema = new Schema<IUser, UserModel>(
     image: {
       type: String,
       required: true,
+      default: 'https://avatar.iran.liara.run/public/boy',
     },
     gender: {
       type: String,

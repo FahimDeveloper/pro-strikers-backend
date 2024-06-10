@@ -60,10 +60,10 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
     },
     schedules: [facilityScheduleDaySchema],
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 export const FacilitySchedule = model<IFacilitySchedule>(
-  'FacilitySchedule',
+  'FacilitySchedules',
   facilityScheduleSchema,
 );

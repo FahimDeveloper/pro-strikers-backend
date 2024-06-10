@@ -56,7 +56,7 @@ const eventSchema = new Schema<IEvent>(
       required: true,
     },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 export const Event = model<IEvent>('Event', eventSchema);

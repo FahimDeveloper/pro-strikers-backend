@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 
 export interface ICourseReservation {
-  user: mongoose.Types.ObjectId;
+  user_email: string;
   course: mongoose.Types.ObjectId;
-  issue_date: Date;
-  isDeleted: boolean;
+  category: string;
+  trainer: string;
+  issue_date: string;
+  course_date: string;
 }

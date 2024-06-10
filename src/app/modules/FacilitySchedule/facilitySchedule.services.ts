@@ -1,6 +1,12 @@
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { IFacilitySchedule } from './facilitySchedule.interface';
+import {
+  IFacilityDaySchedule,
+  IFacilitySchedule,
+} from './facilitySchedule.interface';
 import { FacilitySchedule } from './facilitySchedule.model';
+import AppError from '../../errors/AppError';
+import moment from 'moment';
 
 const createFacilityIntoDB = async (payload: IFacilitySchedule) => {
   const result = await FacilitySchedule.create(payload);
@@ -28,6 +34,30 @@ const getAllFacilitiesFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
+const getFacilityByDateFromDB = async (payload: any) => {
+  const result = await FacilitySchedule.findById(payload.id).select(
+    'sport schedules trainer facility_duration',
+  );
+  if (!result) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Facility not found');
+  }
+  const day = moment(payload.date).format('dddd');
+  if (result) {
+    let schedule;
+    schedule = result?.schedules.find(
+      (schedule: IFacilityDaySchedule) => schedule.day === day,
+    );
+    if (!schedule?.active) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Facility not available in your selected date',
+      );
+    }
+    result.schedules = [schedule];
+    return result;
+  }
+};
+
 const getSingleFacilityFromDB = async (id: string) => {
   const result = await FacilitySchedule.findById(id);
   return result;
@@ -44,4 +74,5 @@ export const FacilityScheduleServices = {
   getAllFacilitiesFromDB,
   getSingleFacilityFromDB,
   deleteFacilityFromDB,
+  getFacilityByDateFromDB,
 };

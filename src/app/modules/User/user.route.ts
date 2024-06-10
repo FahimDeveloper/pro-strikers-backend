@@ -20,6 +20,11 @@ route.get(
   UserControllers.getMembershipUsers,
 );
 route.get(
+  '/email',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  UserControllers.getUsresEmail,
+);
+route.get(
   '/:id',
   authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   validateRequest(UserValidations.createValidation),
@@ -30,7 +35,9 @@ route.post(
   upload.single('image'),
   authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
     next();
   },
   validateRequest(UserValidations.createValidation),

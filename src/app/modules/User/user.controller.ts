@@ -26,6 +26,11 @@ const getAllUsers = catchAsync(async (req, res) => {
   );
 });
 
+const getUsresEmail = catchAsync(async (req, res) => {
+  const result = await UserServices.getUsersEmailFromDB();
+  sendResponse(res, httpStatus.OK, 'Users are retrieved succesfully', result);
+});
+
 const getSingleUser = catchAsync(async (req, res) => {
   const result = await UserServices.getSingleUserFromDB(req.params.id);
   sendResponse(res, httpStatus.OK, 'User is retrieved succesfully', result);
@@ -54,6 +59,7 @@ export const UserControllers = {
   getMembershipUsers,
   getAllUsers,
   getSingleUser,
+  getUsresEmail,
   updateUser,
   deleteUser,
 };

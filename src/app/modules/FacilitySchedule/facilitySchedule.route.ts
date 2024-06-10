@@ -26,6 +26,12 @@ route.post(
   FacilitySheduleControllers.createFacility,
 );
 
+route.post(
+  '/by-date',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  FacilitySheduleControllers.getFacilityByDate,
+);
+
 route.patch(
   '/update/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),

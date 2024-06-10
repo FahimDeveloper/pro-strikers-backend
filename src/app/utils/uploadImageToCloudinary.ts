@@ -19,6 +19,6 @@ export const uploadImageIntoCloduinary = async (file: any) => {
   });
   fs.unlinkSync(path);
   return {
-    url: result.url,
+    url: result.secure_url,
   };
 };

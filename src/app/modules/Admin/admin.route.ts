@@ -21,7 +21,9 @@ route.post(
   upload.single('image'),
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
     next();
   },
   validateRequest(adminValidations.createValidation),

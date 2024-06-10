@@ -9,11 +9,15 @@ import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
   if (findUser) {
-    fs.unlinkSync(file?.path);
     throw new AppError(httpStatus.CONFLICT, 'User already exists!');
   }
-  const { url } = await uploadImageIntoCloduinary(file);
-  const result = await User.create({ ...payload, image: url });
+  let result;
+  if (file?.path) {
+    const { url } = await uploadImageIntoCloduinary(file);
+    result = await User.create({ ...payload, image: url });
+  } else {
+    result = await User.create(payload);
+  }
   return result;
 };
 
@@ -45,6 +49,11 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   return { result, count };
 };
 
+const getUsersEmailFromDB = async () => {
+  const result = await User.find().select('email');
+  return result;
+};
+
 const getMembershipUsersFromDB = async (query: Record<string, unknown>) => {
   const userQuery = new QueryBuilder(
     User.find({ membership: true }).select('-password'),
@@ -72,6 +81,7 @@ export const UserServices = {
   createUserIntoDB,
   updateUserIntoDB,
   getAllUsersFromDB,
+  getUsersEmailFromDB,
   getMembershipUsersFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,

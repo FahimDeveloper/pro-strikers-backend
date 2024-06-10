@@ -26,6 +26,12 @@ route.post(
   CourseSheduleControllers.createCourse,
 );
 
+route.post(
+  '/by-date',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  CourseSheduleControllers.getCourseByDate,
+);
+
 route.patch(
   '/update/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),

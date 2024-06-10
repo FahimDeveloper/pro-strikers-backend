@@ -68,11 +68,17 @@ const loginAdminIntoDB = async (payload: ILogin) => {
   };
 
   let accessToken;
+  let refreshToken;
   if (payload?.remember) {
     accessToken = createToken(
       jwtPayload,
       config.jwt_access_secret as string,
       config.jwt_remember_access_expires_in as string,
+    );
+    refreshToken = createToken(
+      jwtPayload,
+      config.jwt_refresh_secret as string,
+      config.jwt_remember_refresh_expires_in as string,
     );
   } else {
     accessToken = createToken(
@@ -80,16 +86,6 @@ const loginAdminIntoDB = async (payload: ILogin) => {
       config.jwt_access_secret as string,
       config.jwt_access_expires_in as string,
     );
-  }
-
-  let refreshToken;
-  if (payload?.remember) {
-    refreshToken = createToken(
-      jwtPayload,
-      config.jwt_refresh_secret as string,
-      config.jwt_remember_refresh_expires_in as string,
-    );
-  } else {
     refreshToken = createToken(
       jwtPayload,
       config.jwt_refresh_secret as string,

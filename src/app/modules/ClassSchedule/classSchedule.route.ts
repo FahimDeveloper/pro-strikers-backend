@@ -20,6 +20,12 @@ route.get(
 );
 
 route.post(
+  '/by-date',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  ClassSheduleControllers.getClassByDate,
+);
+
+route.post(
   '/create',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(classScheduleValidations.createValidation),
