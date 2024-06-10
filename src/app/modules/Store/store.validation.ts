@@ -48,6 +48,14 @@ const createValidation = z.object({
       required_error: 'category is required',
       invalid_type_error: 'category is must be a string',
     }),
+    color: z.string({
+      required_error: 'color is required',
+      invalid_type_error: 'color is must be a string',
+    }),
+    size: z.string({
+      required_error: 'size is required',
+      invalid_type_error: 'size is must be a string',
+    }),
     description: z.string({
       required_error: 'description is required',
       invalid_type_error: 'description is must be a string',
@@ -84,6 +92,18 @@ const updateValidation = z.object({
       .string({
         required_error: 'category is required',
         invalid_type_error: 'category is must be a string',
+      })
+      .optional(),
+    color: z
+      .string({
+        required_error: 'color is required',
+        invalid_type_error: 'color is must be a string',
+      })
+      .optional(),
+    size: z
+      .string({
+        required_error: 'size is required',
+        invalid_type_error: 'size is must be a string',
       })
       .optional(),
     description: z

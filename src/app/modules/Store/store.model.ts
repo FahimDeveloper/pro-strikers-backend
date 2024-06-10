@@ -36,6 +36,14 @@ const storeSchema = new Schema<IStore>(
       type: Number,
       required: true,
     },
+    color: {
+      type: String,
+      required: true,
+    },
+    size: {
+      type: String,
+      required: true,
+    },
     category: {
       type: String,
       required: true,

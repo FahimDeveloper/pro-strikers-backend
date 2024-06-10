@@ -2,6 +2,8 @@ export interface IStore {
   product_name: string;
   category: string;
   price: number;
+  color: string;
+  size: string;
   images: string[];
   description: string;
   price_variation: boolean;
