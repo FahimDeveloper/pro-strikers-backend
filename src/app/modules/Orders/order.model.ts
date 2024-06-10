@@ -8,7 +8,7 @@ const OrderSchema: Schema = new Schema<IOrder>(
       required: true,
       trim: true,
     },
-    product_id: {
+    product: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'Store',

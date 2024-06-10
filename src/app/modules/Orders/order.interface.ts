@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 export interface IOrder {
   user_email: string;
-  product_id: mongoose.Types.ObjectId;
+  product: mongoose.Types.ObjectId;
   status: string;
   quantity: number;
   category: string;

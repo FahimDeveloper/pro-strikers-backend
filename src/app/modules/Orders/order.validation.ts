@@ -9,7 +9,7 @@ const createValidation = z.object({
         required_error: 'User email is required',
       })
       .email('Invalid email format'),
-    product_id: z
+    product: z
       .string({
         invalid_type_error: 'Product ID must be a string',
         required_error: 'Product ID is required',
@@ -45,7 +45,7 @@ const updateValidation = z.object({
       })
       .email('Invalid email format')
       .optional(),
-    product_id: z
+    product: z
       .string({
         invalid_type_error: 'Product ID must be a string',
         required_error: 'Product ID is required',
