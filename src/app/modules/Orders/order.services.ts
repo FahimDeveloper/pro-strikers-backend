@@ -12,7 +12,7 @@ const updateOrderIntoDB = async (id: string, payload: Partial<IOrder>) => {
 };
 
 const getAllOrdersFromDB = async (query: Record<string, unknown>) => {
-  const OrdersQuery = new QueryBuilder(Order.find(), query)
+  const OrdersQuery = new QueryBuilder(Order.find().populate('product'), query)
     .search(['user_email'])
     .filter()
     .paginate();
