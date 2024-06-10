@@ -8,8 +8,12 @@ import { LaneValidations } from './lane.validation';
 const route = express.Router();
 
 route.get('/', LaneControllers.getAllLanes);
+route.get(
+  '/lane-title',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  LaneControllers.getLanes,
+);
 route.get('/:id', LaneControllers.getSingleLane);
-route.get('/lane-title', LaneControllers.getLanes);
 route.post(
   '/create',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
