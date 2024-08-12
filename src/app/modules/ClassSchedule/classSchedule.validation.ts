@@ -30,6 +30,14 @@ const createValidation = z.object({
       invalid_type_error: 'capacity must be number',
       required_error: 'capacity is required',
     }),
+    start_date: z.string({
+      invalid_type_error: 'start date must be string',
+      required_error: 'start date is required',
+    }),
+    end_date: z.string({
+      invalid_type_error: 'end date must be string',
+      required_error: 'end date is required',
+    }),
     price: z.number({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
@@ -105,6 +113,16 @@ const updateValidation = z.object({
     price: z
       .number({
         invalid_type_error: 'price must be number',
+      })
+      .optional(),
+    start_date: z
+      .string({
+        invalid_type_error: 'start date must be string',
+      })
+      .optional(),
+    end_date: z
+      .string({
+        invalid_type_error: 'end date must be string',
       })
       .optional(),
     schedules: z

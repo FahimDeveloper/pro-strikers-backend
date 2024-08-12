@@ -8,6 +8,8 @@ export interface IClassSchedule {
   facility: string;
   trainer: string;
   level: string;
+  start_date: string;
+  end_date: string;
   capacity: number;
   price: number;
   schedules: IClassDaySchedule[];

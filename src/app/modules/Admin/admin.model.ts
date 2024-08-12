@@ -26,7 +26,7 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
     },
     phone: { type: String, required: true },
     gender: { type: String, required: true },
-    date_of_birth: { type: String, required: true },
+    date_of_birth: { type: String },
     role: {
       type: String,
       required: true,

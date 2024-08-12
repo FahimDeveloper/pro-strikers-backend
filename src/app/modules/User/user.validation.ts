@@ -28,17 +28,20 @@ const createValidation = z.object({
       invalid_type_error: 'phone must be string',
       required_error: 'phone is required',
     }),
-    date_of_birth: z.string({
-      invalid_type_error: 'type must be string',
-      required_error: 'type is required',
-    }),
+    date_of_birth: z
+      .string({
+        invalid_type_error: 'date of birth must be string',
+      })
+      .optional(),
     membership: z.boolean({
-      invalid_type_error: 'type must be boolean',
+      invalid_type_error: 'membership must be boolean',
       required_error: 'membership is required',
     }),
-    activity: z.boolean({
-      invalid_type_error: 'type must be boolean',
-    }),
+    status: z
+      .boolean({
+        invalid_type_error: 'status must be boolean',
+      })
+      .optional(),
     issue_date: z
       .string({
         invalid_type_error: 'issue data must be string',
@@ -49,10 +52,12 @@ const createValidation = z.object({
         invalid_type_error: 'expiry data must be string',
       })
       .optional(),
-    package_name: z.string({
-      invalid_type_error: 'package name must be string',
-    }),
-    plan: z.enum(['no plan', 'monthly', 'yearly']),
+    package_name: z
+      .string({
+        invalid_type_error: 'package name must be string',
+      })
+      .optional(),
+    plan: z.enum(['monthly', 'yearly']).optional(),
   }),
 });
 
@@ -62,20 +67,17 @@ const updateValidation = z.object({
       first_name: z
         .string({
           invalid_type_error: 'first name must be string',
-          required_error: 'first name is required',
         })
         .optional(),
       last_name: z
         .string({
           invalid_type_error: 'last name must be string',
-          required_error: 'last name is required',
         })
         .optional(),
       gender: z.enum(['male', 'female']).optional(),
       email: z
         .string({
           invalid_type_error: 'email must be string',
-          required_error: 'email is required',
         })
         .email({
           message: 'Please enter a valid email address',
@@ -84,31 +86,27 @@ const updateValidation = z.object({
       password: z
         .string({
           invalid_type_error: 'password must be string',
-          required_error: 'password is required',
         })
         .optional(),
       role: z.enum(['user']).optional(),
       phone: z
         .string({
           invalid_type_error: 'phone must be string',
-          required_error: 'phone is required',
         })
         .optional(),
       date_of_birth: z
         .string({
-          invalid_type_error: 'type must be string',
-          required_error: 'type is required',
+          invalid_type_error: 'date of birth must be string',
         })
         .optional(),
       membership: z
         .boolean({
-          invalid_type_error: 'type must be boolean',
-          required_error: 'membership is required',
+          invalid_type_error: 'membership must be boolean',
         })
         .optional(),
-      activity: z
+      status: z
         .boolean({
-          invalid_type_error: 'type must be boolean',
+          invalid_type_error: 'status must be boolean',
         })
         .optional(),
       issue_date: z
@@ -126,7 +124,7 @@ const updateValidation = z.object({
           invalid_type_error: 'package name must be string',
         })
         .optional(),
-      plan: z.enum(['no plan', 'monthly', 'yearly']).optional(),
+      plan: z.enum(['monthly', 'yearly']).optional(),
     })
     .optional(),
 });

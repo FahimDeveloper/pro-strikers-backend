@@ -18,7 +18,6 @@ const createValidation = z.object({
     gender: z.enum(['male', 'female']),
     date_of_birth: z.string({
       invalid_type_error: 'date_of_birth must be string',
-      required_error: 'date_of_birth is required',
     }),
     email: z
       .string({
@@ -55,7 +54,9 @@ const updateValidation = z.object({
     image: z.any().optional(),
     phone: z.string().optional(),
     gender: z.enum(['male', 'female']).optional(),
-    date_of_birth: z.string().optional(),
+    date_of_birth: z
+      .string({ invalid_type_error: 'email must be string' })
+      .optional(),
     email: z
       .string({
         invalid_type_error: 'email must be string',

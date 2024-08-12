@@ -1,4 +1,5 @@
 import { Model, Types } from 'mongoose';
+import { IRole } from '../../utils/role';
 
 export interface IAdmin {
   _id: Types.ObjectId;
@@ -7,9 +8,9 @@ export interface IAdmin {
   image: string;
   email: string;
   phone: string;
-  date_of_birth: string;
+  date_of_birth?: string;
   gender: 'male' | 'female';
-  role: 'super-admin' | 'admin' | 'trainer';
+  role: IRole;
   description: string;
   password: string;
 }

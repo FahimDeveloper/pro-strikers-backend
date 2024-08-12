@@ -4,7 +4,7 @@ import { IAdmin } from './admin.interface';
 import { Admin } from './admin.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
-import fs from 'fs';
+import { sendEmail } from '../../utils/sendEmail';
 
 const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   const findAdminUser = await Admin.isAdminExists(payload.email);
@@ -15,8 +15,12 @@ const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
     result = await Admin.create({ ...payload, image: url });
+  } else {
+    result = await Admin.create(payload);
   }
-  result = await Admin.create(payload);
+  if (result) {
+    await sendEmail({ email: payload.email, password: payload.password });
+  }
   return result;
 };
 

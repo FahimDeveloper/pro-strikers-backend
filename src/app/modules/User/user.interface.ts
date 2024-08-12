@@ -11,13 +11,13 @@ export interface IUser {
   password: string;
   role: 'user';
   phone: string;
-  date_of_birth: Date;
+  date_of_birth?: string;
   membership: boolean;
-  activity: boolean;
-  issue_date?: Date;
-  expiry_date?: Date;
-  package_name: string;
-  plan: string;
+  status: boolean;
+  issue_date?: string;
+  expiry_date?: string;
+  package_name?: string;
+  plan?: string;
 }
 
 export interface UserModel extends Model<IUser> {

@@ -51,6 +51,14 @@ const classScheduleSchema = new Schema<IClassSchedule>(
       type: Number,
       required: true,
     },
+    start_date: {
+      type: String,
+      required: true,
+    },
+    end_date: {
+      type: String,
+      required: true,
+    },
     price: {
       type: Number,
       required: true,
