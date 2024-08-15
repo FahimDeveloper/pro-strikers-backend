@@ -2,6 +2,7 @@ import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import { AuthControllers } from './auth.controller';
 import { AuthValidation } from './auth.validation';
+import { UserValidations } from '../User/user.validation';
 
 const router = express.Router();
 
@@ -9,6 +10,12 @@ router.post(
   '/user/login',
   validateRequest(AuthValidation.loginValidation),
   AuthControllers.loginUser,
+);
+
+router.post(
+  '/user/registration',
+  validateRequest(UserValidations.createValidation),
+  AuthControllers.registerUser,
 );
 
 router.post(

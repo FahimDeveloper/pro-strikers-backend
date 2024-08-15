@@ -5,6 +5,7 @@ import { User } from './user.model';
 import AppError from '../../errors/AppError';
 import fs from 'fs';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
+import { sendEmail } from '../../utils/sendEmail';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
@@ -17,6 +18,9 @@ const createUserIntoDB = async (payload: IUser, file: any) => {
     result = await User.create({ ...payload, image: url });
   } else {
     result = await User.create(payload);
+  }
+  if (result) {
+    await sendEmail({ email: payload.email, password: payload.password });
   }
   return result;
 };

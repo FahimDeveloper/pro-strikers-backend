@@ -3,7 +3,7 @@ import config from '../../config';
 import { createToken, verifyToken } from '../../utils/auth';
 import { User } from '../User/user.model';
 import AppError from '../../errors/AppError';
-import { ILogin } from './auth.interface';
+import { ILogin, IRegister } from './auth.interface';
 import { Admin } from '../Admin/admin.model';
 import { ROLE } from '../../utils/role';
 import { sendEmail } from '../../utils/sendEmail';
@@ -30,6 +30,53 @@ const loginUserIntoDB = async (payload: ILogin) => {
     role: user.role,
   };
 
+  let accessToken;
+  let refreshToken;
+  if (payload?.remember) {
+    accessToken = createToken(
+      jwtPayload,
+      config.jwt_access_secret as string,
+      config.jwt_remember_access_expires_in as string,
+    );
+    refreshToken = createToken(
+      jwtPayload,
+      config.jwt_refresh_secret as string,
+      config.jwt_remember_refresh_expires_in as string,
+    );
+  } else {
+    accessToken = createToken(
+      jwtPayload,
+      config.jwt_access_secret as string,
+      config.jwt_access_expires_in as string,
+    );
+    refreshToken = createToken(
+      jwtPayload,
+      config.jwt_refresh_secret as string,
+      config.jwt_refresh_expires_in as string,
+    );
+  }
+
+  const { _id, first_name, last_name, image, email, role } = user;
+
+  return {
+    user: { _id, first_name, last_name, image, email, role },
+    accessToken,
+    refreshToken,
+  };
+};
+
+const registerUserIntoDB = async (payload: IRegister) => {
+  const user = await User.isUserExistsByEmail(payload.email);
+  if (user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User Already exists');
+  }
+  const result = await User.create(payload);
+
+  const jwtPayload = {
+    email: payload.email,
+    role: 'user',
+  };
+
   const accessToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
@@ -42,7 +89,10 @@ const loginUserIntoDB = async (payload: ILogin) => {
     config.jwt_refresh_expires_in as string,
   );
 
+  const { _id, first_name, last_name, image, email, role } = result;
+
   return {
+    user: { _id, first_name, last_name, image, email, role },
     accessToken,
     refreshToken,
   };
@@ -278,6 +328,7 @@ const resetAdminPasswordIntoDB = async (payload: {
 
 export const AuthServices = {
   loginUserIntoDB,
+  registerUserIntoDB,
   loginAdminIntoDB,
   refreshToken,
   resetCodeSend,

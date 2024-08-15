@@ -33,10 +33,11 @@ const createValidation = z.object({
         invalid_type_error: 'date of birth must be string',
       })
       .optional(),
-    membership: z.boolean({
-      invalid_type_error: 'membership must be boolean',
-      required_error: 'membership is required',
-    }),
+    membership: z
+      .boolean({
+        invalid_type_error: 'membership must be boolean',
+      })
+      .default(false),
     status: z
       .boolean({
         invalid_type_error: 'status must be boolean',

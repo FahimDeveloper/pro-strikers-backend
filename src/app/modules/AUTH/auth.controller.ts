@@ -8,7 +8,7 @@ import { AuthServices } from './auth.services';
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUserIntoDB(req.body);
 
-  const { accessToken, refreshToken } = result;
+  const { accessToken, refreshToken, user } = result;
 
   res.cookie('refreshToken', refreshToken, {
     // secure: config.NODE_ENV === 'production',
@@ -17,7 +17,28 @@ const loginUser = catchAsync(async (req, res) => {
     maxAge: 1000 * 60 * 60 * 24 * 365,
   });
 
-  sendResponse(res, httpStatus.OK, 'logged in successfully!', accessToken);
+  sendResponse(res, httpStatus.OK, 'logged in successfully!', {
+    user,
+    accessToken,
+  });
+});
+
+const registerUser = catchAsync(async (req, res) => {
+  const result = await AuthServices.registerUserIntoDB(req.body);
+
+  const { accessToken, refreshToken, user } = result;
+
+  res.cookie('refreshToken', refreshToken, {
+    // secure: config.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
+
+  sendResponse(res, httpStatus.OK, 'Registration successfull', {
+    user,
+    accessToken,
+  });
 });
 
 const loginAdmin = catchAsync(async (req, res) => {
@@ -104,6 +125,7 @@ const resetAdminPassword = catchAsync(async (req, res) => {
 
 export const AuthControllers = {
   loginUser,
+  registerUser,
   loginAdmin,
   refreshToken,
   adminForgetPassword,

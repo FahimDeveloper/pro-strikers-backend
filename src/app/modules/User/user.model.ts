@@ -22,6 +22,7 @@ const userSchema = new Schema<IUser, UserModel>(
     gender: {
       type: String,
       enum: ['male', 'female'],
+      required: true,
     },
     email: {
       type: String,
@@ -46,7 +47,7 @@ const userSchema = new Schema<IUser, UserModel>(
     },
     membership: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     status: {
       type: Boolean,
