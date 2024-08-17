@@ -17,6 +17,8 @@ import { CourseReservationRoutes } from '../modules/CoursesReservation/coursesRe
 import { FacilityReservationRoutes } from '../modules/FacilityReservation/facilityReservation.route';
 import { AppointmentGroupReservationRoutes } from '../modules/AppointmentGroupReservation/appointmentGroupReservation.route';
 import { AppointmentOneOnOneReservationRoutes } from '../modules/AppointmentOneOnOneReservation/appointmentOneOnOneReservation.route';
+import { EventIndividualReservationRoutes } from '../modules/EventIndividualReservation/eventIndividualReservation.route';
+import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/eventGroupReservation.route';
 const router = express.Router();
 
 const mainRoutes = [
@@ -91,6 +93,14 @@ const mainRoutes = [
   {
     path: '/reservations/appointments/one-on-one',
     route: AppointmentOneOnOneReservationRoutes,
+  },
+  {
+    path: '/reservations/events/individual',
+    route: EventIndividualReservationRoutes,
+  },
+  {
+    path: '/reservations/events/group',
+    route: EventGroupReservationRoutes,
   },
 ];
 
