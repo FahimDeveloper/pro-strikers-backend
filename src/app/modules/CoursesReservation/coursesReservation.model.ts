@@ -3,31 +3,22 @@ import { ICourseReservation } from './coursesReservation.interface';
 
 const courseReservationSchema = new Schema<ICourseReservation>(
   {
-    user_email: {
-      type: String,
-      required: true,
-    },
+    player_name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
     course: {
       type: Schema.Types.ObjectId,
+      required: true,
       ref: 'CoursesSchedule',
-      required: true,
     },
-    category: {
-      type: String,
-      required: true,
-    },
-    trainer: {
-      type: String,
-      required: true,
-    },
-    issue_date: {
-      type: String,
-      required: true,
-    },
-    course_date: {
-      type: String,
-      required: true,
-    },
+    trainer: { type: String, required: true },
+    age: { type: Number, required: true },
+    street_address: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    sport: { type: String, required: true },
+    zip_code: { type: String, required: true },
+    skill_level: { type: String, required: true },
   },
   { timestamps: true, versionKey: false },
 );

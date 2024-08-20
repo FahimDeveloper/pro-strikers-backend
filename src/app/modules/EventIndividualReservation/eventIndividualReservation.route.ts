@@ -21,7 +21,7 @@ route.get(
 
 route.post(
   '/create',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
   validateRequest(EventIndividualResrvationValidations.createValidation),
   EventIndividualReservationController.createEventIndividualReservation,
 );

@@ -1,10 +1,15 @@
 import QueryBuilder from '../../builder/QueryBuilder';
+import { Event } from '../Events/events.model';
 import { IEventGroupReservation } from './eventGroupReservation.interface';
 import { EventGroupReservation } from './eventGroupReservation.model';
 
 const createEventGroupReservationIntoDB = async (
   payload: IEventGroupReservation,
 ) => {
+  const checkEvent = await Event.findById(payload.event);
+  if (!checkEvent) {
+    throw new Error('Event not found, Please enter a valid event ID');
+  }
   const result = await EventGroupReservation.create(payload);
   return result;
 };

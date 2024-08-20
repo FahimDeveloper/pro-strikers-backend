@@ -13,6 +13,7 @@ export interface IEventGroupReservation {
   street_address: string;
   city: string;
   state: string;
+  sport: string;
   zip_code: string;
   team_name: string;
   team: IEventGroupMembers[];

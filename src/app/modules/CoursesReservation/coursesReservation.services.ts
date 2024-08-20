@@ -1,8 +1,13 @@
 import QueryBuilder from '../../builder/QueryBuilder';
+import { CourseSchedule } from '../CourseSchedule/courseSchedule.model';
 import { ICourseReservation } from './coursesReservation.interface';
 import { CourseReservation } from './coursesReservation.model';
 
 const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
+  const checkCourse = await CourseSchedule.findById(payload.course);
+  if (!checkCourse) {
+    throw new Error('Bootcamp not found, Please enter a valid Bootcamp ID');
+  }
   const result = await CourseReservation.create(payload);
   return result;
 };
@@ -22,7 +27,7 @@ const getAllCoursesReservationsFromDB = async (
     CourseReservation.find().populate('course'),
     query,
   )
-    .search(['user_email'])
+    .search(['email'])
     .filter()
     .paginate();
   const result = await CourseReservationQuery?.modelQuery;

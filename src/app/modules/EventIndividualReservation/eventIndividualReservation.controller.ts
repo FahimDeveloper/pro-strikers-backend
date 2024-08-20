@@ -27,7 +27,7 @@ const updateEventIndividualReservation = catchAsync(async (req, res) => {
 });
 
 const getAllEventIndividualReservations = catchAsync(async (req, res) => {
-  const result =
+  const { result, count } =
     await EventIndividualReservationServices.getAllEventIndividualReservationsFromDB(
       req.query,
     );
@@ -36,6 +36,7 @@ const getAllEventIndividualReservations = catchAsync(async (req, res) => {
     httpStatus.OK,
     'Event individual reservations fetched successfully',
     result,
+    count,
   );
 });
 

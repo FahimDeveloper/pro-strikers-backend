@@ -27,7 +27,7 @@ const updateEventGroupReservation = catchAsync(async (req, res) => {
 });
 
 const getAllEventGroupReservations = catchAsync(async (req, res) => {
-  const result =
+  const { result, count } =
     await EventGroupReservationServices.getAllEventGroupReservationsFromDB(
       req.query,
     );
@@ -36,6 +36,7 @@ const getAllEventGroupReservations = catchAsync(async (req, res) => {
     httpStatus.OK,
     'Event Group reservations fetched successfully',
     result,
+    count,
   );
 });
 

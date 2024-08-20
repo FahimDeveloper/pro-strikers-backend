@@ -7,11 +7,7 @@ import validateRequest from '../../middlewares/validateRequest';
 
 const route = express.Router();
 
-route.get(
-  '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  CourseSheduleControllers.getAllCourses,
-);
+route.get('/', CourseSheduleControllers.getAllCourses);
 
 route.get(
   '/:id',
@@ -24,12 +20,6 @@ route.post(
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(courseScheduleValidations.createValidation),
   CourseSheduleControllers.createCourse,
-);
-
-route.post(
-  '/by-date',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  CourseSheduleControllers.getCourseByDate,
 );
 
 route.patch(

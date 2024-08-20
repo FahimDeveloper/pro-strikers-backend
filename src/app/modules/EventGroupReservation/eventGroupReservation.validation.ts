@@ -2,9 +2,13 @@ import { z } from 'zod';
 
 const createValidation = z.object({
   body: z.object({
-    player_name: z.string({
-      required_error: 'Player name is required',
-      invalid_type_error: 'Player name must be a string',
+    first_name: z.string({
+      required_error: 'First name is required',
+      invalid_type_error: 'First name must be a string',
+    }),
+    last_name: z.string({
+      required_error: 'Last name is required',
+      invalid_type_error: 'Last name must be a string',
     }),
     email: z
       .string({
@@ -36,22 +40,65 @@ const createValidation = z.object({
       required_error: 'State is required',
       invalid_type_error: 'State must be a string',
     }),
+    sport: z.string({
+      required_error: 'Sport is required',
+      invalid_type_error: 'Sport must be a string',
+    }),
+    preferred_time: z.string({
+      required_error: 'Preferred time is required',
+      invalid_type_error: 'Preferred time must be a string',
+    }),
+    preferred_date: z.string({
+      required_error: 'Preferred date is required',
+      invalid_type_error: 'Preferred date must be a string',
+    }),
     zip_code: z.string({
       required_error: 'Zip code is required',
       invalid_type_error: 'Zip code must be a string',
     }),
-    play_mode: z.string({
-      required_error: 'Play mode is required',
-      invalid_type_error: 'Play mode must be a string',
+    team_name: z.string({
+      required_error: 'Team name is required',
+      invalid_type_error: 'Team name must be a string',
     }),
+    team: z.array(
+      z.object({
+        first_name: z.string({
+          required_error: 'First name is required',
+          invalid_type_error: 'First name must be a string',
+        }),
+        last_name: z.string({
+          required_error: 'Last name is required',
+          invalid_type_error: 'Last name must be a string',
+        }),
+        email: z
+          .string({
+            required_error: 'Email is required',
+            invalid_type_error: 'Email must be a string',
+          })
+          .email('Invalid email'),
+        contact: z.string({
+          required_error: 'Contact number is required',
+          invalid_type_error: 'Contact number must be a string',
+        }),
+        age: z.number({
+          required_error: 'Age is required',
+          invalid_type_error: 'Age must be a number',
+        }),
+      }),
+    ),
   }),
 });
 
 const updateValidation = z.object({
   body: z.object({
-    player_name: z
+    first_name: z
       .string({
-        invalid_type_error: 'Player name must be a string',
+        required_error: 'First name is required',
+      })
+      .optional(),
+    last_name: z
+      .string({
+        required_error: 'Last name is required',
       })
       .optional(),
     email: z
@@ -90,15 +137,64 @@ const updateValidation = z.object({
         invalid_type_error: 'State must be a string',
       })
       .optional(),
+    sport: z
+      .string({
+        invalid_type_error: 'Sport must be a string',
+      })
+      .optional(),
+    preferred_time: z
+      .string({
+        invalid_type_error: 'Preferred time must be a string',
+      })
+      .optional(),
+    preferred_date: z
+      .string({
+        invalid_type_error: 'Preferred date must be a string',
+      })
+      .optional(),
     zip_code: z
       .string({
         invalid_type_error: 'Zip code must be a string',
       })
       .optional(),
-    play_mode: z
+    team_name: z
       .string({
-        invalid_type_error: 'Play mode must be a string',
+        required_error: 'Team name is required',
       })
+      .optional(),
+    team: z
+      .array(
+        z
+          .object({
+            first_name: z
+              .string({
+                required_error: 'First name is required',
+              })
+              .optional(),
+            last_name: z
+              .string({
+                required_error: 'Last name is required',
+              })
+              .optional(),
+            email: z
+              .string({
+                required_error: 'Email is required',
+              })
+              .email('Invalid email')
+              .optional(),
+            contact: z
+              .string({
+                required_error: 'Contact number is required',
+              })
+              .optional(),
+            age: z
+              .number({
+                required_error: 'Age is required',
+              })
+              .optional(),
+          })
+          .optional(),
+      )
       .optional(),
   }),
 });

@@ -36,13 +36,17 @@ const createValidation = z.object({
       required_error: 'State is required',
       invalid_type_error: 'State must be a string',
     }),
+    sport: z.string({
+      required_error: 'sport is required',
+      invalid_type_error: 'sport must be a string',
+    }),
     zip_code: z.string({
       required_error: 'Zip code is required',
       invalid_type_error: 'Zip code must be a string',
     }),
-    play_mode: z.string({
-      required_error: 'Play mode is required',
-      invalid_type_error: 'Play mode must be a string',
+    skill_level: z.string({
+      required_error: 'Skill level is required',
+      invalid_type_error: 'Skill level must be a string',
     }),
   }),
 });
@@ -90,14 +94,19 @@ const updateValidation = z.object({
         invalid_type_error: 'State must be a string',
       })
       .optional(),
+    sport: z
+      .string({
+        invalid_type_error: 'Sport must be a string',
+      })
+      .optional(),
     zip_code: z
       .string({
         invalid_type_error: 'Zip code must be a string',
       })
       .optional(),
-    play_mode: z
+    skill_level: z
       .string({
-        invalid_type_error: 'Play mode must be a string',
+        invalid_type_error: 'Skill level must be a string',
       })
       .optional(),
   }),

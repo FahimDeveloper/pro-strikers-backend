@@ -1,11 +1,16 @@
 import QueryBuilder from '../../builder/QueryBuilder';
 import catchAsync from '../../utils/catchAsync';
+import { Event } from '../Events/events.model';
 import { IEventIndividualReservation } from './eventIndividualReservation.interface';
 import { EventIndividualReservation } from './eventIndividualReservation.model';
 
 const createEventIndividualReservationIntoDB = async (
   payload: IEventIndividualReservation,
 ) => {
+  const checkEvent = await Event.findById(payload.event);
+  if (!checkEvent) {
+    throw new Error('Event not found, Please enter a valid event ID');
+  }
   const result = await EventIndividualReservation.create(payload);
   return result;
 };

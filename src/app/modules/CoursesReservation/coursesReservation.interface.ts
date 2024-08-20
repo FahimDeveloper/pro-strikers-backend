@@ -1,10 +1,16 @@
 import mongoose from 'mongoose';
 
 export interface ICourseReservation {
-  user_email: string;
+  player_name: string;
+  email: string;
+  phone: string;
+  age: number;
   course: mongoose.Types.ObjectId;
-  category: string;
   trainer: string;
-  issue_date: string;
-  course_date: string;
+  street_address: string;
+  city: string;
+  state: string;
+  sport: string;
+  zip_code: string;
+  skill_level: string;
 }

@@ -20,7 +20,7 @@ const handleCastError = (
 
   return {
     statusCode,
-    message: 'Duplicate error',
+    message: 'Invalid Id, Please enter a valid Id',
     errorSources,
   };
 };

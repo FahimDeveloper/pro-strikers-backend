@@ -11,7 +11,7 @@ const loginUser = catchAsync(async (req, res) => {
   const { accessToken, refreshToken, user } = result;
 
   res.cookie('refreshToken', refreshToken, {
-    // secure: config.NODE_ENV === 'production',
+    secure: config.node_env === 'production',
     httpOnly: true,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 * 365,
@@ -29,7 +29,7 @@ const registerUser = catchAsync(async (req, res) => {
   const { accessToken, refreshToken, user } = result;
 
   res.cookie('refreshToken', refreshToken, {
-    // secure: config.NODE_ENV === 'production',
+    secure: config.node_env === 'production',
     httpOnly: true,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 * 365,
@@ -47,8 +47,7 @@ const loginAdmin = catchAsync(async (req, res) => {
   const { accessToken, refreshToken, user } = result;
 
   res.cookie('refreshToken', refreshToken, {
-    // secure: config.NODE_ENV === 'production',
-    secure: true,
+    secure: config.node_env === 'production',
     httpOnly: true,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 * 365,

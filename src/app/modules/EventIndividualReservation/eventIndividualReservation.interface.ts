@@ -9,6 +9,7 @@ export interface IEventIndividualReservation {
   street_address: string;
   city: string;
   state: string;
+  sport: string;
   zip_code: string;
-  play_mode: string;
+  skill_level: string;
 }
