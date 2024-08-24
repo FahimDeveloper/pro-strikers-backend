@@ -20,10 +20,6 @@ const createValidation = z.object({
       required_error: 'Bootcamp ID is required',
       invalid_type_error: 'Bootcamp ID must be a string',
     }),
-    trainer: z.string({
-      required_error: 'Trainer is required',
-      invalid_type_error: 'Trainer must be a string',
-    }),
     age: z.number({
       required_error: 'Age is required',
       invalid_type_error: 'Age must be a number',
@@ -76,11 +72,6 @@ const updateValidation = z.object({
     course: z
       .string({
         invalid_type_error: 'Bootcamp ID must be a string',
-      })
-      .optional(),
-    trainer: z
-      .string({
-        invalid_type_error: 'Trainer must be a string',
       })
       .optional(),
     age: z

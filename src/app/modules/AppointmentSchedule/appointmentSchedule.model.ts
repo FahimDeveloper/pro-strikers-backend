@@ -1,4 +1,4 @@
-import { Schema, Types, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import {
   IAppointmentDaySchedule,
   IAppointmentSchedule,
@@ -43,7 +43,8 @@ const appointmentScheduleSchema = new Schema<IAppointmentSchedule>(
       required: true,
     },
     trainer: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Admin',
       required: true,
     },
     description: {

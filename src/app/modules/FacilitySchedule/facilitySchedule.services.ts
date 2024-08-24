@@ -9,6 +9,13 @@ import AppError from '../../errors/AppError';
 import moment from 'moment';
 
 const createFacilityIntoDB = async (payload: IFacilitySchedule) => {
+  const findSport = await FacilitySchedule.findOne({ sport: payload.sport });
+  if (findSport) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      'This Sport Facility already exists',
+    );
+  }
   const result = await FacilitySchedule.create(payload);
   return result;
 };
@@ -32,6 +39,11 @@ const getAllFacilitiesFromDB = async (query: Record<string, unknown>) => {
     count,
     result,
   };
+};
+
+const getFacilityByQueryFromDB = async (query: Record<string, unknown>) => {
+  const result = await FacilitySchedule.findOne(query);
+  return result;
 };
 
 const getFacilityByDateFromDB = async (payload: any) => {
@@ -75,4 +87,5 @@ export const FacilityScheduleServices = {
   getSingleFacilityFromDB,
   deleteFacilityFromDB,
   getFacilityByDateFromDB,
+  getFacilityByQueryFromDB,
 };

@@ -11,7 +11,6 @@ const courseReservationSchema = new Schema<ICourseReservation>(
       required: true,
       ref: 'CoursesSchedule',
     },
-    trainer: { type: String, required: true },
     age: { type: Number, required: true },
     street_address: { type: String, required: true },
     city: { type: String, required: true },

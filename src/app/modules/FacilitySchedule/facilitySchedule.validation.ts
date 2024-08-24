@@ -19,10 +19,6 @@ const createValidation = z.object({
       invalid_type_error: 'facility duration must be number',
       required_error: 'facility duration is required',
     }),
-    trainer: z.string({
-      invalid_type_error: 'trainer must be string',
-      required_error: 'trainer is required',
-    }),
     description: z.string({
       invalid_type_error: 'description must be string',
       required_error: 'description is required',
@@ -83,12 +79,6 @@ const updateValidation = z.object({
       .number({
         invalid_type_error: 'facility duration must be number',
         required_error: 'facility duration is required',
-      })
-      .optional(),
-    trainer: z
-      .string({
-        invalid_type_error: 'trainer must be string',
-        required_error: 'trainer is required',
       })
       .optional(),
     description: z

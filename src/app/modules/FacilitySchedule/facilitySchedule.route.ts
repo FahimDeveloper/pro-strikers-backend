@@ -7,6 +7,8 @@ import validateRequest from '../../middlewares/validateRequest';
 
 const route = express.Router();
 
+route.get('/by-query', FacilitySheduleControllers.getFacilityByQuery);
+
 route.get(
   '/',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
@@ -24,6 +26,12 @@ route.post(
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(facilityScheduleValidations.createValidation),
   FacilitySheduleControllers.createFacility,
+);
+
+route.post(
+  '/by-date',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  FacilitySheduleControllers.getFacilityByDate,
 );
 
 route.post(

@@ -6,7 +6,6 @@ export interface IFacilitySchedule {
   sport: string;
   facility: string;
   facility_duration: number;
-  trainer: string;
   description: string;
   price: number;
   lane: string;

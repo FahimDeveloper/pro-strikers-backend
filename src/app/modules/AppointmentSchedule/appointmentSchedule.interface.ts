@@ -6,7 +6,7 @@ export interface IAppointmentSchedule {
   appointment_type: string;
   sport: string;
   appointment_duration: number;
-  trainer: string;
+  trainer: Types.ObjectId;
   description: string;
   price: number;
   schedules: IAppointmentDaySchedule[];

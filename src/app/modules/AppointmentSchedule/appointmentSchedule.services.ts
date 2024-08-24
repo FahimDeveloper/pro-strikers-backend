@@ -16,7 +16,10 @@ const updateAppointmentIntoDB = async (
 };
 
 const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
-  const appointmentQuery = new QueryBuilder(AppointmentSchedule.find(), query)
+  const appointmentQuery = new QueryBuilder(
+    AppointmentSchedule.find().populate('trainer'),
+    query,
+  )
     .search(['appointment_name'])
     .filter()
     .paginate();

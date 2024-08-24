@@ -6,7 +6,6 @@ export interface ICourseReservation {
   phone: string;
   age: number;
   course: mongoose.Types.ObjectId;
-  trainer: string;
   street_address: string;
   city: string;
   state: string;

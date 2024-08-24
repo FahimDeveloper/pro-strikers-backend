@@ -14,6 +14,13 @@ const getAllFacilities = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Facility fetch succesfully', result, count);
 });
 
+const getFacilityByQuery = catchAsync(async (req, res) => {
+  const result = await FacilityScheduleServices.getFacilityByQueryFromDB(
+    req.query,
+  );
+  sendResponse(res, httpStatus.OK, 'Facility fetch succesfully', result);
+});
+
 const getSingleFacility = catchAsync(async (req, res) => {
   const result = await FacilityScheduleServices.getSingleFacilityFromDB(
     req.params.id,
@@ -45,4 +52,5 @@ export const FacilitySheduleControllers = {
   updateFacility,
   getFacilityByDate,
   deleteFacility,
+  getFacilityByQuery,
 };

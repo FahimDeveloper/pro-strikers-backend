@@ -40,7 +40,8 @@ const classScheduleSchema = new Schema<IClassSchedule>(
       required: true,
     },
     trainer: {
-      type: String,
+      type: Schema.ObjectId,
+      ref: 'Admin',
       required: true,
     },
     level: {

@@ -6,7 +6,7 @@ export interface IClassSchedule {
   sport: string;
   description: string;
   facility: string;
-  trainer: string;
+  trainer: Types.ObjectId;
   level: string;
   start_date: string;
   end_date: string;

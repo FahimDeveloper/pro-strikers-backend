@@ -19,7 +19,10 @@ const updateClassIntoDB = async (
 };
 
 const getAllClassesFromDB = async (query: Record<string, unknown>) => {
-  const classQuery = new QueryBuilder(ClassSchedule.find(), query)
+  const classQuery = new QueryBuilder(
+    ClassSchedule.find().populate('trainer'),
+    query,
+  )
     .search(['class_name'])
     .filter()
     .paginate();

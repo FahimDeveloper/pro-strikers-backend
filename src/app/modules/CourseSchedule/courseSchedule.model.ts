@@ -13,7 +13,8 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
       required: true,
     },
     trainer: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Admin',
       required: true,
     },
     capacity: {

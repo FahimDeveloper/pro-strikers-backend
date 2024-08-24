@@ -19,7 +19,10 @@ const updateCourseIntoDB = async (
 };
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
-  const courseQuery = new QueryBuilder(CourseSchedule.find(), query)
+  const courseQuery = new QueryBuilder(
+    CourseSchedule.find().populate('trainer'),
+    query,
+  )
     .search(['course_name'])
     .filter()
     .rangeFilter()
