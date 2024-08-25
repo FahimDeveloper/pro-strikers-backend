@@ -22,10 +22,11 @@ const createValidation = z.object({
     }),
     registration_start: z.string(),
     registration_end: z.string(),
-    registration: z.number({
-      invalid_type_error: 'total registrations must be number',
-      required_error: 'total registrations is required',
-    }),
+    registration: z
+      .number({
+        invalid_type_error: 'total registrations must be number',
+      })
+      .default(0),
     image: z.any().optional(),
     allowed_registrations: z.number({
       invalid_type_error: 'allowed registrations must be number',
@@ -75,7 +76,6 @@ const updateValidation = z.object({
     registration: z
       .number({
         invalid_type_error: 'total registrations must be number',
-        required_error: 'total registrations is required',
       })
       .optional(),
     image: z.any().optional(),

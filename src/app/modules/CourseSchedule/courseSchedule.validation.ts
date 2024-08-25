@@ -18,6 +18,11 @@ const createValidation = z.object({
       invalid_type_error: 'capacity must be number',
       required_error: 'capacity is required',
     }),
+    enrolled: z
+      .number({
+        invalid_type_error: 'enrolled must be number',
+      })
+      .default(0),
     start_date: z.string({
       invalid_type_error: 'start date must be string',
       required_error: 'start date is required',
@@ -69,6 +74,11 @@ const updateValidation = z.object({
       .number({
         invalid_type_error: 'capacity must be number',
         required_error: 'capacity is required',
+      })
+      .optional(),
+    enrolled: z
+      .number({
+        invalid_type_error: 'enrolled must be number',
       })
       .optional(),
     start_date: z

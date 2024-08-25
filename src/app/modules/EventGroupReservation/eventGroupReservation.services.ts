@@ -9,9 +9,22 @@ const createEventGroupReservationIntoDB = async (
   const checkEvent = await Event.findById(payload.event);
   if (!checkEvent) {
     throw new Error('Event not found, Please enter a valid event ID');
+  } else if (checkEvent.allowed_registrations === checkEvent.registration) {
+    throw new Error('Event is fully registered, please choose another event');
+  } else {
+    const updatedCourse = await Event.findByIdAndUpdate(
+      payload.event,
+      { $inc: { registration: 1 } },
+      { new: true, runValidators: true },
+    );
+    if (!updatedCourse) {
+      throw new Error(
+        'Failed event registration, Try again later or contact with support',
+      );
+    }
+    const result = await EventGroupReservation.create(payload);
+    return result;
   }
-  const result = await EventGroupReservation.create(payload);
-  return result;
 };
 
 const updateEventGroupReservationIntoDB = async (

@@ -48,7 +48,7 @@ const getFacilityByQueryFromDB = async (query: Record<string, unknown>) => {
 
 const getFacilityByDateFromDB = async (payload: any) => {
   const result = await FacilitySchedule.findById(payload.id).select(
-    'sport schedules trainer facility_duration',
+    'sport schedules trainer duration',
   );
   if (!result) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Facility not found');

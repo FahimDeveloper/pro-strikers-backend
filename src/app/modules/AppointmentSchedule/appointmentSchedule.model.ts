@@ -38,7 +38,7 @@ const appointmentScheduleSchema = new Schema<IAppointmentSchedule>(
       type: String,
       required: true,
     },
-    appointment_duration: {
+    duration: {
       type: Number,
       required: true,
     },

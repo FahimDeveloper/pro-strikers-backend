@@ -7,9 +7,22 @@ const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
   const checkCourse = await CourseSchedule.findById(payload.course);
   if (!checkCourse) {
     throw new Error('Bootcamp not found, Please enter a valid Bootcamp ID');
+  } else if (checkCourse.capacity === checkCourse.enrolled) {
+    throw new Error('Course is fully booked, please choose another course');
+  } else {
+    const updatedCourse = await CourseSchedule.findByIdAndUpdate(
+      payload.course,
+      { $inc: { enrolled: 1 } },
+      { new: true, runValidators: true },
+    );
+    if (!updatedCourse) {
+      throw new Error(
+        'Failed course enrollment, Try again later or contact with support',
+      );
+    }
+    const result = await CourseReservation.create(payload);
+    return result;
   }
-  const result = await CourseReservation.create(payload);
-  return result;
 };
 
 const updateCourseReservationIntoDB = async (

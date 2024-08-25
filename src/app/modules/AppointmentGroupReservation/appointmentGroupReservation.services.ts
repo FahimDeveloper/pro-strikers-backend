@@ -27,7 +27,7 @@ const getAllAppointmentGroupReservationsFromDB = async (
     AppointmentGroupReservation.find(),
     query,
   )
-    .search(['user_email'])
+    .search(['email phone'])
     .filter()
     .paginate();
   const result = await appointmentGroupReservationQuery?.modelQuery;

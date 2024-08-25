@@ -19,7 +19,7 @@ import { AppointmentGroupReservationRoutes } from '../modules/AppointmentGroupRe
 import { AppointmentOneOnOneReservationRoutes } from '../modules/AppointmentOneOnOneReservation/appointmentOneOnOneReservation.route';
 import { EventIndividualReservationRoutes } from '../modules/EventIndividualReservation/eventIndividualReservation.route';
 import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/eventGroupReservation.route';
-import { FacilityReservationCartRoutes } from '../modules/FacilityReservationCart/facilityReservationCart.route';
+import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 const router = express.Router();
 
 const mainRoutes = [
@@ -84,12 +84,12 @@ const mainRoutes = [
     route: CourseReservationRoutes,
   },
   {
-    path: '/reservations/carts/facilities',
-    route: FacilityReservationCartRoutes,
-  },
-  {
     path: '/reservations/facilities',
     route: FacilityReservationRoutes,
+  },
+  {
+    path: '/reservations/slot-bookings',
+    route: SlotRoutes,
   },
   {
     path: '/reservations/appointments/group',

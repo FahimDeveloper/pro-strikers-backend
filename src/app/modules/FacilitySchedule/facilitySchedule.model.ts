@@ -33,13 +33,12 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
     sport: {
       type: String,
       required: true,
-      index: true,
     },
     facility: {
       type: String,
       required: true,
     },
-    facility_duration: {
+    duration: {
       type: Number,
       required: true,
     },

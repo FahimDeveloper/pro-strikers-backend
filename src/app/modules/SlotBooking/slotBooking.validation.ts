@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 const createValidation = z.object({
   body: z.object({
-    facility: z.string({
-      required_error: 'Facility is required.',
-      invalid_type_error: 'Facility must be a valid ObjectId string.',
+    training: z.string({
+      required_error: 'training is required.',
+      invalid_type_error: 'training must be a string.',
     }),
     user: z.string({
       required_error: 'User is required.',
-      invalid_type_error: 'User must be a valid ObjectId string.',
+      invalid_type_error: 'User must be a valid string.',
     }),
     time_slot: z.string({
       required_error: 'Time slot is required.',
@@ -23,14 +23,14 @@ const createValidation = z.object({
 
 const updateValidation = z.object({
   body: z.object({
-    facility: z
+    training: z
       .string({
-        invalid_type_error: 'Facility must be a valid ObjectId string.',
+        invalid_type_error: 'training must be a valid string.',
       })
       .optional(),
     user: z
       .string({
-        invalid_type_error: 'User must be a valid ObjectId string.',
+        invalid_type_error: 'User must be a valid string.',
       })
       .optional(),
     time_slot: z
@@ -46,7 +46,7 @@ const updateValidation = z.object({
   }),
 });
 
-export const FacilityCartReservationValidations = {
+export const SlotBookingValidations = {
   createValidation,
   updateValidation,
 };

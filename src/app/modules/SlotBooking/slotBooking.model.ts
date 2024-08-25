@@ -1,0 +1,30 @@
+import { model, Schema } from 'mongoose';
+import { ISlotBooking } from './slotBooking.interface';
+
+const slotBookingSchema = new Schema<ISlotBooking>(
+  {
+    training: {
+      type: Schema.Types.ObjectId,
+      required: true,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    time_slot: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: String,
+      required: true,
+    },
+  },
+  { versionKey: false, timestamps: true },
+);
+
+export const SlotBooking = model<ISlotBooking>(
+  'SlotBooking',
+  slotBookingSchema,
+);

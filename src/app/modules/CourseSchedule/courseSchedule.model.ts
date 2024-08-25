@@ -21,6 +21,10 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
       type: Number,
       required: true,
     },
+    enrolled: {
+      type: Number,
+      default: 0,
+    },
     start_date: {
       type: String,
       required: true,

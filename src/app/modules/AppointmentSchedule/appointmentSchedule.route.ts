@@ -11,7 +11,7 @@ route.get('/', AppointmentSheduleControllers.getAllAppointments);
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   AppointmentSheduleControllers.getSingleAppointment,
 );
 

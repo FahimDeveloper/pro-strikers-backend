@@ -15,7 +15,7 @@ const createValidation = z.object({
       invalid_type_error: 'facility must be string',
       required_error: 'facility is required',
     }),
-    facility_duration: z.number({
+    duration: z.number({
       invalid_type_error: 'facility duration must be number',
       required_error: 'facility duration is required',
     }),
@@ -75,7 +75,7 @@ const updateValidation = z.object({
         required_error: 'sport is required',
       })
       .optional(),
-    facility_duration: z
+    duration: z
       .number({
         invalid_type_error: 'facility duration must be number',
         required_error: 'facility duration is required',

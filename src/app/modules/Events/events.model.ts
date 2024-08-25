@@ -45,7 +45,7 @@ const eventSchema = new Schema<IEvent>(
     },
     registration: {
       type: Number,
-      required: true,
+      default: 0,
     },
     description: {
       type: String,

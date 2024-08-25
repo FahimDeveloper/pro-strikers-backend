@@ -9,7 +9,7 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   AppointmentGroupReservationController.getAllAppointmentGroupReservation,
 );
 
