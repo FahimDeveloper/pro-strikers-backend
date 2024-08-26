@@ -14,14 +14,20 @@ route.get(
 );
 
 route.get(
+  '/slots',
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
+  AppointmentGroupReservationController.getAppointmentReservationSlots,
+);
+
+route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   AppointmentGroupReservationController.getSingleAppointmentGroupReservation,
 );
 
 route.post(
-  '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  '/create/:id',
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   validateRequest(AppointmentGroupReservationValidations.createValidation),
   AppointmentGroupReservationController.createAppointmentGroupReservation,
 );

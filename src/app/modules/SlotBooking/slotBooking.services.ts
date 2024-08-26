@@ -22,12 +22,7 @@ const getSlotBookingsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const deleteSlotBookingFromDB = async (id: string) => {
-  const result = await SlotBooking.findByIdAndDelete(id);
-  return result;
-};
-
-const deleteUserSlotBookingsFromDB = async (id: string) => {
-  const result = await SlotBooking.deleteMany({ user: id });
+  const result = await SlotBooking.findOneAndDelete({ id: id });
   return result;
 };
 
@@ -35,5 +30,4 @@ export const SlotBookingServices = {
   createSlotBookingIntoDB,
   getSlotBookingsFromDB,
   deleteSlotBookingFromDB,
-  deleteUserSlotBookingsFromDB,
 };

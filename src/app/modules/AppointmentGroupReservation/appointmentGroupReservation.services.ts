@@ -1,12 +1,23 @@
+import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { SlotBooking } from '../SlotBooking/slotBooking.model';
 import { IAppointmentGroupReservation } from './appointmentGroupReservation.interface';
 import { AppointmentGroupReservation } from './appointmentGroupReservation.model';
 
 const createAppointmentGroupReservationIntoDB = async (
+  id: string,
   payload: IAppointmentGroupReservation,
 ) => {
-  const result = await AppointmentGroupReservation.create(payload);
-  return result;
+  const deleteSlots = await SlotBooking.deleteMany({
+    user: id,
+    training: payload.appointment,
+  });
+  if (deleteSlots) {
+    const result = await AppointmentGroupReservation.create(payload);
+    return result;
+  } else {
+    throw new Error('Failed your appointment reservation');
+  }
 };
 
 const updateAppointmentGroupReservationIntoDB = async (
@@ -17,6 +28,30 @@ const updateAppointmentGroupReservationIntoDB = async (
     id,
     payload,
   );
+  return result;
+};
+
+const getAppointmentReservationSlotsFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const { date, training } = query;
+  const result = await AppointmentGroupReservation.aggregate([
+    { $unwind: '$bookings' },
+    {
+      $match: {
+        'bookings.date': date,
+        'bookings.training': new mongoose.Types.ObjectId(training as string),
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        date: '$bookings.date',
+        time_slot: '$bookings.time_slot',
+        training: '$bookings.training',
+      },
+    },
+  ]);
   return result;
 };
 
@@ -54,4 +89,5 @@ export const AppointmentGroupReservationServices = {
   getAllAppointmentGroupReservationsFromDB,
   getSingleAppointmentGroupReservationFromDB,
   deleteAppointmentGroupReservationFromDB,
+  getAppointmentReservationSlotsFromDB,
 };

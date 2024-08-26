@@ -3,6 +3,12 @@ import { ISlotBooking } from './slotBooking.interface';
 
 const slotBookingSchema = new Schema<ISlotBooking>(
   {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      indexes: true,
+    },
     training: {
       type: Schema.Types.ObjectId,
       required: true,

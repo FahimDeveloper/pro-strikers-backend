@@ -21,12 +21,6 @@ router.post(
 );
 
 router.delete(
-  '/delete/slots',
-  authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
-  SlotBookingController.deleteUserSlotBookings,
-);
-
-router.delete(
   '/delete/:id',
   authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
   SlotBookingController.deleteSlotBooking,

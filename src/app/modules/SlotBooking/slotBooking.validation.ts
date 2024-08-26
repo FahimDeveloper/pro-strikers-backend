@@ -2,6 +2,10 @@ import { z } from 'zod';
 
 const createValidation = z.object({
   body: z.object({
+    id: z.string({
+      required_error: 'id is required.',
+      invalid_type_error: 'id must be a string.',
+    }),
     training: z.string({
       required_error: 'training is required.',
       invalid_type_error: 'training must be a string.',
@@ -23,6 +27,11 @@ const createValidation = z.object({
 
 const updateValidation = z.object({
   body: z.object({
+    id: z
+      .string({
+        required_error: 'id is required.',
+      })
+      .optional(),
     training: z
       .string({
         invalid_type_error: 'training must be a valid string.',
