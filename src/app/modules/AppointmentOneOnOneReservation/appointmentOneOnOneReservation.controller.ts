@@ -5,12 +5,26 @@ import { AppointmentOneOnOneReservationServices } from './appointmentOneOnOneRes
 
 const createAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
   await AppointmentOneOnOneReservationServices.createAppointmentOneOnOneReservationIntoDB(
+    req.params.id,
     req.body,
   );
   sendResponse(
     res,
     httpStatus.CREATED,
     'Appointment One On One reservation created succesfully',
+  );
+});
+
+const getAppointmentOneOnOneReservationSlots = catchAsync(async (req, res) => {
+  const result =
+    await AppointmentOneOnOneReservationServices.getAppointmentOneOnOneReservationSlotsFromDB(
+      req.query,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Appointment one on one reservation slots fetch succesfully',
+    result,
   );
 });
 
@@ -70,4 +84,5 @@ export const AppointmentOneOnOneReservationController = {
   getSingleAppointmentOneOnOneReservation,
   updateAppointmentOneOnOneReservation,
   deleteAppointmentOneOnOneReservation,
+  getAppointmentOneOnOneReservationSlots,
 };

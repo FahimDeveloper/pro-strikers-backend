@@ -14,14 +14,20 @@ route.get(
 );
 
 route.get(
+  '/slots',
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
+  FacilityReservationController.getFacilityReservationSlots,
+);
+
+route.get(
   '/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilityReservationController.getSingleFacilityReservation,
 );
 
 route.post(
-  '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  '/create/:id',
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   validateRequest(FacilityReservationValidations.createValidation),
   FacilityReservationController.createFacilityReservation,
 );

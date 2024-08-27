@@ -4,7 +4,10 @@ import sendResponse from '../../utils/sendResponse';
 import { FacilityReservationServices } from './facilityReservation.services';
 
 const createFacilityReservation = catchAsync(async (req, res) => {
-  await FacilityReservationServices.createFacilityReservationIntoDB(req.body);
+  await FacilityReservationServices.createFacilityReservationIntoDB(
+    req.params.id,
+    req.body,
+  );
   sendResponse(
     res,
     httpStatus.CREATED,
@@ -23,6 +26,19 @@ const getAllFacilitiesReservation = catchAsync(async (req, res) => {
     'Facilities reservation fetch succesfully',
     result,
     count,
+  );
+});
+
+const getFacilityReservationSlots = catchAsync(async (req, res) => {
+  const result =
+    await FacilityReservationServices.getFacilityReservationSlotsFromDB(
+      req.query,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Facility reservation slots fetch succesfully',
+    result,
   );
 });
 
@@ -60,4 +76,5 @@ export const FacilityReservationController = {
   getSingleFacilityReservation,
   updateFacilityReservation,
   deleteFacilityReservation,
+  getFacilityReservationSlots,
 };

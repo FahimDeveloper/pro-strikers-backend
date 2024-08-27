@@ -9,19 +9,25 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   AppointmentOneOnOneReservationController.getAllAppointmentOneOnOneReservations,
 );
 
 route.get(
+  '/slots',
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
+  AppointmentOneOnOneReservationController.getAppointmentOneOnOneReservationSlots,
+);
+
+route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   AppointmentOneOnOneReservationController.getSingleAppointmentOneOnOneReservation,
 );
 
 route.post(
-  '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  '/create/:id',
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   validateRequest(AppointmentOneOnOneReservationValidations.createValidation),
   AppointmentOneOnOneReservationController.createAppointmentOneOnOneReservation,
 );

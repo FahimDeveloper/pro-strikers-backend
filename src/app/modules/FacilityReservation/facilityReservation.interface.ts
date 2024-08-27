@@ -1,11 +1,22 @@
 import mongoose from 'mongoose';
 
 export interface IFacilityReservation {
-  user_email: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  age: number;
   facility: mongoose.Types.ObjectId;
-  category: string;
-  trainer: string;
-  issue_date: string;
-  facility_date: string;
-  time_slots: string[];
+  street_address: string;
+  city: string;
+  state: string;
+  sport: string;
+  zip_code: string;
+  bookings: IFacilityBookings[];
+}
+
+export interface IFacilityBookings {
+  date: string;
+  time_slot: string;
+  training: mongoose.Types.ObjectId;
 }

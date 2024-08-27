@@ -1,42 +1,38 @@
 import { Schema, model } from 'mongoose';
 import { IFacilityReservation } from './facilityReservation.interface';
 
-const appointmentReservationSchema = new Schema<IFacilityReservation>(
+const FacilityBookingsSchema = new Schema(
   {
-    user_email: {
-      type: String,
-      required: true,
-    },
+    date: { type: String, required: true },
+    time_slot: { type: String, required: true },
+    training: { type: Schema.Types.ObjectId, ref: 'Training', required: true },
+  },
+  { versionKey: false, _id: false },
+);
+
+const FacilityReservationSchema = new Schema<IFacilityReservation>(
+  {
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    age: { type: Number, required: true },
     facility: {
       type: Schema.Types.ObjectId,
       ref: 'FacilitySchedules',
       required: true,
     },
-    category: {
-      type: String,
-      required: true,
-    },
-    trainer: {
-      type: String,
-      required: true,
-    },
-    issue_date: {
-      type: String,
-      required: true,
-    },
-    facility_date: {
-      type: String,
-      required: true,
-    },
-    time_slots: {
-      type: [String],
-      required: true,
-    },
+    street_address: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    sport: { type: String, required: true },
+    zip_code: { type: String, required: true },
+    bookings: { type: [FacilityBookingsSchema], required: true },
   },
-  { timestamps: true, versionKey: false },
+  { versionKey: false, timestamps: true },
 );
 
 export const FacilityReservation = model<IFacilityReservation>(
   'FacilityReservation',
-  appointmentReservationSchema,
+  FacilityReservationSchema,
 );

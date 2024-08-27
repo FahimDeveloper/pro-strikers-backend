@@ -84,6 +84,14 @@ const createValidation = z.object({
       .refine(val => mongoose.Types.ObjectId.isValid(val), {
         message: 'Invalid ObjectId',
       }),
+    trainer: z
+      .string({
+        required_error: 'Trainer ID is required',
+        invalid_type_error: 'Trainer must be a valid ObjectId',
+      })
+      .refine(val => mongoose.Types.ObjectId.isValid(val), {
+        message: 'Invalid ObjectId',
+      }),
     street_address: z.string({
       required_error: 'Street address is required',
       invalid_type_error: 'Street address must be a string',
@@ -151,6 +159,14 @@ const updateValidation = z.object({
     appointment: z
       .string({
         invalid_type_error: 'Appointment must be a valid ObjectId',
+      })
+      .refine(val => mongoose.Types.ObjectId.isValid(val), {
+        message: 'Invalid ObjectId',
+      })
+      .optional(),
+    trainer: z
+      .string({
+        invalid_type_error: 'Trainer must be a valid ObjectId',
       })
       .refine(val => mongoose.Types.ObjectId.isValid(val), {
         message: 'Invalid ObjectId',

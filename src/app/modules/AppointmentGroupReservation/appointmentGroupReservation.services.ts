@@ -31,7 +31,7 @@ const updateAppointmentGroupReservationIntoDB = async (
   return result;
 };
 
-const getAppointmentReservationSlotsFromDB = async (
+const getAppointmentGroupReservationSlotsFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const { date, training } = query;
@@ -59,10 +59,19 @@ const getAllAppointmentGroupReservationsFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const appointmentGroupReservationQuery = new QueryBuilder(
-    AppointmentGroupReservation.find(),
+    AppointmentGroupReservation.find().populate([
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+      {
+        path: 'appointment',
+        select: 'appointment_name duration',
+      },
+    ]),
     query,
   )
-    .search(['email phone'])
+    .search(['email', 'phone'])
     .filter()
     .paginate();
   const result = await appointmentGroupReservationQuery?.modelQuery;
@@ -89,5 +98,5 @@ export const AppointmentGroupReservationServices = {
   getAllAppointmentGroupReservationsFromDB,
   getSingleAppointmentGroupReservationFromDB,
   deleteAppointmentGroupReservationFromDB,
-  getAppointmentReservationSlotsFromDB,
+  getAppointmentGroupReservationSlotsFromDB,
 };

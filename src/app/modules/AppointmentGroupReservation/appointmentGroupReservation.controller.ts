@@ -15,9 +15,9 @@ const createAppointmentGroupReservation = catchAsync(async (req, res) => {
   );
 });
 
-const getAppointmentReservationSlots = catchAsync(async (req, res) => {
+const getAppointmentGroupReservationSlots = catchAsync(async (req, res) => {
   const result =
-    await AppointmentGroupReservationServices.getAppointmentReservationSlotsFromDB(
+    await AppointmentGroupReservationServices.getAppointmentGroupReservationSlotsFromDB(
       req.query,
     );
   sendResponse(
@@ -84,5 +84,5 @@ export const AppointmentGroupReservationController = {
   getSingleAppointmentGroupReservation,
   updateAppointmentGroupReservation,
   deleteAppointmentGroupReservation,
-  getAppointmentReservationSlots,
+  getAppointmentGroupReservationSlots,
 };

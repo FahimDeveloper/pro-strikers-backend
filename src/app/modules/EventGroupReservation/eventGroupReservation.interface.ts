@@ -7,8 +7,8 @@ export interface IEventGroupReservation {
   email: string;
   phone: string;
   age: number;
-  preferred_time: string;
-  preferred_date: string;
+  // preferred_time: string;
+  // preferred_date: string;
   event: mongoose.Types.ObjectId;
   street_address: string;
   city: string;

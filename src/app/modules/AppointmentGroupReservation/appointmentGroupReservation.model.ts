@@ -48,7 +48,7 @@ const AppointmentGroupReservationSchema = new Schema(
     team: { type: [AppointmentGroupMembersSchema], required: true },
     bookings: { type: [AppointmentBookingsSchema], required: true },
   },
-  { versionLey: false, timestamps: true },
+  { versionKey: false, timestamps: true },
 );
 
 export const AppointmentGroupReservation = model<IAppointmentGroupReservation>(
