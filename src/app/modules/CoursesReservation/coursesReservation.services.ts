@@ -1,4 +1,6 @@
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
+import AppError from '../../errors/AppError';
 import { CourseSchedule } from '../CourseSchedule/courseSchedule.model';
 import { ICourseReservation } from './coursesReservation.interface';
 import { CourseReservation } from './coursesReservation.model';
@@ -6,9 +8,20 @@ import { CourseReservation } from './coursesReservation.model';
 const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
   const checkCourse = await CourseSchedule.findById(payload.course);
   if (!checkCourse) {
-    throw new Error('Bootcamp not found, Please enter a valid Bootcamp ID');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Bootcamp not found, Please enter a valid Bootcamp ID',
+    );
+  } else if (checkCourse?.sport !== payload.sport) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Reservation sport and bootcamp sport not match',
+    );
   } else if (checkCourse.capacity === checkCourse.enrolled) {
-    throw new Error('Course is fully booked, please choose another course');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Course is fully booked, please choose another course',
+    );
   } else {
     const updatedCourse = await CourseSchedule.findByIdAndUpdate(
       payload.course,
@@ -16,7 +29,8 @@ const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
       { new: true, runValidators: true },
     );
     if (!updatedCourse) {
-      throw new Error(
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
         'Failed course enrollment, Try again later or contact with support',
       );
     }

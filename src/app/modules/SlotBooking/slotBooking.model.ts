@@ -30,6 +30,8 @@ const slotBookingSchema = new Schema<ISlotBooking>(
   { versionKey: false, timestamps: true },
 );
 
+slotBookingSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1200 });
+
 export const SlotBooking = model<ISlotBooking>(
   'SlotBooking',
   slotBookingSchema,

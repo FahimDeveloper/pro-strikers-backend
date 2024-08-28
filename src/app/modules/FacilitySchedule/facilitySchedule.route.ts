@@ -29,15 +29,9 @@ route.post(
 );
 
 route.post(
-  '/by-date',
+  '/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  FacilitySheduleControllers.getFacilityByDate,
-);
-
-route.post(
-  '/by-date',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  FacilitySheduleControllers.getFacilityByDate,
+  FacilitySheduleControllers.getFacilityById,
 );
 
 route.patch(

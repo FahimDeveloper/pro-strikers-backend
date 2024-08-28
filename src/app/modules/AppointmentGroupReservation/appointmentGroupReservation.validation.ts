@@ -1,54 +1,6 @@
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
-// Zod Schema for AppointmentGroupMembers
-const AppointmentGroupMembersSchema = z.object({
-  first_name: z.string({
-    required_error: 'First name is required',
-    invalid_type_error: 'First name must be a string',
-  }),
-  last_name: z.string({
-    required_error: 'Last name is required',
-    invalid_type_error: 'Last name must be a string',
-  }),
-  age: z.number({
-    required_error: 'Age is required',
-    invalid_type_error: 'Age must be a number',
-  }),
-  email: z
-    .string({
-      required_error: 'Email is required',
-      invalid_type_error: 'Email must be a string',
-    })
-    .email({
-      message: 'Invalid email address',
-    }),
-  contact: z.string({
-    required_error: 'Contact is required',
-    invalid_type_error: 'Contact must be a string',
-  }),
-});
-
-// Zod Schema for AppointmentBookings
-const AppointmentBookingsSchema = z.object({
-  date: z.string({
-    required_error: 'Date is required',
-    invalid_type_error: 'Date must be a string',
-  }),
-  time_slot: z.string({
-    required_error: 'Time slot is required',
-    invalid_type_error: 'Time slot must be a string',
-  }),
-  training: z
-    .string({
-      required_error: 'Training ID is required',
-      invalid_type_error: 'Training must be a valid ObjectId',
-    })
-    .refine(val => mongoose.Types.ObjectId.isValid(val), {
-      message: 'Invalid ObjectId',
-    }),
-});
-
 // Zod Schema for AppointmentGroupReservation (Create)
 const createValidation = z.object({
   body: z.object({
@@ -111,16 +63,6 @@ const createValidation = z.object({
     zip_code: z.string({
       required_error: 'Zip code is required',
       invalid_type_error: 'Zip code must be a string',
-    }),
-    team_name: z.string({
-      required_error: 'Team name is required',
-      invalid_type_error: 'Team name must be a string',
-    }),
-    team: z.array(AppointmentGroupMembersSchema, {
-      required_error: 'Team members are required',
-    }),
-    bookings: z.array(AppointmentBookingsSchema, {
-      required_error: 'Bookings are required',
     }),
   }),
 });
@@ -197,13 +139,6 @@ const updateValidation = z.object({
         invalid_type_error: 'Zip code must be a string',
       })
       .optional(),
-    team_name: z
-      .string({
-        invalid_type_error: 'Team name must be a string',
-      })
-      .optional(),
-    team: z.array(AppointmentGroupMembersSchema).optional(),
-    bookings: z.array(AppointmentBookingsSchema).optional(),
   }),
 });
 

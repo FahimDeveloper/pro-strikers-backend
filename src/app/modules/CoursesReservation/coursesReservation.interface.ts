@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 
 export interface ICourseReservation {
-  player_name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
   age: number;
@@ -11,5 +12,4 @@ export interface ICourseReservation {
   state: string;
   sport: string;
   zip_code: string;
-  skill_level: string;
 }

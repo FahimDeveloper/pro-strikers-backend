@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export interface IAppointmentSchedule {
+export interface IOneAppointmentSchedule {
   _id: Types.ObjectId;
   appointment_name: string;
   appointment_type: string;
@@ -9,10 +9,11 @@ export interface IAppointmentSchedule {
   trainer: Types.ObjectId;
   description: string;
   price: number;
-  schedules: IAppointmentDaySchedule[];
+  capacity: number;
+  schedules: IOneAppointmentDaySchedule[];
 }
 
-export interface IAppointmentDaySchedule {
+export interface IOneAppointmentDaySchedule {
   day: string;
   active: boolean;
   start_time: string;

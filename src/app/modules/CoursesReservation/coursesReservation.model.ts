@@ -3,7 +3,8 @@ import { ICourseReservation } from './coursesReservation.interface';
 
 const courseReservationSchema = new Schema<ICourseReservation>(
   {
-    player_name: { type: String, required: true },
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: true },
     course: {
@@ -17,7 +18,6 @@ const courseReservationSchema = new Schema<ICourseReservation>(
     state: { type: String, required: true },
     sport: { type: String, required: true },
     zip_code: { type: String, required: true },
-    skill_level: { type: String, required: true },
   },
   { timestamps: true, versionKey: false },
 );

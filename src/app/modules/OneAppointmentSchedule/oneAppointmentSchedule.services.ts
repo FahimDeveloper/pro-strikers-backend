@@ -1,25 +1,25 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
-import { IAppointmentSchedule } from './appointmentSchedule.interface';
-import { AppointmentSchedule } from './appointmentSchedule.model';
+import { IOneAppointmentSchedule } from './oneAppointmentSchedule.interface';
+import { OneAppointmentSchedule } from './oneAppointmentSchedule.model';
 
-const createAppointmentIntoDB = async (payload: IAppointmentSchedule) => {
-  const result = await AppointmentSchedule.create(payload);
+const createAppointmentIntoDB = async (payload: IOneAppointmentSchedule) => {
+  const result = await OneAppointmentSchedule.create(payload);
   return result;
 };
 
 const updateAppointmentIntoDB = async (
   id: string,
-  payload: Partial<IAppointmentSchedule>,
+  payload: Partial<IOneAppointmentSchedule>,
 ) => {
-  const result = await AppointmentSchedule.findByIdAndUpdate(id, payload);
+  const result = await OneAppointmentSchedule.findByIdAndUpdate(id, payload);
   return result;
 };
 
 const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
   const appointmentQuery = new QueryBuilder(
-    AppointmentSchedule.find().populate([
+    OneAppointmentSchedule.find().populate([
       {
         path: 'trainer',
         select: 'first_name last_name',
@@ -39,7 +39,12 @@ const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSingleAppointmentFromDB = async (id: string) => {
-  const result = await AppointmentSchedule.findById(id);
+  const result = await OneAppointmentSchedule.findById(id);
+  return result;
+};
+
+const getAppointmentByIdFromDB = async (id: string) => {
+  const result = await OneAppointmentSchedule.findById(id);
   if (!result) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -50,14 +55,15 @@ const getSingleAppointmentFromDB = async (id: string) => {
 };
 
 const deleteAppointmentFromDB = async (id: string) => {
-  const result = await AppointmentSchedule.findByIdAndDelete(id);
+  const result = await OneAppointmentSchedule.findByIdAndDelete(id);
   return result;
 };
 
-export const AppointmentScheduleServices = {
+export const OneAppointmentScheduleServices = {
   createAppointmentIntoDB,
   updateAppointmentIntoDB,
   getAllAppointmentsFromDB,
   getSingleAppointmentFromDB,
   deleteAppointmentFromDB,
+  getAppointmentByIdFromDB,
 };

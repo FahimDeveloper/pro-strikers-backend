@@ -21,7 +21,7 @@ const appointmentOneOnOneReservationSchema =
       age: { type: Number, required: true },
       appointment: {
         type: Schema.Types.ObjectId,
-        ref: 'AppointmentSchedule',
+        ref: 'OneAppointmentSchedule',
         required: true,
       },
       trainer: {

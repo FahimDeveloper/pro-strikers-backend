@@ -1,10 +1,10 @@
 import { Schema, model } from 'mongoose';
 import {
-  IAppointmentDaySchedule,
-  IAppointmentSchedule,
-} from './appointmentSchedule.interface';
+  IGroupAppointmentDaySchedule,
+  IGroupAppointmentSchedule,
+} from './groupAppointmentSchedule.interface';
 
-const appointmentScheduleDaySchema = new Schema<IAppointmentDaySchedule>(
+const appointmentScheduleDaySchema = new Schema<IGroupAppointmentDaySchedule>(
   {
     day: {
       type: String,
@@ -24,13 +24,9 @@ const appointmentScheduleDaySchema = new Schema<IAppointmentDaySchedule>(
   { _id: false },
 );
 
-const appointmentScheduleSchema = new Schema<IAppointmentSchedule>(
+const appointmentScheduleSchema = new Schema<IGroupAppointmentSchedule>(
   {
     appointment_name: {
-      type: String,
-      required: true,
-    },
-    appointment_type: {
       type: String,
       required: true,
     },
@@ -38,7 +34,7 @@ const appointmentScheduleSchema = new Schema<IAppointmentSchedule>(
       type: String,
       required: true,
     },
-    duration: {
+    capacity: {
       type: Number,
       required: true,
     },
@@ -60,7 +56,7 @@ const appointmentScheduleSchema = new Schema<IAppointmentSchedule>(
   { timestamps: true, versionKey: false },
 );
 
-export const AppointmentSchedule = model<IAppointmentSchedule>(
-  'AppointmentSchedule',
+export const GroupAppointmentSchedule = model<IGroupAppointmentSchedule>(
+  'GroupAppointmentSchedule',
   appointmentScheduleSchema,
 );

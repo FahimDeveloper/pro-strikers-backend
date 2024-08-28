@@ -11,23 +11,7 @@ export interface IAppointmentGroupReservation {
   city: string;
   state: string;
   sport: string;
+  date: Date;
   zip_code: string;
   trainer: mongoose.Types.ObjectId;
-  team_name: string;
-  team: IAppointmentGroupMembers[];
-  bookings: IAppointmentBookings[];
-}
-
-export interface IAppointmentGroupMembers {
-  first_name: string;
-  last_name: string;
-  age: number;
-  email: string;
-  contact: string;
-}
-
-export interface IAppointmentBookings {
-  date: string;
-  time_slot: string;
-  training: mongoose.Types.ObjectId;
 }

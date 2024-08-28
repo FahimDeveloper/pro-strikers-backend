@@ -1,13 +1,8 @@
-import mongoose from 'mongoose';
 import { z } from 'zod';
 
 const createValidation = z.object({
   body: z.object({
     appointment_name: z.string({
-      invalid_type_error: 'appointment name must be string',
-      required_error: 'appointment name is required',
-    }),
-    appointment_type: z.string({
       invalid_type_error: 'appointment name must be string',
       required_error: 'appointment name is required',
     }),
@@ -18,6 +13,10 @@ const createValidation = z.object({
     duration: z.number({
       invalid_type_error: 'appointment duration must be number',
       required_error: 'appointment duration is required',
+    }),
+    capacity: z.number({
+      invalid_type_error: 'appointment capacity must be number',
+      required_error: 'appointment capacity is required',
     }),
     trainer: z.string({
       invalid_type_error: 'trainer must be string',
@@ -67,11 +66,6 @@ const updateValidation = z.object({
         invalid_type_error: 'appointment name must be string',
       })
       .optional(),
-    appointment_type: z
-      .string({
-        invalid_type_error: 'appointment type must be string',
-      })
-      .optional(),
     sport: z
       .string({
         invalid_type_error: 'sport must be string',
@@ -81,6 +75,11 @@ const updateValidation = z.object({
       .number({
         invalid_type_error: 'appointment duration must be number',
         required_error: 'appointment duration is required',
+      })
+      .optional(),
+    capacity: z
+      .number({
+        invalid_type_error: 'appointment capacity must be number',
       })
       .optional(),
     trainer: z
@@ -127,7 +126,7 @@ const updateValidation = z.object({
   }),
 });
 
-export const appointmentScheduleValidations = {
+export const groupAppointmentScheduleValidations = {
   createValidation,
   updateValidation,
 };

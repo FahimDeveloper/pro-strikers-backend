@@ -3,7 +3,7 @@ import { AdminRoutes } from '../modules/Admin/admin.route';
 import { UserRoutes } from '../modules/User/user.route';
 import { ClassRoutes } from '../modules/ClassSchedule/classSchedule.route';
 import { CourseRoutes } from '../modules/CourseSchedule/courseSchedule.route';
-import { AppointmentRoutes } from '../modules/AppointmentSchedule/appointmentSchedule.route';
+import { GroupAppointmentRoutes } from '../modules/GroupAppointmentSchedule/groupAppointmentSchedule.route';
 import { FacilityRoutes } from '../modules/FacilitySchedule/facilitySchedule.route';
 import { VoucherRoute } from '../modules/Voucher/voucher.route';
 import { PostRoutes } from '../modules/Post/post.route';
@@ -20,6 +20,7 @@ import { AppointmentOneOnOneReservationRoutes } from '../modules/AppointmentOneO
 import { EventIndividualReservationRoutes } from '../modules/EventIndividualReservation/eventIndividualReservation.route';
 import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/eventGroupReservation.route';
 import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
+import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
 const router = express.Router();
 
 const mainRoutes = [
@@ -44,8 +45,12 @@ const mainRoutes = [
     route: CourseRoutes,
   },
   {
-    path: '/schedule/appointments',
-    route: AppointmentRoutes,
+    path: '/schedule/appointments/group',
+    route: GroupAppointmentRoutes,
+  },
+  {
+    path: '/schedule/appointments/one-on-one',
+    route: OneAppointmentRoutes,
   },
   {
     path: '/schedule/facilities',

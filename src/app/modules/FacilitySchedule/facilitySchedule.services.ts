@@ -46,28 +46,12 @@ const getFacilityByQueryFromDB = async (query: Record<string, unknown>) => {
   return result;
 };
 
-const getFacilityByDateFromDB = async (payload: any) => {
-  const result = await FacilitySchedule.findById(payload.id).select(
-    'sport schedules trainer duration',
-  );
+const getFaciliyByIdFromDB = async (id: string) => {
+  const result = await FacilitySchedule.findById(id);
   if (!result) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Facility not found');
+    throw new AppError(httpStatus.BAD_REQUEST, 'Could not find the facility');
   }
-  const day = moment(payload.date).format('dddd');
-  if (result) {
-    let schedule;
-    schedule = result?.schedules.find(
-      (schedule: IFacilityDaySchedule) => schedule.day === day,
-    );
-    if (!schedule?.active) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Facility not available in your selected date',
-      );
-    }
-    result.schedules = [schedule];
-    return result;
-  }
+  return result;
 };
 
 const getSingleFacilityFromDB = async (id: string) => {
@@ -86,6 +70,6 @@ export const FacilityScheduleServices = {
   getAllFacilitiesFromDB,
   getSingleFacilityFromDB,
   deleteFacilityFromDB,
-  getFacilityByDateFromDB,
+  getFaciliyByIdFromDB,
   getFacilityByQueryFromDB,
 };

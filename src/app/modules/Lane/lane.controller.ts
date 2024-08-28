@@ -19,7 +19,6 @@ const getSingleLane = catchAsync(async (req, res) => {
 });
 
 const getLanes = catchAsync(async (req, res) => {
-  console.log('hello');
   const result = await LaneServices.getLanesFromDB();
   sendResponse(res, httpStatus.OK, 'Lanes fetched successfully', result);
 });

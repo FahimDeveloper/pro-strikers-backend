@@ -71,7 +71,7 @@ const getAllAppointmentOneOnOneReservationsFromDB = async (
     ]),
     query,
   )
-    .search(['user_email'])
+    .search(['email', 'phone'])
     .filter()
     .paginate();
   const result = await appointmentOneOnOneReservationQuery?.modelQuery;

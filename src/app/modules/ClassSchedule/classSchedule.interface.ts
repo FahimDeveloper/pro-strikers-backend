@@ -7,7 +7,6 @@ export interface IClassSchedule {
   description: string;
   facility: string;
   trainer: Types.ObjectId;
-  level: string;
   start_date: string;
   end_date: string;
   capacity: number;

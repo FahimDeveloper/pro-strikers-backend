@@ -1,23 +1,30 @@
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { SlotBooking } from '../SlotBooking/slotBooking.model';
 import { IAppointmentGroupReservation } from './appointmentGroupReservation.interface';
 import { AppointmentGroupReservation } from './appointmentGroupReservation.model';
+import { GroupAppointmentSchedule } from '../GroupAppointmentSchedule/groupAppointmentSchedule.model';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const createAppointmentGroupReservationIntoDB = async (
-  id: string,
   payload: IAppointmentGroupReservation,
 ) => {
-  const deleteSlots = await SlotBooking.deleteMany({
-    user: id,
-    training: payload.appointment,
-  });
-  if (deleteSlots) {
-    const result = await AppointmentGroupReservation.create(payload);
-    return result;
-  } else {
-    throw new Error('Failed your appointment reservation');
+  const date = new Date(payload.date);
+  const appointment = await GroupAppointmentSchedule.findById(
+    payload.appointment,
+  );
+  if (!appointment) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Training not found');
   }
+  const count = await AppointmentGroupReservation.find({
+    _id: appointment._id,
+    day: date,
+  }).countDocuments();
+  if (count >= appointment.capacity) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Training capacity exceeded');
+  }
+  const result = await AppointmentGroupReservation.create(payload);
+  return result;
 };
 
 const updateAppointmentGroupReservationIntoDB = async (
@@ -28,30 +35,6 @@ const updateAppointmentGroupReservationIntoDB = async (
     id,
     payload,
   );
-  return result;
-};
-
-const getAppointmentGroupReservationSlotsFromDB = async (
-  query: Record<string, unknown>,
-) => {
-  const { date, training } = query;
-  const result = await AppointmentGroupReservation.aggregate([
-    { $unwind: '$bookings' },
-    {
-      $match: {
-        'bookings.date': date,
-        'bookings.training': new mongoose.Types.ObjectId(training as string),
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        date: '$bookings.date',
-        time_slot: '$bookings.time_slot',
-        training: '$bookings.training',
-      },
-    },
-  ]);
   return result;
 };
 
@@ -66,7 +49,7 @@ const getAllAppointmentGroupReservationsFromDB = async (
       },
       {
         path: 'appointment',
-        select: 'appointment_name duration',
+        select: 'appointment_name',
       },
     ]),
     query,
@@ -98,5 +81,4 @@ export const AppointmentGroupReservationServices = {
   getAllAppointmentGroupReservationsFromDB,
   getSingleAppointmentGroupReservationFromDB,
   deleteAppointmentGroupReservationFromDB,
-  getAppointmentGroupReservationSlotsFromDB,
 };

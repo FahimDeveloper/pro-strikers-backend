@@ -44,10 +44,6 @@ const classScheduleSchema = new Schema<IClassSchedule>(
       ref: 'Admin',
       required: true,
     },
-    level: {
-      type: String,
-      required: true,
-    },
     capacity: {
       type: Number,
       required: true,

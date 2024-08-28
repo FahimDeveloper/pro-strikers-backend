@@ -1,38 +1,32 @@
+import mongoose from 'mongoose';
 import { z } from 'zod';
 
 const createValidation = z.object({
   body: z.object({
-    class_name: z.string({
-      invalid_type_error: 'class name must be string',
-      required_error: 'class name is required',
+    appointment_name: z.string({
+      invalid_type_error: 'appointment name must be string',
+      required_error: 'appointment name is required',
     }),
     sport: z.string({
       invalid_type_error: 'sport must be string',
       required_error: 'sport is required',
     }),
-    description: z.string({
-      invalid_type_error: 'description must be string',
-      required_error: 'description is required',
+    duration: z.number({
+      invalid_type_error: 'appointment duration must be number',
+      required_error: 'appointment duration is required',
     }),
-    facility: z.string({
-      invalid_type_error: 'facility must be string',
-      required_error: 'facility is required',
-    }),
+    capacity: z
+      .number({
+        invalid_type_error: 'appointment capacity must be number',
+      })
+      .optional(),
     trainer: z.string({
       invalid_type_error: 'trainer must be string',
       required_error: 'trainer is required',
     }),
-    capacity: z.number({
-      invalid_type_error: 'capacity must be number',
-      required_error: 'capacity is required',
-    }),
-    start_date: z.string({
-      invalid_type_error: 'start date must be string',
-      required_error: 'start date is required',
-    }),
-    end_date: z.string({
-      invalid_type_error: 'end date must be string',
-      required_error: 'end date is required',
+    description: z.string({
+      invalid_type_error: 'description must be string',
+      required_error: 'description is required',
     }),
     price: z.number({
       invalid_type_error: 'price must be number',
@@ -50,14 +44,12 @@ const createValidation = z.object({
         }),
         start_time: z
           .string({
-            invalid_type_error: 'start time must be string',
-            required_error: 'start time is required',
+            invalid_type_error: 'start_time must be string',
           })
           .optional(),
         end_time: z
           .string({
-            invalid_type_error: 'end time must be string',
-            required_error: 'end time is required',
+            invalid_type_error: 'end_time must be string',
           })
           .optional(),
       }),
@@ -71,9 +63,9 @@ const createValidation = z.object({
 
 const updateValidation = z.object({
   body: z.object({
-    class_name: z
+    appointment_name: z
       .string({
-        invalid_type_error: 'class name must be string',
+        invalid_type_error: 'appointment name must be string',
       })
       .optional(),
     sport: z
@@ -81,39 +73,31 @@ const updateValidation = z.object({
         invalid_type_error: 'sport must be string',
       })
       .optional(),
+    duration: z
+      .number({
+        invalid_type_error: 'appointment duration must be number',
+        required_error: 'appointment duration is required',
+      })
+      .optional(),
+    capacity: z
+      .number({
+        invalid_type_error: 'appointment capacity must be number',
+      })
+      .optional(),
+    trainer: z
+      .string({
+        invalid_type_error: 'trainer must be string',
+        required_error: 'trainer is required',
+      })
+      .optional(),
     description: z
       .string({
         invalid_type_error: 'description must be string',
       })
       .optional(),
-    // facility: z
-    //   .string({
-    //     invalid_type_error: 'facility must be string',
-    //   })
-    //   .optional(),
-    trainer: z
-      .string({
-        invalid_type_error: 'trainer must be string',
-      })
-      .optional(),
-    capacity: z
-      .number({
-        invalid_type_error: 'capacity must be number',
-      })
-      .optional(),
     price: z
       .number({
         invalid_type_error: 'price must be number',
-      })
-      .optional(),
-    start_date: z
-      .string({
-        invalid_type_error: 'start date must be string',
-      })
-      .optional(),
-    end_date: z
-      .string({
-        invalid_type_error: 'end date must be string',
       })
       .optional(),
     schedules: z
@@ -127,12 +111,12 @@ const updateValidation = z.object({
           }),
           start_time: z
             .string({
-              invalid_type_error: 'start time must be string',
+              invalid_type_error: 'start_time must be string',
             })
             .optional(),
           end_time: z
             .string({
-              invalid_type_error: 'end time must be string',
+              invalid_type_error: 'end_time must be string',
             })
             .optional(),
         }),
@@ -144,7 +128,7 @@ const updateValidation = z.object({
   }),
 });
 
-export const classScheduleValidations = {
+export const oneAppointmentScheduleValidations = {
   createValidation,
   updateValidation,
 };

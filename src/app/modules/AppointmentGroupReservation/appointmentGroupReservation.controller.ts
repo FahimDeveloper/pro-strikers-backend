@@ -5,26 +5,12 @@ import { AppointmentGroupReservationServices } from './appointmentGroupReservati
 
 const createAppointmentGroupReservation = catchAsync(async (req, res) => {
   await AppointmentGroupReservationServices.createAppointmentGroupReservationIntoDB(
-    req.params.id,
     req.body,
   );
   sendResponse(
     res,
     httpStatus.CREATED,
     'Appointment Group reservation created succesfully',
-  );
-});
-
-const getAppointmentGroupReservationSlots = catchAsync(async (req, res) => {
-  const result =
-    await AppointmentGroupReservationServices.getAppointmentGroupReservationSlotsFromDB(
-      req.query,
-    );
-  sendResponse(
-    res,
-    httpStatus.OK,
-    'Appointment Group reservation slots fetch succesfully',
-    result,
   );
 });
 
@@ -84,5 +70,4 @@ export const AppointmentGroupReservationController = {
   getSingleAppointmentGroupReservation,
   updateAppointmentGroupReservation,
   deleteAppointmentGroupReservation,
-  getAppointmentGroupReservationSlots,
 };
