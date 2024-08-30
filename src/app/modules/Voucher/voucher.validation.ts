@@ -34,6 +34,12 @@ const createValidation = z.object({
       invalid_type_error: 'description must be string',
       required_error: 'description is required',
     }),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false),
   }),
 });
 const updateValidation = z.object({
@@ -41,45 +47,49 @@ const updateValidation = z.object({
     voucher_type: z
       .string({
         invalid_type_error: 'voucher type must be string',
-        required_error: 'voucher type required',
       })
       .optional(),
     discount_type: z
       .string({
         invalid_type_error: 'discount type must be string',
-        required_error: 'discount type is required',
       })
       .optional(),
     discount_value: z
       .string({
         invalid_type_error: 'discount value must be string',
-        required_error: 'discount value is required',
       })
       .optional(),
     start_date: z
       .date({
         invalid_type_error: 'start date type must be string and date type',
-        required_error: 'start date is required',
       })
       .optional(),
     end_date: z
       .date({
         invalid_type_error: 'end date type must be string and date type',
-        required_error: 'end date is required',
       })
       .optional(),
     voucher_code: z
       .string({
         invalid_type_error: 'voucher code must be string',
-        required_error: 'voucher code is required',
       })
       .optional(),
     description: z
       .string({
         invalid_type_error: 'description must be string',
-        required_error: 'description is required',
       })
       .optional(),
+    used: z
+      .number({
+        invalid_type_error: 'used must be number',
+      })
+      .optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+      })
+      .optional()
+      .default(false),
   }),
 });
 

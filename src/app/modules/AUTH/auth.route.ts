@@ -28,6 +28,8 @@ router.post('/refresh-token', AuthControllers.refreshToken);
 
 router.post('/admin/forgot-password', AuthControllers.adminForgetPassword);
 
+router.post('/user/forgot-password', AuthControllers.userForgetPassword);
+
 router.post('/forgot-password/send-code', AuthControllers.sendResetCode);
 
 router.get('/forgot-password/link-verify/:token', AuthControllers.verifyUiLink);
@@ -35,6 +37,8 @@ router.get('/forgot-password/link-verify/:token', AuthControllers.verifyUiLink);
 router.post('/forgot-password/code-verify', AuthControllers.verifyResetCode);
 
 router.post('/admin/reset-password', AuthControllers.resetAdminPassword);
+
+router.post('/user/reset-password', AuthControllers.resetUserPassword);
 
 // router.post(
 //   '/change-password',

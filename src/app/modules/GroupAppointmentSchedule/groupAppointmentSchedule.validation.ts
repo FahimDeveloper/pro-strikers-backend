@@ -30,6 +30,12 @@ const createValidation = z.object({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false),
     schedules: z.array(
       z.object({
         day: z.string({
@@ -74,7 +80,6 @@ const updateValidation = z.object({
     duration: z
       .number({
         invalid_type_error: 'appointment duration must be number',
-        required_error: 'appointment duration is required',
       })
       .optional(),
     capacity: z
@@ -85,7 +90,6 @@ const updateValidation = z.object({
     trainer: z
       .string({
         invalid_type_error: 'trainer must be string',
-        required_error: 'trainer is required',
       })
       .optional(),
     description: z
@@ -98,6 +102,12 @@ const updateValidation = z.object({
         invalid_type_error: 'price must be number',
       })
       .optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+      })
+      .optional()
+      .default(false),
     schedules: z
       .array(
         z.object({

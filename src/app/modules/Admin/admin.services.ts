@@ -65,7 +65,7 @@ const getSingleAdminUserFromDB = async (id: string) => {
 };
 
 const deleteAdminUserFromDB = async (id: string) => {
-  const result = await Admin.findByIdAndDelete(id);
+  const result = await Admin.findByIdAndUpdate(id, { isDeleted: true });
   return result;
 };
 

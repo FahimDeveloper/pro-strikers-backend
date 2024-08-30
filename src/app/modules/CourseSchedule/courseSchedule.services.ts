@@ -48,7 +48,9 @@ const getSingleCourseFromDB = async (id: string) => {
 };
 
 const deleteCourseFromDB = async (id: string) => {
-  const result = await CourseSchedule.findByIdAndDelete(id);
+  const result = await CourseSchedule.findByIdAndUpdate(id, {
+    isDeleted: true,
+  });
   return result;
 };
 

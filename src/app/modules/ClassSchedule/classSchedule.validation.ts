@@ -38,6 +38,12 @@ const createValidation = z.object({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false),
     schedules: z.array(
       z.object({
         day: z.string({
@@ -116,6 +122,12 @@ const updateValidation = z.object({
         invalid_type_error: 'end date must be string',
       })
       .optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+      })
+      .optional()
+      .default(false),
     schedules: z
       .array(
         z.object({

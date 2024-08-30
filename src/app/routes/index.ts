@@ -21,6 +21,7 @@ import { EventIndividualReservationRoutes } from '../modules/EventIndividualRese
 import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/eventGroupReservation.route';
 import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
+import { PaymentRoute } from '../modules/Payment/Payment.route';
 const router = express.Router();
 
 const mainRoutes = [
@@ -111,6 +112,10 @@ const mainRoutes = [
   {
     path: '/reservations/events/group',
     route: EventGroupReservationRoutes,
+  },
+  {
+    path: '/payments',
+    route: PaymentRoute,
   },
 ];
 

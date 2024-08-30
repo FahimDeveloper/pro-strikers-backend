@@ -21,7 +21,6 @@ const corsConfig = {
 };
 app.options('', cors(corsConfig));
 app.use(cors(corsConfig));
-
 app.use('/api/v1', router);
 app.get('/', (req: Request, res: Response) => {
   try {
@@ -30,7 +29,6 @@ app.get('/', (req: Request, res: Response) => {
     console.log(err);
   }
 });
-
 app.use(globalErrorHandler);
 app.use(notFound);
 

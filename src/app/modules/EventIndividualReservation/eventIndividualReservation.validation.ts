@@ -44,10 +44,6 @@ const createValidation = z.object({
       required_error: 'Zip code is required',
       invalid_type_error: 'Zip code must be a string',
     }),
-    skill_level: z.string({
-      required_error: 'Skill level is required',
-      invalid_type_error: 'Skill level must be a string',
-    }),
   }),
 });
 

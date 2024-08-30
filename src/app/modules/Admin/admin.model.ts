@@ -40,6 +40,11 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
       type: String,
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,

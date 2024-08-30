@@ -59,6 +59,12 @@ const createValidation = z.object({
       })
       .optional(),
     plan: z.enum(['monthly', 'yearly']).optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false),
   }),
 });
 
@@ -128,6 +134,12 @@ const updateValidation = z.object({
       plan: z.enum(['monthly', 'yearly']).optional(),
     })
     .optional(),
+  isDeleted: z
+    .boolean({
+      invalid_type_error: 'isDeleted must be boolean',
+    })
+    .optional()
+    .default(false),
 });
 
 export const UserValidations = {

@@ -77,7 +77,7 @@ const getSingleUserFromDB = async (id: string) => {
 };
 
 const deleteUserFromDB = async (id: string) => {
-  const result = await User.findByIdAndDelete(id);
+  const result = await User.findByIdAndUpdate(id, { isDeleted: true });
   return result;
 };
 

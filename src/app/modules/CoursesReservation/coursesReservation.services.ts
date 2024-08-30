@@ -51,10 +51,18 @@ const getAllCoursesReservationsFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const CourseReservationQuery = new QueryBuilder(
-    CourseReservation.find().populate('course'),
+    CourseReservation.find().populate([
+      {
+        path: 'course',
+      },
+      {
+        path: 'trainer',
+        select: 'first_name last_name phone',
+      },
+    ]),
     query,
   )
-    .search(['email'])
+    .search(['email', 'first_name', 'last_name', 'phone'])
     .filter()
     .paginate();
   const result = await CourseReservationQuery?.modelQuery;

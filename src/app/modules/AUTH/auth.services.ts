@@ -278,9 +278,33 @@ const forgetPasswordForAdmin = async (email: string) => {
   );
   const ui_link =
     process.env.NODE_ENV === 'production'
-      ? config.reset_pass_ui_link
-      : config.reset_pass_local_ui_link;
+      ? config.admin_reset_pass_live_ui_link
+      : config.admin_reset_pass_test_ui_link;
   const link = `${ui_link}/${user._id}/${resetToken}`;
+  await sendEmail({ email, link });
+  return;
+};
+
+const forgetPasswordForUser = async (email: string) => {
+  const user = await User.isUserExistsByEmail(email);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+  }
+  const jwtPayload = {
+    email: user.email,
+    role: user.role,
+  };
+
+  const resetToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    '15m',
+  );
+  const ui_link =
+    process.env.NODE_ENV === 'production'
+      ? config.user_reset_pass_live_ui_link
+      : config.user_reset_pass_test_ui_link;
+  const link = `/reset-password/${ui_link}/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
   return;
 };
@@ -326,6 +350,33 @@ const resetAdminPasswordIntoDB = async (payload: {
   return;
 };
 
+const resetUserPasswordIntoDB = async (payload: {
+  id: string;
+  password: string;
+  token: string;
+}) => {
+  const decoded = jwt.verify(
+    payload.token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+
+  const newHashedPassword = await bcrypt.hash(
+    payload.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  await User.findOneAndUpdate(
+    {
+      email: decoded.email,
+      role: decoded.role,
+    },
+    {
+      password: newHashedPassword,
+    },
+  );
+  return;
+};
+
 export const AuthServices = {
   loginUserIntoDB,
   registerUserIntoDB,
@@ -336,5 +387,7 @@ export const AuthServices = {
   verifyCode,
   resetAdminPasswordIntoDB,
   forgetPasswordForAdmin,
+  forgetPasswordForUser,
+  resetUserPasswordIntoDB,
   // resetPassword,
 };

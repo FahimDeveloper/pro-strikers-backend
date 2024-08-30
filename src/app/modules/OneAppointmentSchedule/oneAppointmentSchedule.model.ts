@@ -52,9 +52,19 @@ const appointmentScheduleSchema = new Schema<IOneAppointmentSchedule>(
       required: true,
     },
     schedules: [appointmentScheduleDaySchema],
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true, versionKey: false },
 );
+
+appointmentScheduleSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 export const OneAppointmentSchedule = model<IOneAppointmentSchedule>(
   'OneAppointmentSchedule',

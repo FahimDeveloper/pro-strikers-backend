@@ -14,7 +14,6 @@ const eventIndividualReservationSchema =
       state: { type: String, required: true },
       sport: { type: String, required: true },
       zip_code: { type: String, required: true },
-      skill_level: { type: String, required: true },
     },
     { timestamps: true, versionKey: false },
   );

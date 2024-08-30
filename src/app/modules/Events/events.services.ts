@@ -43,7 +43,7 @@ const getSingleEventFromDB = async (id: string) => {
 };
 
 const deleteEventFromDB = async (id: string) => {
-  const result = await Event.findByIdAndDelete(id);
+  const result = await Event.findByIdAndUpdate(id, { isDeleted: true });
   return result;
 };
 

@@ -57,7 +57,12 @@ const createValidation = z.object({
         invalid_type_error: 'schedules are must be an array of objects',
       },
     ),
-    isDeleted: z.boolean().default(false).optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false),
   }),
 });
 
@@ -66,37 +71,31 @@ const updateValidation = z.object({
     facility_name: z
       .string({
         invalid_type_error: 'facility name must be string',
-        required_error: 'facility name is required',
       })
       .optional(),
     sport: z
       .string({
         invalid_type_error: 'sport must be string',
-        required_error: 'sport is required',
       })
       .optional(),
     duration: z
       .number({
         invalid_type_error: 'facility duration must be number',
-        required_error: 'facility duration is required',
       })
       .optional(),
     description: z
       .string({
         invalid_type_error: 'description must be string',
-        required_error: 'description is required',
       })
       .optional(),
     price: z
       .number({
         invalid_type_error: 'price must be number',
-        required_error: 'price is required',
       })
       .optional(),
     lane: z
       .string({
         invalid_type_error: 'lane must be string',
-        required_error: 'lane is required',
       })
       .optional(),
     schedules: z
@@ -104,11 +103,9 @@ const updateValidation = z.object({
         z.object({
           day: z.string({
             invalid_type_error: 'day must be string',
-            required_error: 'day is required',
           }),
           active: z.boolean({
             invalid_type_error: 'active must be boolean',
-            required_error: 'active is required',
           }),
           start_time: z
             .string({
@@ -122,12 +119,16 @@ const updateValidation = z.object({
             .optional(),
         }),
         {
-          required_error: 'schedules are required',
           invalid_type_error: 'schedules are must be an array of objects',
         },
       )
       .optional(),
-    isDeleted: z.boolean().default(false).optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+      })
+      .optional()
+      .default(false),
   }),
 });
 

@@ -34,6 +34,13 @@ const createValidation = z.object({
       invalid_type_error: 'password must be string',
       required_error: 'password is required',
     }),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .optional()
+      .default(false),
   }),
 });
 
@@ -42,20 +49,18 @@ const updateValidation = z.object({
     first_name: z
       .string({
         invalid_type_error: 'first name must be string',
-        required_error: 'first name is required',
       })
       .optional(),
     last_name: z
       .string({
         invalid_type_error: 'last name must be string',
-        required_error: 'last name is required',
       })
       .optional(),
     image: z.any().optional(),
     phone: z.string().optional(),
     gender: z.enum(['male', 'female']).optional(),
     date_of_birth: z
-      .string({ invalid_type_error: 'email must be string' })
+      .string({ invalid_type_error: 'date_of_birth must be string' })
       .optional(),
     email: z
       .string({
@@ -68,15 +73,19 @@ const updateValidation = z.object({
     description: z
       .string({
         invalid_type_error: 'description must be string',
-        required_error: 'description is required',
       })
       .optional(),
     password: z
       .string({
         invalid_type_error: 'password must be string',
-        required_error: 'password is required',
       })
       .optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+      })
+      .optional()
+      .default(false),
   }),
 });
 

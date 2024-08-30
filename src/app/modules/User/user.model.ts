@@ -65,6 +65,11 @@ const userSchema = new Schema<IUser, UserModel>(
       type: String,
       enum: ['monthly', 'yearly'],
     },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -72,13 +77,24 @@ const userSchema = new Schema<IUser, UserModel>(
   },
 );
 
+// userSchema.pre('save', async function (next) {
+//   const user = this; // doc
+//   // hashing password and save into DB
+//   user.password = await bcrypt.hash(
+//     user.password,
+//     Number(config.bcrypt_salt_rounds),
+//   );
+//   next();
+// });
+
 userSchema.pre('save', async function (next) {
-  const user = this; // doc
-  // hashing password and save into DB
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
+  const salt = await bcrypt.genSalt(Number(config.bcrypt_salt_rounds));
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+userSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 

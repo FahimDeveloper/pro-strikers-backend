@@ -40,6 +40,12 @@ const createValidation = z.object({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false),
   }),
 });
 
@@ -48,19 +54,16 @@ const updateValidation = z.object({
     event_name: z
       .string({
         invalid_type_error: 'event name must be string',
-        required_error: 'event name is required',
       })
       .optional(),
     event_type: z
       .string({
         invalid_type_error: 'event type must be string',
-        required_error: 'event type is required',
       })
       .optional(),
     sport: z
       .string({
         invalid_type_error: 'sport must be string',
-        required_error: 'sport is required',
       })
       .optional(),
     start_date: z.string(),
@@ -68,7 +71,6 @@ const updateValidation = z.object({
     location: z
       .string({
         invalid_type_error: 'location must be string',
-        required_error: 'location is required',
       })
       .optional(),
     registration_start: z.string(),
@@ -82,15 +84,19 @@ const updateValidation = z.object({
     allowed_registrations: z
       .number({
         invalid_type_error: 'allowed registrations must be number',
-        required_error: 'allowed registrations is required',
       })
       .optional(),
     description: z
       .string({
         invalid_type_error: 'description must be string',
-        required_error: 'description is required',
       })
       .optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+      })
+      .optional()
+      .default(false),
     price: z
       .number({
         invalid_type_error: 'price must be number',

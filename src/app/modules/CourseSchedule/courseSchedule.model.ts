@@ -49,9 +49,19 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
       type: Number,
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true, versionKey: false },
 );
+
+courseScheduleSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 export const CourseSchedule = model<ICourseSchedule>(
   'CoursesSchedule',

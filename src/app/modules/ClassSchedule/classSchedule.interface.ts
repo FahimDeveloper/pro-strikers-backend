@@ -11,6 +11,7 @@ export interface IClassSchedule {
   end_date: string;
   capacity: number;
   price: number;
+  isDeleted: boolean;
   schedules: IClassDaySchedule[];
 }
 

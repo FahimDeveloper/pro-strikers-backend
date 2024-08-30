@@ -5,6 +5,16 @@ import { IOneAppointmentSchedule } from './oneAppointmentSchedule.interface';
 import { OneAppointmentSchedule } from './oneAppointmentSchedule.model';
 
 const createAppointmentIntoDB = async (payload: IOneAppointmentSchedule) => {
+  const findSport = await OneAppointmentSchedule.findOne({
+    sport: payload.sport,
+    trainer: payload.trainer,
+  });
+  if (findSport) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      'This Trainer with this Sport appointment already exists',
+    );
+  }
   const result = await OneAppointmentSchedule.create(payload);
   return result;
 };
@@ -55,7 +65,9 @@ const getAppointmentByIdFromDB = async (id: string) => {
 };
 
 const deleteAppointmentFromDB = async (id: string) => {
-  const result = await OneAppointmentSchedule.findByIdAndDelete(id);
+  const result = await OneAppointmentSchedule.findByIdAndUpdate(id, {
+    isDeleted: true,
+  });
   return result;
 };
 

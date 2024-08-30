@@ -64,7 +64,7 @@ const getClassByDateFromDB = async (payload: any) => {
 };
 
 const deleteClassFromDB = async (id: string) => {
-  const result = await ClassSchedule.findByIdAndDelete(id);
+  const result = await ClassSchedule.findByIdAndUpdate(id, { isDeleted: true });
   return result;
 };
 

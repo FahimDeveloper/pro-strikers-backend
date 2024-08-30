@@ -47,6 +47,12 @@ const createValidation = z.object({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false),
   }),
 });
 
@@ -55,25 +61,21 @@ const updateValidation = z.object({
     course_name: z
       .string({
         invalid_type_error: 'class name must be string',
-        required_error: 'class name is required',
       })
       .optional(),
     sport: z
       .string({
         invalid_type_error: 'sport must be string',
-        required_error: 'sport is required',
       })
       .optional(),
     trainer: z
       .string({
         invalid_type_error: 'trainer must be string',
-        required_error: 'trainer is required',
       })
       .optional(),
     capacity: z
       .number({
         invalid_type_error: 'capacity must be number',
-        required_error: 'capacity is required',
       })
       .optional(),
     enrolled: z
@@ -84,39 +86,39 @@ const updateValidation = z.object({
     start_date: z
       .string({
         invalid_type_error: 'start date must be string',
-        required_error: 'start date is required',
       })
       .optional(),
     end_date: z
       .string({
         invalid_type_error: 'end date must be string',
-        required_error: 'end date is required',
       })
       .optional(),
     start_time: z
       .string({
         invalid_type_error: 'start time must be string',
-        required_error: 'start time is required',
       })
       .optional(),
     end_time: z
       .string({
         invalid_type_error: 'end time must be string',
-        required_error: 'end time is required',
       })
       .optional(),
     description: z
       .string({
         invalid_type_error: 'description must be string',
-        required_error: 'description is required',
       })
       .optional(),
     price: z
       .number({
         invalid_type_error: 'price must be number',
-        required_error: 'price is required',
       })
       .optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+      })
+      .optional()
+      .default(false),
   }),
 });
 

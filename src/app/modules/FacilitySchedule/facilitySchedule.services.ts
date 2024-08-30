@@ -6,7 +6,6 @@ import {
 } from './facilitySchedule.interface';
 import { FacilitySchedule } from './facilitySchedule.model';
 import AppError from '../../errors/AppError';
-import moment from 'moment';
 
 const createFacilityIntoDB = async (payload: IFacilitySchedule) => {
   const findSport = await FacilitySchedule.findOne({ sport: payload.sport });
@@ -43,7 +42,11 @@ const getAllFacilitiesFromDB = async (query: Record<string, unknown>) => {
 
 const getFacilityByQueryFromDB = async (query: Record<string, unknown>) => {
   const result = await FacilitySchedule.findOne(query);
-  return result;
+  if (result) {
+    return result;
+  } else {
+    return {};
+  }
 };
 
 const getFaciliyByIdFromDB = async (id: string) => {
@@ -60,7 +63,9 @@ const getSingleFacilityFromDB = async (id: string) => {
 };
 
 const deleteFacilityFromDB = async (id: string) => {
-  const result = await FacilitySchedule.findByIdAndDelete(id);
+  const result = await FacilitySchedule.findByIdAndUpdate(id, {
+    isDeleted: true,
+  });
   return result;
 };
 

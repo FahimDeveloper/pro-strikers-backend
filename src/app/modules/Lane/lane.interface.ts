@@ -3,6 +3,7 @@ export interface ILane {
   description: string;
   addon: boolean;
   addons: Array<IAddon>;
+  isDeleted: boolean;
 }
 
 export interface IAddon {

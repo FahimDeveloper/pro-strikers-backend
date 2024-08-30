@@ -60,10 +60,20 @@ const classScheduleSchema = new Schema<IClassSchedule>(
       type: Number,
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     schedules: [classScheduleDaySchema],
   },
   { versionKey: false, timestamps: true },
 );
+
+classScheduleSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 export const ClassSchedule = model<IClassSchedule>(
   'ClassesSchedule',

@@ -44,14 +44,6 @@ const createValidation = z.object({
       required_error: 'Sport is required',
       invalid_type_error: 'Sport must be a string',
     }),
-    // preferred_time: z.string({
-    //   required_error: 'Preferred time is required',
-    //   invalid_type_error: 'Preferred time must be a string',
-    // }),
-    // preferred_date: z.string({
-    //   required_error: 'Preferred date is required',
-    //   invalid_type_error: 'Preferred date must be a string',
-    // }),
     zip_code: z.string({
       required_error: 'Zip code is required',
       invalid_type_error: 'Zip code must be a string',
@@ -142,16 +134,6 @@ const updateValidation = z.object({
         invalid_type_error: 'Sport must be a string',
       })
       .optional(),
-    // preferred_time: z
-    //   .string({
-    //     invalid_type_error: 'Preferred time must be a string',
-    //   })
-    //   .optional(),
-    // preferred_date: z
-    //   .string({
-    //     invalid_type_error: 'Preferred date must be a string',
-    //   })
-    //   .optional(),
     zip_code: z
       .string({
         invalid_type_error: 'Zip code must be a string',

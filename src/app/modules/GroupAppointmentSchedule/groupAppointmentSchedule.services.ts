@@ -176,7 +176,9 @@ const getAppointmentByIdFromDB = async (id: string) => {
 };
 
 const deleteAppointmentFromDB = async (id: string) => {
-  const result = await GroupAppointmentSchedule.findByIdAndDelete(id);
+  const result = await GroupAppointmentSchedule.findByIdAndUpdate(id, {
+    isDeleted: true,
+  });
   return result;
 };
 

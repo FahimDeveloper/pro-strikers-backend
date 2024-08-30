@@ -92,6 +92,15 @@ const adminForgetPassword = catchAsync(async (req, res) => {
   );
 });
 
+const userForgetPassword = catchAsync(async (req, res) => {
+  await AuthServices.forgetPasswordForUser(req.body.email);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Check your email and reset your password within 15 minutes',
+  );
+});
+
 const sendResetCode = catchAsync(async (req, res) => {
   await AuthServices.resetCodeSend(req.body.token);
   sendResponse(
@@ -122,6 +131,17 @@ const resetAdminPassword = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Password reset successfully!');
 });
 
+const resetUserPassword = catchAsync(async (req, res) => {
+  const token = req.body.token;
+
+  if (!token) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
+  }
+
+  await AuthServices.resetUserPasswordIntoDB(req.body);
+  sendResponse(res, httpStatus.OK, 'Password reset successfully!');
+});
+
 export const AuthControllers = {
   loginUser,
   registerUser,
@@ -132,6 +152,8 @@ export const AuthControllers = {
   verifyUiLink,
   verifyResetCode,
   resetAdminPassword,
+  resetUserPassword,
+  userForgetPassword,
   // changePassword,
   // forgetPassword,
 };

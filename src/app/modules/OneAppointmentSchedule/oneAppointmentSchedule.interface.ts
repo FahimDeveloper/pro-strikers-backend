@@ -10,6 +10,7 @@ export interface IOneAppointmentSchedule {
   description: string;
   price: number;
   capacity: number;
+  isDeleted: boolean;
   schedules: IOneAppointmentDaySchedule[];
 }
 

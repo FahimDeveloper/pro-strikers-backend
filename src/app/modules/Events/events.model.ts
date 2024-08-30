@@ -55,8 +55,18 @@ const eventSchema = new Schema<IEvent>(
       type: Number,
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true, versionKey: false },
 );
+
+eventSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 export const Event = model<IEvent>('Event', eventSchema);

@@ -31,8 +31,18 @@ const LaneSchema = new Schema<ILane>(
       required: true,
     },
     addons: [AddonSchema],
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true, versionKey: false },
 );
+
+LaneSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 export const Lane = model<ILane>('Lane', LaneSchema);

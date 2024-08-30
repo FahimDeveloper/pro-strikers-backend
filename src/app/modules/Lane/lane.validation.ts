@@ -47,6 +47,12 @@ const createValidation = z.object({
       invalid_type_error: 'Addon must be a boolean',
       required_error: 'Addon is required',
     }),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+        required_error: 'isDeleted is required',
+      })
+      .default(false),
     addons: z.array(createAddonValidation).optional(),
   }),
 });
@@ -68,6 +74,12 @@ const updateValidation = z.object({
         invalid_type_error: 'Addon must be a boolean',
       })
       .optional(),
+    isDeleted: z
+      .boolean({
+        invalid_type_error: 'isDeleted must be boolean',
+      })
+      .optional()
+      .default(false),
     addons: z.array(updateAddonValidation).optional(),
   }),
 });

@@ -11,5 +11,4 @@ export interface IEventIndividualReservation {
   state: string;
   sport: string;
   zip_code: string;
-  skill_level: string;
 }

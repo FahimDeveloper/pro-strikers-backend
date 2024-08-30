@@ -51,10 +51,20 @@ const appointmentScheduleSchema = new Schema<IGroupAppointmentSchedule>(
       type: Number,
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     schedules: [appointmentScheduleDaySchema],
   },
   { timestamps: true, versionKey: false },
 );
+
+appointmentScheduleSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 export const GroupAppointmentSchedule = model<IGroupAppointmentSchedule>(
   'GroupAppointmentSchedule',
