@@ -21,13 +21,13 @@ import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/ev
 import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
 import { PaymentRoute } from '../modules/Payment/payment.route';
-import { AuthRoutes } from '../modules/Auth/auth.route';
+import { AuthenticationRoutes } from '../modules/Auth/auth.route';
 const router = express.Router();
 
 const mainRoutes = [
   {
     path: '/auth',
-    route: AuthRoutes,
+    route: AuthenticationRoutes,
   },
   {
     path: '/admins',
