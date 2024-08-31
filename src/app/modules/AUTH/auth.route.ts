@@ -40,4 +40,4 @@ router.post('/admin/reset-password', AuthControllers.resetAdminPassword);
 
 router.post('/user/reset-password', AuthControllers.resetUserPassword);
 
-export const AuthRoutes = router;
+export const AuthenticationRoutes = router;
