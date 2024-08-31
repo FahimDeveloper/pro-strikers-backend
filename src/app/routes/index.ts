@@ -8,7 +8,6 @@ import { FacilityRoutes } from '../modules/FacilitySchedule/facilitySchedule.rou
 import { VoucherRoute } from '../modules/Voucher/voucher.route';
 import { PostRoutes } from '../modules/Post/post.route';
 import { EventRoutes } from '../modules/Events/events.route';
-import { AuthRoutes } from '../modules/Auth/auth.route';
 import { StoreRoutes } from '../modules/Store/store.route';
 import { LaneRoutes } from '../modules/Lane/lane.route';
 import { OrderRoutes } from '../modules/Orders/order.route';
@@ -22,6 +21,7 @@ import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/ev
 import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
 import { PaymentRoute } from '../modules/Payment/payment.route';
+import { AuthRoutes } from '../modules/Auth/auth.route';
 const router = express.Router();
 
 const mainRoutes = [
