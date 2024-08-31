@@ -26,12 +26,12 @@ const router = express.Router();
 
 const mainRoutes = [
   {
-    path: '/auth',
-    route: AuthenticationRoutes,
-  },
-  {
     path: '/admins',
     route: AdminRoutes,
+  },
+  {
+    path: '/auth',
+    route: AuthenticationRoutes,
   },
   {
     path: '/users',
