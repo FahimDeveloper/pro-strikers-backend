@@ -19,7 +19,6 @@ route.post('/create-payment-intent', async (req, res) => {
       clientSecret: paymentIntent.client_secret,
     });
   } catch (error) {
-    console.log(error);
     res.status(httpStatus.BAD_REQUEST).json({
       message: 'Something went wrong',
     });
