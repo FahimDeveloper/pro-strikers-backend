@@ -2,10 +2,28 @@
 import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
-import { TUser, UserModel } from './user.interface';
+import { IUser, UserModel } from './user.interface';
 
-const userSchema = new Schema<TUser, UserModel>(
+const userSchema = new Schema<IUser, UserModel>(
   {
+    first_name: {
+      type: String,
+      required: true,
+    },
+    last_name: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+      default: 'https://avatar.iran.liara.run/public/boy',
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female'],
+      required: true,
+    },
     email: {
       type: String,
       required: true,
@@ -14,12 +32,43 @@ const userSchema = new Schema<TUser, UserModel>(
     password: {
       type: String,
       required: true,
-      select: 0,
     },
-
     role: {
       type: String,
-      enum: ['superAdmin', 'user', 'admin'],
+      enum: ['user'],
+      default: 'user',
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    date_of_birth: {
+      type: String,
+    },
+    membership: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: Boolean,
+    },
+    issue_date: {
+      type: Date,
+    },
+    expiry_date: {
+      type: Date,
+    },
+    package_name: {
+      type: String,
+    },
+    plan: {
+      type: String,
+      enum: ['monthly', 'yearly'],
+    },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   {
@@ -28,13 +77,24 @@ const userSchema = new Schema<TUser, UserModel>(
   },
 );
 
+// userSchema.pre('save', async function (next) {
+//   const user = this; // doc
+//   // hashing password and save into DB
+//   user.password = await bcrypt.hash(
+//     user.password,
+//     Number(config.bcrypt_salt_rounds),
+//   );
+//   next();
+// });
+
 userSchema.pre('save', async function (next) {
-  const user = this; // doc
-  // hashing password and save into DB
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
+  const salt = await bcrypt.genSalt(Number(config.bcrypt_salt_rounds));
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+userSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 
@@ -55,13 +115,4 @@ userSchema.statics.isPasswordMatched = async function (
   return await bcrypt.compare(plainTextPassword, hashedPassword);
 };
 
-userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
-  passwordChangedTimestamp: Date,
-  jwtIssuedTimestamp: number,
-) {
-  const passwordChangedTime =
-    new Date(passwordChangedTimestamp).getTime() / 1000;
-  return passwordChangedTime > jwtIssuedTimestamp;
-};
-
-export const User = model<TUser, UserModel>('User', userSchema);
+export const User = model<IUser, UserModel>('User', userSchema);

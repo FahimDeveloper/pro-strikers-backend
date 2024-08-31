@@ -1,37 +1,79 @@
 import { Schema, model } from 'mongoose';
-import { AdminMethods, TAdmin } from './admin.interface';
+import { AdminMethods, IAdmin } from './admin.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
-const adminSchema = new Schema<TAdmin, AdminMethods>(
+const adminSchema = new Schema<IAdmin, AdminMethods>(
   {
-    user: {
-      type: Schema.Types.ObjectId,
-      required: [true, 'User id is required'],
-      unique: true,
-      ref: 'User',
+    first_name: {
+      type: String,
+      required: true,
+    },
+    last_name: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+      default: 'https://avatar.iran.liara.run/public/boy',
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: true,
       unique: true,
+      index: true,
+    },
+    phone: { type: String, required: true },
+    gender: { type: String, required: true },
+    date_of_birth: { type: String },
+    role: {
+      type: String,
+      required: true,
+      enum: ['super-admin', 'admin', 'trainer', 'staff', 'manager'],
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   {
-    toJSON: {
-      virtuals: true,
-    },
+    timestamps: true,
     versionKey: false,
   },
 );
 
-// adminSchema.pre('aggregate', function (next) {
-//   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-//   next();
-// });
+adminSchema.statics.isPasswordMatched = async function (
+  rowPassword,
+  hashedPassword,
+) {
+  return await bcrypt.compare(rowPassword, hashedPassword);
+};
+
+adminSchema.pre('save', async function (next) {
+  const salt = await bcrypt.genSalt(Number(config.bcrypt_salt_rounds));
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+adminSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 //checking if user is already exist!
-adminSchema.statics.isUserExists = async function (email: string) {
-  const existingUser = await AdminModel.findOne({ email });
+adminSchema.statics.isAdminExists = async function (email: string) {
+  const existingUser = await Admin.findOne({ email });
   return existingUser;
 };
 
-export const AdminModel = model<TAdmin, AdminMethods>('Admin', adminSchema);
+export const Admin = model<IAdmin, AdminMethods>('Admin', adminSchema);

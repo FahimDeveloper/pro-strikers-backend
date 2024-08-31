@@ -9,10 +9,10 @@ import handleDuplicateError from '../errors/handleDuplicateError';
 import handleValidationError from '../errors/handleValidationError';
 import handleZodError from '../errors/handleZodError';
 import { TErrorSources } from '../interface/error';
+import { handleJsonWebTokenError } from '../errors/handleJsonWebTokenError';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.log(err.statusCode);
-  //setting default values
+  const file = req.file?.path;
   let statusCode = 500;
   let message = 'Something went wrong!';
   let errorSources: TErrorSources = [
@@ -23,7 +23,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   ];
 
   if (err instanceof ZodError) {
-    const simplifiedError = handleZodError(err);
+    const simplifiedError = handleZodError(err, file);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
@@ -33,12 +33,20 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
   } else if (err?.name === 'CastError') {
-    const simplifiedError = handleCastError(err);
+    const simplifiedError = handleCastError(err, file);
+    statusCode = simplifiedError?.statusCode;
+    message = simplifiedError?.message;
+    errorSources = simplifiedError?.errorSources;
+  } else if (
+    err?.name === 'JsonWebTokenError' ||
+    err?.name === 'TokenExpiredError'
+  ) {
+    const simplifiedError = handleJsonWebTokenError(err, file);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
   } else if (err?.code === 11000) {
-    const simplifiedError = handleDuplicateError(err);
+    const simplifiedError = handleDuplicateError(err, file);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;
@@ -62,13 +70,18 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   }
 
   //ultimate return
-  return res.status(statusCode).json({
-    success: false,
-    message,
-    errorSources,
-    err,
-    stack: config.NODE_ENV === 'development' ? err?.stack : null,
-  });
+  if (config.node_env === 'development') {
+    return res.status(statusCode).json({
+      message,
+      errorSources,
+      stack: config.node_env === 'development' ? err?.stack : null,
+    });
+  } else {
+    return res.status(statusCode).json({
+      message,
+      errorSources,
+    });
+  }
 };
 
 export default globalErrorHandler;

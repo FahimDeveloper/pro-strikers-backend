@@ -1,15 +1,19 @@
 import mongoose from 'mongoose';
-import config from './app/config';
 import { Server } from 'http';
 import app from './app';
+import config from './app/config';
 
-const port = config.port;
+const port = process.env.PORT || config.port;
 
 let server: Server;
 
 async function dbConnection() {
+  const url =
+    config.node_env === 'production'
+      ? config.database_url
+      : config.database_local_url;
   try {
-    await mongoose.connect(config.database_local_url as string);
+    await mongoose.connect(url as string);
     app.listen(port, () => {
       console.log(`app server listening on ${port}`);
     });
@@ -26,6 +30,7 @@ process.on('uncaughtException', () => {
       process.exit(1);
     });
   }
+  process.exit(1);
 });
 
 process.on('unhandledRejection', () => {

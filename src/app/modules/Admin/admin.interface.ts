@@ -1,10 +1,25 @@
 import { Model, Types } from 'mongoose';
+import { IRole } from '../../utils/role';
 
-export type TAdmin = {
-  user: Types.ObjectId;
+export interface IAdmin {
+  _id: Types.ObjectId;
+  first_name: string;
+  last_name: string;
+  image: string;
   email: string;
-};
+  phone: string;
+  date_of_birth?: string;
+  gender: 'male' | 'female';
+  role: IRole;
+  description: string;
+  password: string;
+  isDeleted: boolean;
+}
 
-export interface AdminMethods extends Model<TAdmin> {
-  isUserExists(id: string): Promise<TAdmin | null>;
+export interface AdminMethods extends Model<IAdmin> {
+  isAdminExists(email: string): Promise<IAdmin | null>;
+  isPasswordMatched(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean>;
 }

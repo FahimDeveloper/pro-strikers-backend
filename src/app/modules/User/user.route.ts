@@ -1,29 +1,65 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import express from 'express';
-import validateRequest from '../../middlewares/validateRequest';
-import { createAdminValidationSchema } from '../Admin/admin.validation';
+import express, { NextFunction, Request, Response } from 'express';
 import { UserControllers } from './user.controller';
-import { createNormalUserValidationSchema } from '../NormalUser/normalUser.validation';
+import authMiddleware from '../../middlewares/authMiddleware';
+import { ROLE } from '../../utils/role';
+import validateRequest from '../../middlewares/validateRequest';
+import { UserValidations } from './user.validation';
+import { upload } from '../../middlewares/multer.middleware';
 
-export const userRoutes = express.Router();
+const route = express.Router();
 
-userRoutes.post(
-  '/create-user',
-  //  auth(USER_ROLE.superAdmin, USER_ROLE.admin),(req: Request, res: Response, next: NextFunction) => {
-  //     req.body = JSON.parse(req.body.data);
-  //     next();
-  //   },
-  validateRequest(createNormalUserValidationSchema),
-  UserControllers.createNormalUser,
+route.get(
+  '/',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  UserControllers.getAllUsers,
+);
+route.get(
+  '/membership',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  UserControllers.getMembershipUsers,
+);
+route.get(
+  '/email',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  UserControllers.getUsresEmail,
+);
+route.get(
+  '/:id',
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
+  validateRequest(UserValidations.createValidation),
+  UserControllers.getSingleUser,
+);
+route.post(
+  '/create',
+  upload.single('image'),
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
+    next();
+  },
+  validateRequest(UserValidations.createValidation),
+  UserControllers.createUser,
+);
+route.patch(
+  '/update/:id',
+  upload.single('image'),
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.data) {
+      req.body = JSON.parse(req.body.data);
+    }
+    next();
+  },
+  validateRequest(UserValidations.updateValidation),
+  UserControllers.updateUser,
+);
+route.delete(
+  '/delete/:id',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  UserControllers.deleteUser,
 );
 
-userRoutes.post(
-  '/create-admin',
-  //   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  //  (req: Request, res: Response, next: NextFunction) => {
-  //     req.body = JSON.parse(req.body.data);
-  //     next();
-  //   },
-  validateRequest(createAdminValidationSchema),
-  UserControllers.createAdmin,
-);
+export const UserRoutes = route;
