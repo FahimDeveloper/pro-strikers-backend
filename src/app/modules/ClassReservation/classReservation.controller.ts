@@ -5,11 +5,7 @@ import { ClassReservationServices } from './classReservation.services';
 
 const createClassReservation = catchAsync(async (req, res) => {
   await ClassReservationServices.createClassReservationIntoDB(req.body);
-  sendResponse(
-    res,
-    httpStatus.CREATED,
-    'Class reservation created succesfully',
-  );
+  sendResponse(res, httpStatus.CREATED, 'Resevation success');
 });
 
 const getAllClassesReservation = catchAsync(async (req, res) => {

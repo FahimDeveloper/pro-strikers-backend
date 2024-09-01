@@ -1,7 +1,9 @@
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { IClassSchedule } from './classSchedule.interface';
 import { ClassSchedule } from './classSchedule.model';
 import mongoose from 'mongoose';
+import AppError from '../../errors/AppError';
 
 const createClassIntoDB = async (payload: IClassSchedule) => {
   const result = await ClassSchedule.create(payload);
@@ -37,7 +39,7 @@ const getSingleClassFromDB = async (id: string) => {
   return result;
 };
 
-const getClassByDateFromDB = async (query: Record<string, unknown>) => {
+const getClassByQueryDataFromDB = async (query: Record<string, unknown>) => {
   const queryDate = new Date(query.date as string);
   const daysOfWeek = [
     'Sunday',
@@ -48,7 +50,7 @@ const getClassByDateFromDB = async (query: Record<string, unknown>) => {
     'Friday',
     'Saturday',
   ];
-  const dayOfWeek = daysOfWeek[queryDate.getUTCDay()];
+  const dayOfWeek = daysOfWeek[queryDate.getDay()];
 
   const matchConditions: Record<string, any> = {
     sport: query.sport,
@@ -157,29 +159,41 @@ const getClassByDateFromDB = async (query: Record<string, unknown>) => {
   return results;
 };
 
-// const getClassByDateFromDB = async (payload: any) => {
-//   const result = await ClassSchedule.findById(payload.id).select(
-//     'sport schedules trainer',
-//   );
-//   if (!result) {
-//     throw new AppError(httpStatus.BAD_REQUEST, 'Class not found');
-//   }
-//   const day = moment(payload.date).format('dddd');
-//   if (result) {
-//     let schedule;
-//     schedule = result?.schedules.find(
-//       (schedule: IClassDaySchedule) => schedule.day === day,
-//     );
-//     if (!schedule?.active) {
-//       throw new AppError(
-//         httpStatus.BAD_REQUEST,
-//         'Class not available in your selected date',
-//       );
-//     }
-//     result.schedules = [schedule];
-//     return result;
-//   }
-// };
+const getClassByIdDateFromDB = async ({
+  id,
+  date,
+}: {
+  id: string;
+  date: Date;
+}) => {
+  const queryDate = new Date(date);
+  const daysOfWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  const dayOfWeek = daysOfWeek[queryDate.getDay()];
+  const result = await ClassSchedule.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+    schedules: {
+      $elemMatch: {
+        day: dayOfWeek,
+        active: true,
+      },
+    },
+  });
+  if (!result) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Class not found, Please check ID and date is available or not',
+    );
+  }
+  return result;
+};
 
 const deleteClassFromDB = async (id: string) => {
   const result = await ClassSchedule.findByIdAndDelete(id);
@@ -191,6 +205,7 @@ export const ClassScheduleServices = {
   updateClassIntoDB,
   getAllClassesFromDB,
   getSingleClassFromDB,
-  getClassByDateFromDB,
+  getClassByQueryDataFromDB,
   deleteClassFromDB,
+  getClassByIdDateFromDB,
 };

@@ -22,8 +22,15 @@ const getSingleClass = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result);
 });
 
-const getClassByDate = catchAsync(async (req, res) => {
-  const result = await ClassScheduleServices.getClassByDateFromDB(req.query);
+const getClassByQueryDate = catchAsync(async (req, res) => {
+  const result = await ClassScheduleServices.getClassByQueryDataFromDB(
+    req.query,
+  );
+  sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result);
+});
+
+const getClassByIdDate = catchAsync(async (req, res) => {
+  const result = await ClassScheduleServices.getClassByIdDateFromDB(req.body);
   sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result);
 });
 
@@ -43,5 +50,6 @@ export const ClassSheduleControllers = {
   getSingleClass,
   updateClass,
   deleteClass,
-  getClassByDate,
+  getClassByQueryDate,
+  getClassByIdDate,
 };

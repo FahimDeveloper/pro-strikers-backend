@@ -13,7 +13,9 @@ route.get(
   ClassSheduleControllers.getAllClasses,
 );
 
-route.get('/by-date', ClassSheduleControllers.getClassByDate);
+route.get('/by-query-date', ClassSheduleControllers.getClassByQueryDate);
+
+route.post('/by-id-date', ClassSheduleControllers.getClassByIdDate);
 
 route.get(
   '/:id',

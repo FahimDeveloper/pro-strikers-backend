@@ -7,11 +7,7 @@ const createEventGroupReservation = catchAsync(async (req, res) => {
   await EventGroupReservationServices.createEventGroupReservationIntoDB(
     req.body,
   );
-  sendResponse(
-    res,
-    httpStatus.CREATED,
-    'Event Group reservation created successfully',
-  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
 const updateEventGroupReservation = catchAsync(async (req, res) => {

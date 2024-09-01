@@ -5,11 +5,7 @@ import { CourseReservationServices } from './coursesReservation.services';
 
 const createCourseReservation = catchAsync(async (req, res) => {
   await CourseReservationServices.createCourseReservationIntoDB(req.body);
-  sendResponse(
-    res,
-    httpStatus.CREATED,
-    'Course reservation created succesfully',
-  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
 const getAllCoursesReservation = catchAsync(async (req, res) => {

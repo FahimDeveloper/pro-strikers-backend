@@ -7,11 +7,7 @@ const createAppointmentGroupReservation = catchAsync(async (req, res) => {
   await AppointmentGroupReservationServices.createAppointmentGroupReservationIntoDB(
     req.body,
   );
-  sendResponse(
-    res,
-    httpStatus.CREATED,
-    'Appointment Group reservation created succesfully',
-  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
 const getAllAppointmentGroupReservation = catchAsync(async (req, res) => {

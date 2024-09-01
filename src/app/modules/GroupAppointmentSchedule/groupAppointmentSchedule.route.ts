@@ -9,7 +9,15 @@ const route = express.Router();
 
 route.get('/', GroupAppointmentSheduleControllers.getAllAppointments);
 
-route.get('/by-date', GroupAppointmentSheduleControllers.getAppointmentByDate);
+route.get(
+  '/by-query-date',
+  GroupAppointmentSheduleControllers.getAppointmentsByQueryDate,
+);
+
+route.post(
+  '/by-id-date',
+  GroupAppointmentSheduleControllers.getAppointmentByIdDate,
+);
 
 route.get(
   '/:id',

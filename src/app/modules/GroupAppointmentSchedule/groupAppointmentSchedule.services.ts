@@ -39,7 +39,9 @@ const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
-const getAppointmentsByDateFromDB = async (query: Record<string, unknown>) => {
+const getAppointmentsByQueryDateFromDB = async (
+  query: Record<string, unknown>,
+) => {
   const queryDate = new Date(query.date as string);
   const daysOfWeek = [
     'Sunday',
@@ -50,7 +52,7 @@ const getAppointmentsByDateFromDB = async (query: Record<string, unknown>) => {
     'Friday',
     'Saturday',
   ];
-  const dayOfWeek = daysOfWeek[queryDate.getUTCDay()];
+  const dayOfWeek = daysOfWeek[queryDate.getDay()];
 
   const matchConditions: Record<string, any> = {
     sport: query.sport,
@@ -159,6 +161,43 @@ const getAppointmentsByDateFromDB = async (query: Record<string, unknown>) => {
   return results;
 };
 
+const getAppointmentByIdDateFromDB = async ({
+  id,
+  date,
+}: {
+  id: string;
+  date: Date;
+}) => {
+  console.log(id, date);
+  const queryDate = new Date(date);
+  const daysOfWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  const dayOfWeek = daysOfWeek[queryDate.getDay()];
+  const result = await GroupAppointmentSchedule.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+    schedules: {
+      $elemMatch: {
+        day: dayOfWeek,
+        active: true,
+      },
+    },
+  });
+  if (!result) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Appointment not found, Please check ID and date is available or not',
+    );
+  }
+  return result;
+};
+
 const getSingleAppointmentFromDB = async (id: string) => {
   const result = await GroupAppointmentSchedule.findById(id);
   return result;
@@ -189,5 +228,6 @@ export const GroupAppointmentScheduleServices = {
   getSingleAppointmentFromDB,
   deleteAppointmentFromDB,
   getAppointmentByIdFromDB,
-  getAppointmentsByDateFromDB,
+  getAppointmentsByQueryDateFromDB,
+  getAppointmentByIdDateFromDB,
 };

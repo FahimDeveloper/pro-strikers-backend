@@ -8,11 +8,7 @@ const createFacilityReservation = catchAsync(async (req, res) => {
     req.params.id,
     req.body,
   );
-  sendResponse(
-    res,
-    httpStatus.CREATED,
-    'Facility reservation created succesfully',
-  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
 const getAllFacilitiesReservation = catchAsync(async (req, res) => {

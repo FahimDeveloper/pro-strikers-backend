@@ -7,11 +7,7 @@ const createEventIndividualReservation = catchAsync(async (req, res) => {
   await EventIndividualReservationServices.createEventIndividualReservationIntoDB(
     req.body,
   );
-  sendResponse(
-    res,
-    httpStatus.CREATED,
-    'Event individual reservation created successfully',
-  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
 const updateEventIndividualReservation = catchAsync(async (req, res) => {

@@ -28,10 +28,18 @@ const getAppointmentById = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Appointment fetch succesfully', result);
 });
 
-const getAppointmentByDate = catchAsync(async (req, res) => {
+const getAppointmentsByQueryDate = catchAsync(async (req, res) => {
   const result =
-    await GroupAppointmentScheduleServices.getAppointmentsByDateFromDB(
+    await GroupAppointmentScheduleServices.getAppointmentsByQueryDateFromDB(
       req.query,
+    );
+  sendResponse(res, httpStatus.OK, 'Appointment fetch succesfully', result);
+});
+
+const getAppointmentByIdDate = catchAsync(async (req, res) => {
+  const result =
+    await GroupAppointmentScheduleServices.getAppointmentByIdDateFromDB(
+      req.body,
     );
   sendResponse(res, httpStatus.OK, 'Appointment fetch succesfully', result);
 });
@@ -64,5 +72,6 @@ export const GroupAppointmentSheduleControllers = {
   updateAppointment,
   deleteAppointment,
   getAppointmentById,
-  getAppointmentByDate,
+  getAppointmentsByQueryDate,
+  getAppointmentByIdDate,
 };

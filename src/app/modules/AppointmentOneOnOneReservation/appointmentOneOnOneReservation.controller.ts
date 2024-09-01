@@ -8,11 +8,7 @@ const createAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
     req.params.id,
     req.body,
   );
-  sendResponse(
-    res,
-    httpStatus.CREATED,
-    'Appointment One On One reservation created succesfully',
-  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
 const getAppointmentOneOnOneReservationSlots = catchAsync(async (req, res) => {
