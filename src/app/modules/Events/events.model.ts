@@ -55,11 +55,6 @@ const eventSchema = new Schema<IEvent>(
       type: Number,
       required: true,
     },
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   { timestamps: true, versionKey: false },
 );

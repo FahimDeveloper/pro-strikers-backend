@@ -7,7 +7,10 @@ import { EventIndividualReservation } from './eventIndividualReservation.model';
 const createEventIndividualReservationIntoDB = async (
   payload: IEventIndividualReservation,
 ) => {
-  const checkEvent = await Event.findById(payload.event);
+  const checkEvent = await Event.findOne({
+    _id: payload.event,
+    sport: payload.sport,
+  });
   if (!checkEvent) {
     throw new Error('Event not found, Please enter a valid event ID');
   } else if (checkEvent.allowed_registrations === checkEvent.registration) {

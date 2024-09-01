@@ -35,7 +35,7 @@ const getLanesFromDB = async () => {
 };
 
 const deleteLaneFromDB = async (id: string) => {
-  const result = await Lane.findByIdAndUpdate(id, { isDeleted: true });
+  const result = await Lane.findByIdAndDelete(id);
   return result;
 };
 

@@ -59,12 +59,6 @@ const createValidation = z.object({
       })
       .optional(),
     plan: z.enum(['monthly', 'yearly']).optional(),
-    isDeleted: z
-      .boolean({
-        invalid_type_error: 'isDeleted must be boolean',
-        required_error: 'isDeleted is required',
-      })
-      .default(false),
   }),
 });
 

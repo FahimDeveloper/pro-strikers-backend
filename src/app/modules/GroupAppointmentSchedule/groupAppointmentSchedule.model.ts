@@ -51,11 +51,7 @@ const appointmentScheduleSchema = new Schema<IGroupAppointmentSchedule>(
       type: Number,
       required: true,
     },
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
+
     schedules: [appointmentScheduleDaySchema],
   },
   { timestamps: true, versionKey: false },

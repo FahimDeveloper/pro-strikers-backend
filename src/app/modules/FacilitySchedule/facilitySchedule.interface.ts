@@ -9,7 +9,7 @@ export interface IFacilitySchedule {
   description: string;
   price: number;
   lane: string;
-  isDeleted: boolean;
+
   schedules: Array<IFacilityDaySchedule>;
 }
 

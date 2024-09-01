@@ -11,7 +11,7 @@ export interface IAppointmentGroupReservation {
   city: string;
   state: string;
   sport: string;
-  date: Date;
+  appointment_date: Date;
   zip_code: string;
   trainer: mongoose.Types.ObjectId;
 }

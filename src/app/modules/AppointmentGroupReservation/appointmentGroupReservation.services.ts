@@ -9,19 +9,19 @@ import httpStatus from 'http-status';
 const createAppointmentGroupReservationIntoDB = async (
   payload: IAppointmentGroupReservation,
 ) => {
-  const date = new Date(payload.date);
+  const date = new Date(payload.appointment_date);
   const appointment = await GroupAppointmentSchedule.findById(
     payload.appointment,
   );
   if (!appointment) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Training not found');
+    throw new AppError(httpStatus.BAD_REQUEST, 'Appointment not found');
   }
   const count = await AppointmentGroupReservation.find({
     _id: appointment._id,
     day: date,
   }).countDocuments();
   if (count >= appointment.capacity) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Training capacity exceeded');
+    throw new AppError(httpStatus.BAD_REQUEST, 'Appointment capacity exceeded');
   }
   const result = await AppointmentGroupReservation.create(payload);
   return result;

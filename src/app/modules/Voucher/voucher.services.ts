@@ -58,7 +58,7 @@ const getSingleVoucherFromDB = async (id: string) => {
 };
 
 const deleteVoucherFromDB = async (id: string) => {
-  const result = await Voucher.findByIdAndUpdate(id, { isDeleted: true });
+  const result = await Voucher.findByIdAndDelete(id);
   return result;
 };
 

@@ -21,7 +21,7 @@ route.get(
 
 route.post(
   '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   validateRequest(ClassReservationValidations.createValidation),
   ClassReservationController.createClassReservation,
 );

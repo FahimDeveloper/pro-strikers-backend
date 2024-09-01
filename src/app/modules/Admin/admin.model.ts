@@ -40,11 +40,6 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
       type: String,
       required: true,
     },
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   {
     timestamps: true,
@@ -62,11 +57,6 @@ adminSchema.statics.isPasswordMatched = async function (
 adminSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt(Number(config.bcrypt_salt_rounds));
   this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-adminSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 

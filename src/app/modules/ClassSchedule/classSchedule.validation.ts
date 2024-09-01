@@ -26,24 +26,15 @@ const createValidation = z.object({
       invalid_type_error: 'capacity must be number',
       required_error: 'capacity is required',
     }),
-    start_date: z.string({
-      invalid_type_error: 'start date must be string',
-      required_error: 'start date is required',
-    }),
-    end_date: z.string({
-      invalid_type_error: 'end date must be string',
-      required_error: 'end date is required',
+    level: z.string({
+      invalid_type_error: 'level must be string',
+      required_error: 'level is required',
     }),
     price: z.number({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
-    isDeleted: z
-      .boolean({
-        invalid_type_error: 'isDeleted must be boolean',
-        required_error: 'isDeleted is required',
-      })
-      .default(false),
+
     schedules: z.array(
       z.object({
         day: z.string({
@@ -92,11 +83,11 @@ const updateValidation = z.object({
         invalid_type_error: 'description must be string',
       })
       .optional(),
-    // facility: z
-    //   .string({
-    //     invalid_type_error: 'facility must be string',
-    //   })
-    //   .optional(),
+    facility: z
+      .string({
+        invalid_type_error: 'facility must be string',
+      })
+      .optional(),
     trainer: z
       .string({
         invalid_type_error: 'trainer must be string',
@@ -112,22 +103,12 @@ const updateValidation = z.object({
         invalid_type_error: 'price must be number',
       })
       .optional(),
-    start_date: z
+    level: z
       .string({
-        invalid_type_error: 'start date must be string',
+        invalid_type_error: 'level must be string',
       })
       .optional(),
-    end_date: z
-      .string({
-        invalid_type_error: 'end date must be string',
-      })
-      .optional(),
-    isDeleted: z
-      .boolean({
-        invalid_type_error: 'isDeleted must be boolean',
-      })
-      .optional()
-      .default(false),
+
     schedules: z
       .array(
         z.object({

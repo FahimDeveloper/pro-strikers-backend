@@ -49,11 +49,6 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
       type: Number,
       required: true,
     },
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   { timestamps: true, versionKey: false },
 );

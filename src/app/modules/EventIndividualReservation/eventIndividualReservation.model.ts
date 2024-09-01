@@ -4,7 +4,8 @@ import { IEventIndividualReservation } from './eventIndividualReservation.interf
 const eventIndividualReservationSchema =
   new Schema<IEventIndividualReservation>(
     {
-      player_name: { type: String, required: true },
+      first_name: { type: String, required: true },
+      last_name: { type: String, required: true },
       email: { type: String, required: true },
       phone: { type: String, required: true },
       event: { type: Schema.Types.ObjectId, required: true, ref: 'Event' },

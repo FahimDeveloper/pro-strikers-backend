@@ -7,5 +7,4 @@ export interface IVoucher {
   voucher_code: string;
   used: number;
   description: string;
-  isDeleted: boolean;
 }

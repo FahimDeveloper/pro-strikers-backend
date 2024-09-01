@@ -65,11 +65,6 @@ const userSchema = new Schema<IUser, UserModel>(
       type: String,
       enum: ['monthly', 'yearly'],
     },
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   {
     timestamps: true,

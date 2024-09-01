@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Query, Schema, model } from 'mongoose';
 import { IClassDaySchedule, IClassSchedule } from './classSchedule.interface';
 
 const classScheduleDaySchema = new Schema<IClassDaySchedule>(
@@ -48,11 +48,7 @@ const classScheduleSchema = new Schema<IClassSchedule>(
       type: Number,
       required: true,
     },
-    start_date: {
-      type: String,
-      required: true,
-    },
-    end_date: {
+    level: {
       type: String,
       required: true,
     },
@@ -60,21 +56,10 @@ const classScheduleSchema = new Schema<IClassSchedule>(
       type: Number,
       required: true,
     },
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
     schedules: [classScheduleDaySchema],
   },
   { versionKey: false, timestamps: true },
 );
-
-classScheduleSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  next();
-});
-
 export const ClassSchedule = model<IClassSchedule>(
   'ClassesSchedule',
   classScheduleSchema,

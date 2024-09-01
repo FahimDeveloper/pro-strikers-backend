@@ -14,5 +14,4 @@ export interface IEvent {
   image: string;
   description: string;
   price: number;
-  isDeleted: boolean;
 }

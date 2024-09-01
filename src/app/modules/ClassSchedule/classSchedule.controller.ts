@@ -23,7 +23,7 @@ const getSingleClass = catchAsync(async (req, res) => {
 });
 
 const getClassByDate = catchAsync(async (req, res) => {
-  const result = await ClassScheduleServices.getClassByDateFromDB(req.body);
+  const result = await ClassScheduleServices.getClassByDateFromDB(req.query);
   sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result);
 });
 

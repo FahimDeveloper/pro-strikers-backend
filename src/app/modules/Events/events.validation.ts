@@ -40,12 +40,6 @@ const createValidation = z.object({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
-    isDeleted: z
-      .boolean({
-        invalid_type_error: 'isDeleted must be boolean',
-        required_error: 'isDeleted is required',
-      })
-      .default(false),
   }),
 });
 
@@ -91,12 +85,7 @@ const updateValidation = z.object({
         invalid_type_error: 'description must be string',
       })
       .optional(),
-    isDeleted: z
-      .boolean({
-        invalid_type_error: 'isDeleted must be boolean',
-      })
-      .optional()
-      .default(false),
+
     price: z
       .number({
         invalid_type_error: 'price must be number',

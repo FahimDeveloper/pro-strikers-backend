@@ -52,11 +52,6 @@ const appointmentScheduleSchema = new Schema<IOneAppointmentSchedule>(
       required: true,
     },
     schedules: [appointmentScheduleDaySchema],
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   { timestamps: true, versionKey: false },
 );

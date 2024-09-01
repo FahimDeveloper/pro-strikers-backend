@@ -18,7 +18,6 @@ export interface IUser {
   expiry_date?: string;
   package_name?: string;
   plan?: string;
-  isDeleted: boolean;
 }
 
 export interface UserModel extends Model<IUser> {

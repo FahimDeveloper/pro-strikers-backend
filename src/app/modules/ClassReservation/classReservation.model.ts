@@ -3,33 +3,29 @@ import { IClassReservation } from './classReservation.interface';
 
 const classReservationSchema = new Schema<IClassReservation>(
   {
-    user_email: {
-      type: String,
-      required: true,
-    },
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    age: { type: Number, required: true },
     class: {
       type: Schema.Types.ObjectId,
       ref: 'ClassesSchedule',
       required: true,
     },
-    category: {
-      type: String,
-      required: true,
-    },
     trainer: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Admin',
       required: true,
     },
-    issue_date: {
-      type: String,
-      required: true,
-    },
-    class_date: {
-      type: String,
-      required: true,
-    },
+    class_date: { type: Date, required: true },
+    street_address: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    sport: { type: String, required: true },
+    zip_code: { type: String, required: true },
   },
-  { timestamps: true, versionKey: false },
+  { versionKey: false, timestamps: true },
 );
 
 export const ClassReservation = model<IClassReservation>(

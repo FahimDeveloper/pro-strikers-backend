@@ -13,5 +13,4 @@ export interface ICourseSchedule {
   start_time: string;
   end_time: string;
   price: number;
-  isDeleted: boolean;
 }

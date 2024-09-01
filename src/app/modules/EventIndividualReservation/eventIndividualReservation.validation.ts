@@ -2,9 +2,13 @@ import { z } from 'zod';
 
 const createValidation = z.object({
   body: z.object({
-    player_name: z.string({
-      required_error: 'Player name is required',
-      invalid_type_error: 'Player name must be a string',
+    first_name: z.string({
+      required_error: 'First name is required',
+      invalid_type_error: 'First name must be a string',
+    }),
+    last_name: z.string({
+      required_error: 'Last name is required',
+      invalid_type_error: 'Last name must be a string',
     }),
     email: z
       .string({
@@ -49,9 +53,14 @@ const createValidation = z.object({
 
 const updateValidation = z.object({
   body: z.object({
-    player_name: z
+    first_name: z
       .string({
-        invalid_type_error: 'Player name must be a string',
+        invalid_type_error: 'First name must be a string',
+      })
+      .optional(),
+    last_name: z
+      .string({
+        invalid_type_error: 'Last name must be a string',
       })
       .optional(),
     email: z
@@ -98,11 +107,6 @@ const updateValidation = z.object({
     zip_code: z
       .string({
         invalid_type_error: 'Zip code must be a string',
-      })
-      .optional(),
-    skill_level: z
-      .string({
-        invalid_type_error: 'Skill level must be a string',
       })
       .optional(),
   }),

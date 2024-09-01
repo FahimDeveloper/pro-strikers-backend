@@ -27,6 +27,7 @@ const getAppointmentById = catchAsync(async (req, res) => {
     );
   sendResponse(res, httpStatus.OK, 'Appointment fetch succesfully', result);
 });
+
 const getAppointmentByDate = catchAsync(async (req, res) => {
   const result =
     await GroupAppointmentScheduleServices.getAppointmentsByDateFromDB(

@@ -13,7 +13,6 @@ export interface IAdmin {
   role: IRole;
   description: string;
   password: string;
-  isDeleted: boolean;
 }
 
 export interface AdminMethods extends Model<IAdmin> {

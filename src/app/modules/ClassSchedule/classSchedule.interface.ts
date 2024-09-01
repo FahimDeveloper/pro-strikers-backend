@@ -7,11 +7,9 @@ export interface IClassSchedule {
   description: string;
   facility: string;
   trainer: Types.ObjectId;
-  start_date: string;
-  end_date: string;
+  level: string;
   capacity: number;
   price: number;
-  isDeleted: boolean;
   schedules: IClassDaySchedule[];
 }
 

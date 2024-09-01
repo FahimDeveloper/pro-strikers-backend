@@ -35,11 +35,6 @@ const voucherSchema = new Schema<IVoucher>(
       type: String,
       required: true,
     },
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   { timestamps: true, versionKey: false },
 );

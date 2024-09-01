@@ -6,9 +6,12 @@ import { EventGroupReservation } from './eventGroupReservation.model';
 const createEventGroupReservationIntoDB = async (
   payload: IEventGroupReservation,
 ) => {
-  const checkEvent = await Event.findById(payload.event);
+  const checkEvent = await Event.findOne({
+    _id: payload.event,
+    sport: payload.sport,
+  });
   if (!checkEvent) {
-    throw new Error('Event not found, Please enter a valid event ID');
+    throw new Error('Event not found, Please check event Id and event sport');
   } else if (checkEvent.allowed_registrations === checkEvent.registration) {
     throw new Error('Event is fully registered, please choose another event');
   } else {

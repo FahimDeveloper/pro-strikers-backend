@@ -31,11 +31,6 @@ const LaneSchema = new Schema<ILane>(
       required: true,
     },
     addons: [AddonSchema],
-    isDeleted: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   { timestamps: true, versionKey: false },
 );

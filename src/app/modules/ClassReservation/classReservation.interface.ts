@@ -1,10 +1,17 @@
 import mongoose from 'mongoose';
 
 export interface IClassReservation {
-  user_email: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  age: number;
   class: mongoose.Types.ObjectId;
-  category: string;
-  trainer: string;
-  issue_date: string;
-  class_date: string;
+  street_address: string;
+  city: string;
+  state: string;
+  sport: string;
+  class_date: Date;
+  zip_code: string;
+  trainer: mongoose.Types.ObjectId;
 }

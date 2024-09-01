@@ -13,16 +13,12 @@ route.get(
   ClassSheduleControllers.getAllClasses,
 );
 
+route.get('/by-date', ClassSheduleControllers.getClassByDate);
+
 route.get(
   '/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   ClassSheduleControllers.getSingleClass,
-);
-
-route.post(
-  '/by-date',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  ClassSheduleControllers.getClassByDate,
 );
 
 route.post(
