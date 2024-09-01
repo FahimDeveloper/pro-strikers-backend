@@ -21,17 +21,17 @@ import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/ev
 import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
 import { PaymentRoute } from '../modules/Payment/payment.route';
-import { AuthenticationRoutes } from '../modules/Auth/auth.route';
-const router = express.Router();
+import { AuthenticationRoutes } from '../modules/Authentication/Authentication.route';
 
+const router = express.Router();
 const mainRoutes = [
-  {
-    path: '/admins',
-    route: AdminRoutes,
-  },
   {
     path: '/auth',
     route: AuthenticationRoutes,
+  },
+  {
+    path: '/admins',
+    route: AdminRoutes,
   },
   {
     path: '/users',

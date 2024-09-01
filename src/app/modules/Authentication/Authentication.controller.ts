@@ -1,12 +1,12 @@
 import httpStatus from 'http-status';
 import config from '../../config';
-import AppError from '../../errors/AppError';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { AuthServices } from './auth.services';
+import { AuthenticationServices } from './Authentication.services';
+import AppError from '../../errors/AppError';
 
 const loginUser = catchAsync(async (req, res) => {
-  const result = await AuthServices.loginUserIntoDB(req.body);
+  const result = await AuthenticationServices.loginUserIntoDB(req.body);
 
   const { accessToken, refreshToken, user } = result;
 
@@ -24,7 +24,7 @@ const loginUser = catchAsync(async (req, res) => {
 });
 
 const registerUser = catchAsync(async (req, res) => {
-  const result = await AuthServices.registerUserIntoDB(req.body);
+  const result = await AuthenticationServices.registerUserIntoDB(req.body);
 
   const { accessToken, refreshToken, user } = result;
 
@@ -42,7 +42,7 @@ const registerUser = catchAsync(async (req, res) => {
 });
 
 const loginAdmin = catchAsync(async (req, res) => {
-  const result = await AuthServices.loginAdminIntoDB(req.body);
+  const result = await AuthenticationServices.loginAdminIntoDB(req.body);
 
   const { accessToken, refreshToken, user } = result;
 
@@ -62,7 +62,7 @@ const loginAdmin = catchAsync(async (req, res) => {
 // const changePassword = catchAsync(async (req, res) => {
 //   const { ...passwordData } = req.body;
 
-//   const result = await AuthServices.changePassword(req.user, passwordData);
+//   const result = await AuthenticationServices.changePassword(req.user, passwordData);
 //   sendResponse(res, {
 //     statusCode: httpStatus.OK,
 //     success: true,
@@ -76,7 +76,8 @@ const refreshToken = catchAsync(async (req, res) => {
   if (!refreshToken) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'The request not authorized!');
   }
-  const { user, accessToken } = await AuthServices.refreshToken(refreshToken);
+  const { user, accessToken } =
+    await AuthenticationServices.refreshToken(refreshToken);
   sendResponse(res, httpStatus.OK, 'Access token is retrieved successfully!', {
     user,
     accessToken,
@@ -84,7 +85,7 @@ const refreshToken = catchAsync(async (req, res) => {
 });
 
 const adminForgetPassword = catchAsync(async (req, res) => {
-  await AuthServices.forgetPasswordForAdmin(req.body.email);
+  await AuthenticationServices.forgetPasswordForAdmin(req.body.email);
   sendResponse(
     res,
     httpStatus.OK,
@@ -93,7 +94,7 @@ const adminForgetPassword = catchAsync(async (req, res) => {
 });
 
 const userForgetPassword = catchAsync(async (req, res) => {
-  await AuthServices.forgetPasswordForUser(req.body.email);
+  await AuthenticationServices.forgetPasswordForUser(req.body.email);
   sendResponse(
     res,
     httpStatus.OK,
@@ -102,7 +103,7 @@ const userForgetPassword = catchAsync(async (req, res) => {
 });
 
 const sendResetCode = catchAsync(async (req, res) => {
-  await AuthServices.resetCodeSend(req.body.token);
+  await AuthenticationServices.resetCodeSend(req.body.token);
   sendResponse(
     res,
     httpStatus.OK,
@@ -111,12 +112,12 @@ const sendResetCode = catchAsync(async (req, res) => {
 });
 
 const verifyUiLink = catchAsync(async (req, res) => {
-  await AuthServices.verifyLink(req.params.token);
+  await AuthenticationServices.verifyLink(req.params.token);
   sendResponse(res, httpStatus.OK, 'Success');
 });
 
 const verifyResetCode = catchAsync(async (req, res) => {
-  await AuthServices.verifyCode(req.body);
+  await AuthenticationServices.verifyCode(req.body);
   sendResponse(res, httpStatus.OK, 'Success');
 });
 
@@ -127,7 +128,7 @@ const resetAdminPassword = catchAsync(async (req, res) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
   }
 
-  await AuthServices.resetAdminPasswordIntoDB(req.body);
+  await AuthenticationServices.resetAdminPasswordIntoDB(req.body);
   sendResponse(res, httpStatus.OK, 'Password reset successfully!');
 });
 
@@ -138,11 +139,11 @@ const resetUserPassword = catchAsync(async (req, res) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
   }
 
-  await AuthServices.resetUserPasswordIntoDB(req.body);
+  await AuthenticationServices.resetUserPasswordIntoDB(req.body);
   sendResponse(res, httpStatus.OK, 'Password reset successfully!');
 });
 
-export const AuthControllers = {
+export const AuthenticationControllers = {
   loginUser,
   registerUser,
   loginAdmin,

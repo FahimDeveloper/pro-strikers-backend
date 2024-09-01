@@ -1,15 +1,15 @@
 import httpStatus from 'http-status';
-import config from '../../config';
-import { createToken, verifyToken } from '../../utils/auth';
-import { User } from '../User/user.model';
 import AppError from '../../errors/AppError';
-import { ILogin, IRegister } from './auth.interface';
-import { Admin } from '../Admin/admin.model';
-import { ROLE } from '../../utils/role';
-import { sendEmail } from '../../utils/sendEmail';
+import { User } from '../User/user.model';
+import { ILogin, IRegister } from './Authentication.interface';
+import { createToken, verifyToken } from '../../utils/auth';
+import config from '../../config';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ResetPassService } from '../ResetPass/resetPass.services';
 import bcrypt from 'bcrypt';
+import { ROLE } from '../../utils/role';
+import { Admin } from '../Admin/admin.model';
+import { ResetPassService } from '../ResetPass/resetPass.services';
+import { sendEmail } from '../../utils/sendEmail';
 
 const loginUserIntoDB = async (payload: ILogin) => {
   const user = await User.isUserExistsByEmail(payload.email);
@@ -377,7 +377,7 @@ const resetUserPasswordIntoDB = async (payload: {
   return;
 };
 
-export const AuthServices = {
+export const AuthenticationServices = {
   loginUserIntoDB,
   registerUserIntoDB,
   loginAdminIntoDB,

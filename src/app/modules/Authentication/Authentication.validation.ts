@@ -15,7 +15,7 @@ const refreshTokenValidation = z.object({
   }),
 });
 
-export const AuthValidation = {
+export const AuthenticationValidations = {
   loginValidation,
   refreshTokenValidation,
 };
