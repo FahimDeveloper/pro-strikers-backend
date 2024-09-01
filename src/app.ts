@@ -20,7 +20,7 @@ const corsConfig = {
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
 };
-app.options('', cors(corsConfig));
+app.options('*', cors(corsConfig));
 app.use(cors(corsConfig));
 app.use('/api/v1', router);
 app.get('/', (req: Request, res: Response) => {
