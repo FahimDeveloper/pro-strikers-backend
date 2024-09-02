@@ -19,10 +19,11 @@ const createValidation = z.object({
       .email({
         message: 'Please enter a valid email address',
       }),
-    password: z.string({
-      invalid_type_error: 'password must be string',
-      required_error: 'password is required',
-    }),
+    password: z
+      .string({
+        invalid_type_error: 'password must be string',
+      })
+      .optional(),
     role: z.enum(['user']).default('user'),
     phone: z.string({
       invalid_type_error: 'phone must be string',

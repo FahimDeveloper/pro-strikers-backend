@@ -30,10 +30,11 @@ const createValidation = z.object({
       invalid_type_error: 'description must be string',
       required_error: 'description is required',
     }),
-    password: z.string({
-      invalid_type_error: 'password must be string',
-      required_error: 'password is required',
-    }),
+    password: z
+      .string({
+        invalid_type_error: 'password must be string',
+      })
+      .optional(),
   }),
 });
 

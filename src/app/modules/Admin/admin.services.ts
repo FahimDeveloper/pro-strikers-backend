@@ -5,12 +5,14 @@ import { Admin } from './admin.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { sendEmail } from '../../utils/sendEmail';
+import { generateRandomPassword } from '../../utils/generateRandomPassword';
 
 const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   const findAdminUser = await Admin.isAdminExists(payload.email);
   if (findAdminUser) {
     throw new AppError(httpStatus.CONFLICT, 'Admin user already exists!');
   }
+  const randomPass = generateRandomPassword();
   let result;
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
@@ -19,7 +21,7 @@ const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
     result = await Admin.create(payload);
   }
   if (result) {
-    await sendEmail({ email: payload.email, password: payload.password });
+    await sendEmail({ email: payload.email, password: randomPass });
   }
   return result;
 };

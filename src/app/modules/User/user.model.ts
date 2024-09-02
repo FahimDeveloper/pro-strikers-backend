@@ -88,11 +88,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  next();
-});
-
 // set '' after saving password
 userSchema.post('save', function (doc, next) {
   doc.password = '';

@@ -6,12 +6,14 @@ import AppError from '../../errors/AppError';
 import fs from 'fs';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { sendEmail } from '../../utils/sendEmail';
+import { generateRandomPassword } from '../../utils/generateRandomPassword';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
   if (findUser) {
     throw new AppError(httpStatus.CONFLICT, 'User already exists!');
   }
+  const randomPass = generateRandomPassword();
   let result;
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
@@ -20,7 +22,7 @@ const createUserIntoDB = async (payload: IUser, file: any) => {
     result = await User.create(payload);
   }
   if (result) {
-    await sendEmail({ email: payload.email, password: payload.password });
+    await sendEmail({ email: payload.email, password: randomPass });
   }
   return result;
 };
