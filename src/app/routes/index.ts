@@ -20,8 +20,8 @@ import { EventIndividualReservationRoutes } from '../modules/EventIndividualRese
 import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/eventGroupReservation.route';
 import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
-import { PaymentRoute } from '../modules/Payment/payment.route';
 import { AuthenticationRoutes } from '../modules/Authentication/Authentication.route';
+import { StripePaymentRoutes } from '../modules/StripePayment/stripePayment.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -115,7 +115,7 @@ const mainRoutes = [
   },
   {
     path: '/payments',
-    route: PaymentRoute,
+    route: StripePaymentRoutes,
   },
 ];
 
