@@ -27,7 +27,6 @@ route.get(
 route.get(
   '/:id',
   authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
-  validateRequest(UserValidations.createValidation),
   UserControllers.getSingleUser,
 );
 route.post(

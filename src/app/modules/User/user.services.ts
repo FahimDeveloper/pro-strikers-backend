@@ -3,7 +3,6 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { IUser } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../errors/AppError';
-import fs from 'fs';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { sendEmail } from '../../utils/sendEmail';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
@@ -17,9 +16,13 @@ const createUserIntoDB = async (payload: IUser, file: any) => {
   let result;
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
-    result = await User.create({ ...payload, image: url });
+    result = await User.create({
+      ...payload,
+      image: url,
+      password: randomPass,
+    });
   } else {
-    result = await User.create(payload);
+    result = await User.create({ ...payload, password: randomPass });
   }
   if (result) {
     await sendEmail({ email: payload.email, password: randomPass });

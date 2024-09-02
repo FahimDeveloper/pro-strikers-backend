@@ -16,9 +16,13 @@ const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   let result;
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
-    result = await Admin.create({ ...payload, image: url });
+    result = await Admin.create({
+      ...payload,
+      image: url,
+      password: randomPass,
+    });
   } else {
-    result = await Admin.create(payload);
+    result = await Admin.create({ ...payload, password: randomPass });
   }
   if (result) {
     await sendEmail({ email: payload.email, password: randomPass });

@@ -55,10 +55,6 @@ const getAllCoursesReservationsFromDB = async (
       {
         path: 'course',
       },
-      {
-        path: 'trainer',
-        select: 'first_name last_name phone',
-      },
     ]),
     query,
   )

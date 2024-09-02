@@ -9,6 +9,7 @@ const createEventGroupReservationIntoDB = async (
   const checkEvent = await Event.findOne({
     _id: payload.event,
     sport: payload.sport,
+    event_type: 'group',
   });
   if (!checkEvent) {
     throw new Error('Event not found, Please check event Id and event sport');
