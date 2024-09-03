@@ -63,9 +63,7 @@ const getSingleFacilityFromDB = async (id: string) => {
 };
 
 const deleteFacilityFromDB = async (id: string) => {
-  const result = await FacilitySchedule.findByIdAndUpdate(id, {
-    isDeleted: true,
-  });
+  const result = await FacilitySchedule.findByIdAndDelete(id);
   return result;
 };
 

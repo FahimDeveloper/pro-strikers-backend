@@ -65,9 +65,7 @@ const getAppointmentByIdFromDB = async (id: string) => {
 };
 
 const deleteAppointmentFromDB = async (id: string) => {
-  const result = await OneAppointmentSchedule.findByIdAndUpdate(id, {
-    isDeleted: true,
-  });
+  const result = await OneAppointmentSchedule.findByIdAndDelete(id);
   return result;
 };
 
