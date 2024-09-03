@@ -59,11 +59,6 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
   { timestamps: true, versionKey: false },
 );
 
-facilityScheduleSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  next();
-});
-
 export const FacilitySchedule = model<IFacilitySchedule>(
   'FacilitySchedules',
   facilityScheduleSchema,

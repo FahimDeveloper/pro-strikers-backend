@@ -9,7 +9,6 @@ export interface IGroupAppointmentSchedule {
   description: string;
   price: number;
   capacity: number;
-
   schedules: IGroupAppointmentDaySchedule[];
 }
 
