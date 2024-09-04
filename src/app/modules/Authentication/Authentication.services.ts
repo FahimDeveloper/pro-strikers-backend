@@ -256,7 +256,7 @@ const verifyCode = async ({ token, otp }: { token: string; otp: number }) => {
   ) as JwtPayload;
   const result = await ResetPassService.verifyResetCode({ email, code: otp });
   if (!result) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'code not valid');
+    throw new AppError(httpStatus.BAD_REQUEST, 'code invalid');
   }
   return result;
 };

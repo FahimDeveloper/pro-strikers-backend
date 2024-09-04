@@ -19,7 +19,7 @@ export default {
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
   admin_reset_pass_live_ui_link: process.env.ADMIN_RESET_PASS_LIVE_UI_LINK,
-  admin_reset_pass_test_ui_link: process.env.ADMIN_RESET_TEST_LIVE_UI_LINK,
+  admin_reset_pass_test_ui_link: process.env.ADMIN_RESET_PASS_TEST_UI_LINK,
   user_reset_pass_live_ui_link: process.env.USER_RESET_PASS_LIVE_UI_LINK,
   user_reset_pass_test_ui_link: process.env.USER_RESET_TEST_LIVE_UI_LINK,
   node_mailer_mail: process.env.NODEMAILER_MAIL,

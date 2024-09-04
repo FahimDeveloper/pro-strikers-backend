@@ -17,21 +17,21 @@ route.get(
 
 route.post(
   '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(courseScheduleValidations.createValidation),
   CourseSheduleControllers.createCourse,
 );
 
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(courseScheduleValidations.createValidation),
   CourseSheduleControllers.updateCourse,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   CourseSheduleControllers.deleteCourse,
 );
 

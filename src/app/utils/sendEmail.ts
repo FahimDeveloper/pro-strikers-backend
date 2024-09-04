@@ -28,7 +28,7 @@ export const sendEmail = async ({ email, link, code, password }: TProp) => {
       from: config.node_mailer_mail,
       to: email,
       subject: 'Reset Code',
-      html: `<p style="font-size:22px; font-weight:500">Use this code ${code} to reset your password</p>`,
+      html: `<p>Use this code <span style="font-size:18px; font-weight:500">${code}</span> to reset your password</p>`,
     });
   }
 

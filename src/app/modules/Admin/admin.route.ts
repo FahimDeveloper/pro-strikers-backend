@@ -32,7 +32,7 @@ route.post(
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   AdminControllers.getSingleAdminUser,
 );
 

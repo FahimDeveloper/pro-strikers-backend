@@ -26,7 +26,7 @@ route.get(
 );
 route.post(
   '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(groupAppointmentScheduleValidations.createValidation),
   GroupAppointmentSheduleControllers.createAppointment,
 );
@@ -39,14 +39,14 @@ route.post(
 
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(groupAppointmentScheduleValidations.updateValidation),
   GroupAppointmentSheduleControllers.updateAppointment,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   GroupAppointmentSheduleControllers.deleteAppointment,
 );
 

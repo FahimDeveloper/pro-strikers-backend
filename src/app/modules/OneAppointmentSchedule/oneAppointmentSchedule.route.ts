@@ -17,7 +17,7 @@ route.get(
 
 route.post(
   '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(oneAppointmentScheduleValidations.createValidation),
   OneAppointmentSheduleControllers.createAppointment,
 );
@@ -29,14 +29,14 @@ route.post(
 
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(oneAppointmentScheduleValidations.updateValidation),
   OneAppointmentSheduleControllers.updateAppointment,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   OneAppointmentSheduleControllers.deleteAppointment,
 );
 
