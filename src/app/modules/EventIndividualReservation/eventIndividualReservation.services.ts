@@ -69,7 +69,7 @@ const createEventIndividualReservationByUserIntoDB = async (
         { $inc: { registration: 1 } },
         { new: true, runValidators: true, session },
       );
-      await EventIndividualReservation.create([payload], {
+      await EventIndividualReservation.create([event_data], {
         session,
       });
       await Payment.create([payment_info], { session });
