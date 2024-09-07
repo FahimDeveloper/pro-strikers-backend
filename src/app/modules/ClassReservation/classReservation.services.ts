@@ -31,9 +31,9 @@ const createClassReservationByUserIntoDB = async (
   payload: IClassReservationByUser,
 ) => {
   const session = await mongoose.startSession();
+  const { class_data, payment_info } = payload;
   try {
     session.startTransaction();
-    const { class_data, payment_info } = payload;
     const date = new Date(class_data.class_date);
     const kidsClass = await ClassSchedule.findById(class_data.class);
     if (!kidsClass) {
