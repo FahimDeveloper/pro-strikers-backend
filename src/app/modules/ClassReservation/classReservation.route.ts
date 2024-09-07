@@ -29,7 +29,7 @@ route.post(
   '/user/create',
   authMiddleware(ROLE.user),
   validateRequest(ClassReservationValidations.createByUserValidation),
-  ClassReservationController.createClassReservation,
+  ClassReservationController.createClassReservationByUser,
 );
 
 route.post(

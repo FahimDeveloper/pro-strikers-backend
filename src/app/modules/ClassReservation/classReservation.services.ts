@@ -36,8 +36,6 @@ const createClassReservationByUserIntoDB = async (
     session.startTransaction();
     const date = new Date(class_data.class_date);
     const kidsClass = await ClassSchedule.findById(class_data.class);
-    console.log(class_data);
-    console.log(kidsClass);
     if (!kidsClass) {
       throw new Error('Class not found');
     }
