@@ -61,7 +61,7 @@ const createFacilityReservationByUserIntoDB = async (
         { session },
       );
     }
-    await FacilityReservation.create([payload], { session });
+    await FacilityReservation.create([facility_data], { session });
     await WebPayment.create([payment_info], { session });
     await session.commitTransaction();
     await session.endSession();
