@@ -66,12 +66,12 @@ const createFacilityReservationByUserIntoDB = async (
     await session.commitTransaction();
     await session.endSession();
     return;
-  } catch (err) {
+  } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      'Failed your facility reservation',
+      err?.message || 'Failed your facility reservation',
     );
   }
 };
