@@ -1,22 +1,64 @@
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { SlotBooking } from '../SlotBooking/slotBooking.model';
-import { IAppointmentOneOnOneReservation } from './appointmentOneOnOneReservation.interface';
+import {
+  IAppointmentOneOnOneReservation,
+  IAppointmentOneOnOneReservationByUser,
+} from './appointmentOneOnOneReservation.interface';
 import { AppointmentOneOnOneReservation } from './appointmentOneOnOneReservation.model';
+import Payment from '../Payment/payment.modal';
 
 const createAppointmentOneOnOneReservationIntoDB = async (
   id: string,
   payload: IAppointmentOneOnOneReservation,
 ) => {
-  const deleteSlots = await SlotBooking.deleteMany({
-    user: id,
-    training: payload.appointment,
-  });
-  if (deleteSlots) {
-    const result = await AppointmentOneOnOneReservation.create(payload);
-    return result;
-  } else {
-    throw new Error('Failed your appointment reservation');
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    await SlotBooking.deleteMany(
+      {
+        user: id,
+        training: payload.appointment,
+      },
+      session,
+    );
+    await AppointmentOneOnOneReservation.create(payload);
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(error?.message || 'Failed to create reservation');
+  }
+};
+
+const createAppointmentOneOnOneReservationByUserIntoDB = async (
+  id: string,
+  payload: IAppointmentOneOnOneReservationByUser,
+) => {
+  const { appointment_data, payment_info } = payload;
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    await SlotBooking.deleteMany(
+      {
+        user: id,
+        training: appointment_data.appointment,
+      },
+      session,
+    );
+    await AppointmentOneOnOneReservation.create([appointment_data], {
+      session,
+    });
+    await Payment.create([payment_info], { session });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(error?.message || 'Failed to create reservation');
   }
 };
 
@@ -82,6 +124,15 @@ const getAllAppointmentOneOnOneReservationsFromDB = async (
   };
 };
 
+const getUserAppointmentOneOnOneReservationListFromDB = async (
+  email: string,
+) => {
+  const result = await AppointmentOneOnOneReservation.find({
+    email: email,
+  }).populate('appointment');
+  return result;
+};
+
 const getSingleAppointmentOneOnOneReservationFromDB = async (id: string) => {
   const result = await AppointmentOneOnOneReservation.findById(id);
   return result;
@@ -95,9 +146,11 @@ const deleteAppointmentOneOnOneReservationFromDB = async (id: string) => {
 
 export const AppointmentOneOnOneReservationServices = {
   createAppointmentOneOnOneReservationIntoDB,
+  createAppointmentOneOnOneReservationByUserIntoDB,
   updateAppointmentOneOnOneReservationIntoDB,
   getAllAppointmentOneOnOneReservationsFromDB,
   getSingleAppointmentOneOnOneReservationFromDB,
+  getUserAppointmentOneOnOneReservationListFromDB,
   deleteAppointmentOneOnOneReservationFromDB,
   getAppointmentOneOnOneReservationSlotsFromDB,
 };

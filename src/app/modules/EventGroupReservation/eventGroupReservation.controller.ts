@@ -10,6 +10,13 @@ const createEventGroupReservation = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
+const createEventGroupReservationByuser = catchAsync(async (req, res) => {
+  await EventGroupReservationServices.createEventGroupReservationByUserIntoDB(
+    req.body,
+  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
+});
+
 const updateEventGroupReservation = catchAsync(async (req, res) => {
   await EventGroupReservationServices.updateEventGroupReservationIntoDB(
     req.params.id,
@@ -49,6 +56,19 @@ const getSingleEventGroupReservation = catchAsync(async (req, res) => {
   );
 });
 
+const getUserEventGroupReservationList = catchAsync(async (req, res) => {
+  const result =
+    await EventGroupReservationServices.getUserEventGroupReservationListFromDB(
+      req.params.email,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'User event group reservations fetched successfully',
+    result,
+  );
+});
+
 const deleteEventGroupReservation = catchAsync(async (req, res) => {
   await EventGroupReservationServices.deleteEventGroupReservationFromDB(
     req.params.id,
@@ -66,4 +86,6 @@ export const EventGroupReservationController = {
   getAllEventGroupReservations,
   getSingleEventGroupReservation,
   deleteEventGroupReservation,
+  createEventGroupReservationByuser,
+  getUserEventGroupReservationList,
 };

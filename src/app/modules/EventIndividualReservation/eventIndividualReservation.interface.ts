@@ -8,8 +8,20 @@ export interface IEventIndividualReservation {
   age: number;
   event: mongoose.Types.ObjectId;
   street_address: string;
+  voucher_applied: boolean;
   city: string;
   state: string;
   sport: string;
   zip_code: string;
+}
+
+export interface IEventIndividualReservationByUser {
+  event_data: IEventIndividualReservation;
+  payment_info: {
+    transaction_id: string;
+    user: mongoose.Types.ObjectId;
+    amount: number;
+    email: string;
+    service: string;
+  };
 }

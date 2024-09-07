@@ -41,6 +41,11 @@ const getVoucherFromDB = async (payload: any) => {
     } else if (currentDate > endDate) {
       throw new AppError(httpStatus.BAD_REQUEST, 'The voucher already expired');
     } else {
+      await Voucher.findByIdAndUpdate(
+        result._id,
+        { $inc: { used: 1 } },
+        { new: true, runValidators: true },
+      );
       const voucher = {
         discount_type: result?.discount_type,
         discount_value: result?.discount_value,

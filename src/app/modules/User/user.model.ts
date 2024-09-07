@@ -22,7 +22,6 @@ const userSchema = new Schema<IUser, UserModel>(
     gender: {
       type: String,
       enum: ['male', 'female'],
-      required: true,
     },
     email: {
       type: String,
@@ -38,9 +37,13 @@ const userSchema = new Schema<IUser, UserModel>(
       enum: ['user'],
       default: 'user',
     },
-    phone: {
+    provider: {
       type: String,
       required: true,
+      default: 'email with password',
+    },
+    phone: {
+      type: String,
     },
     date_of_birth: {
       type: String,
@@ -53,10 +56,10 @@ const userSchema = new Schema<IUser, UserModel>(
       type: Boolean,
     },
     issue_date: {
-      type: Date,
+      type: String,
     },
     expiry_date: {
-      type: Date,
+      type: String,
     },
     package_name: {
       type: String,

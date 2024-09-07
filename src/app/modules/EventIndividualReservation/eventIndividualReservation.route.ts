@@ -14,27 +14,40 @@ route.get(
 );
 
 route.get(
+  '/user/:email',
+  authMiddleware(ROLE.user),
+  EventIndividualReservationController.getUserEventIndividualReservationList,
+);
+
+route.get(
   '/:id',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
   EventIndividualReservationController.getSingleEventIndividualReservation,
 );
 
 route.post(
-  '/create',
-  authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
-  validateRequest(EventIndividualResrvationValidations.createValidation),
+  '/user/create',
+  authMiddleware(ROLE.user),
+  validateRequest(EventIndividualResrvationValidations.createByUserValidation),
+  EventIndividualReservationController.createEventIndividualReservationByuser,
+);
+
+route.post(
+  '/admin/create',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  validateRequest(EventIndividualResrvationValidations.createByAdminValidation),
   EventIndividualReservationController.createEventIndividualReservation,
 );
 
 route.patch(
-  '/update/:id',
+  '/admin/update/:id',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
-  validateRequest(EventIndividualResrvationValidations.updateValidation),
+  validateRequest(EventIndividualResrvationValidations.updateByAdminValidation),
   EventIndividualReservationController.updateEventIndividualReservation,
 );
 
 route.delete(
-  '/delete/:id',
+  '/admin/delete/:id',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
   EventIndividualReservationController.deleteEventIndividualReservation,
 );

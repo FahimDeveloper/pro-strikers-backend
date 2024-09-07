@@ -10,6 +10,13 @@ const createEventIndividualReservation = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
+const createEventIndividualReservationByuser = catchAsync(async (req, res) => {
+  await EventIndividualReservationServices.createEventIndividualReservationByUserIntoDB(
+    req.body,
+  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
+});
+
 const updateEventIndividualReservation = catchAsync(async (req, res) => {
   await EventIndividualReservationServices.updateEventIndividualReservationIntoDB(
     req.params.id,
@@ -33,6 +40,19 @@ const getAllEventIndividualReservations = catchAsync(async (req, res) => {
     'Event individual reservations fetched successfully',
     result,
     count,
+  );
+});
+
+const getUserEventIndividualReservationList = catchAsync(async (req, res) => {
+  const result =
+    await EventIndividualReservationServices.getUserEventIndividualReservationListFromDB(
+      req.params.email,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'User event group reservations fetched successfully',
+    result,
   );
 });
 
@@ -62,6 +82,8 @@ const deleteEventIndividualReservation = catchAsync(async (req, res) => {
 
 export const EventIndividualReservationController = {
   createEventIndividualReservation,
+  createEventIndividualReservationByuser,
+  getUserEventIndividualReservationList,
   updateEventIndividualReservation,
   getAllEventIndividualReservations,
   getSingleEventIndividualReservation,

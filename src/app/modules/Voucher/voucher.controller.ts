@@ -26,7 +26,7 @@ const updateVoucher = catchAsync(async (req, res) => {
 });
 
 const getVoucher = catchAsync(async (req, res) => {
-  const result = await VoucherServices.getVoucherFromDB(req.params.id);
+  const result = await VoucherServices.getVoucherFromDB(req.body);
   sendResponse(res, httpStatus.OK, 'Get voucher succesfully', result);
 });
 

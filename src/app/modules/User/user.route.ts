@@ -24,11 +24,19 @@ route.get(
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   UserControllers.getUsresEmail,
 );
+
 route.get(
   '/:id',
   authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   UserControllers.getSingleUser,
 );
+
+route.post(
+  '/create-membership/:id',
+  authMiddleware(ROLE.user),
+  UserControllers.createMembershipByUser,
+);
+
 route.post(
   '/create',
   upload.single('image'),

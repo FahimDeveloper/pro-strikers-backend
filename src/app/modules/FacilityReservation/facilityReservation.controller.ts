@@ -8,6 +8,14 @@ const createFacilityReservation = catchAsync(async (req, res) => {
     req.params.id,
     req.body,
   );
+  sendResponse(res, httpStatus.CREATED, 'Reservation create success');
+});
+
+const createFacilityReservationByUser = catchAsync(async (req, res) => {
+  await FacilityReservationServices.createFacilityReservationByUserIntoDB(
+    req.params.id,
+    req.body,
+  );
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
@@ -73,4 +81,5 @@ export const FacilityReservationController = {
   updateFacilityReservation,
   deleteFacilityReservation,
   getFacilityReservationSlots,
+  createFacilityReservationByUser,
 };

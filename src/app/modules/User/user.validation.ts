@@ -10,7 +10,7 @@ const createValidation = z.object({
       invalid_type_error: 'last name must be string',
       required_error: 'last name is required',
     }),
-    gender: z.enum(['male', 'female']),
+    gender: z.enum(['male', 'female']).optional(),
     email: z
       .string({
         invalid_type_error: 'email must be string',
@@ -24,11 +24,15 @@ const createValidation = z.object({
         invalid_type_error: 'password must be string',
       })
       .optional(),
+    provider: z
+      .enum(['email with password', 'google', 'facebook'])
+      .default('email with password'),
     role: z.enum(['user']).default('user'),
-    phone: z.string({
-      invalid_type_error: 'phone must be string',
-      required_error: 'phone is required',
-    }),
+    phone: z
+      .string({
+        invalid_type_error: 'phone must be string',
+      })
+      .optional(),
     date_of_birth: z
       .string({
         invalid_type_error: 'date of birth must be string',
@@ -89,6 +93,9 @@ const updateValidation = z.object({
         .string({
           invalid_type_error: 'password must be string',
         })
+        .optional(),
+      provider: z
+        .enum(['email with password', 'google', 'facebook'])
         .optional(),
       role: z.enum(['user']).optional(),
       phone: z

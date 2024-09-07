@@ -59,17 +59,12 @@ const loginAdmin = catchAsync(async (req, res) => {
   });
 });
 
-// const changePassword = catchAsync(async (req, res) => {
-//   const { ...passwordData } = req.body;
-
-//   const result = await AuthenticationServices.changePassword(req.user, passwordData);
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Password is updated successfully!',
-//     data: result,
-//   });
-// });
+const continueWithSocial = catchAsync(async (req, res) => {
+  const result = await AuthenticationServices.continueWithSocialIntoDB(
+    req.body,
+  );
+  sendResponse(res, httpStatus.OK, 'Logged in successfully!', result);
+});
 
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
@@ -155,6 +150,7 @@ export const AuthenticationControllers = {
   resetAdminPassword,
   resetUserPassword,
   userForgetPassword,
+  continueWithSocial,
   // changePassword,
   // forgetPassword,
 };

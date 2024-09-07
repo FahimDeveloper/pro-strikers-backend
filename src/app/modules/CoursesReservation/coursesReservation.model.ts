@@ -14,6 +14,7 @@ const courseReservationSchema = new Schema<ICourseReservation>(
     },
     age: { type: Number, required: true },
     street_address: { type: String, required: true },
+    voucher_applied: { type: Boolean, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
     sport: { type: String, required: true },

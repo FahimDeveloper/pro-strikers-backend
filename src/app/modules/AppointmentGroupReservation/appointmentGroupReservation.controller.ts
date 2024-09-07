@@ -10,6 +10,13 @@ const createAppointmentGroupReservation = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
+const createAppointmentGroupReservationByUser = catchAsync(async (req, res) => {
+  await AppointmentGroupReservationServices.createAppointmentGroupReservationByUserIntoDB(
+    req.body,
+  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation success');
+});
+
 const getAllAppointmentGroupReservation = catchAsync(async (req, res) => {
   const { count, result } =
     await AppointmentGroupReservationServices.getAllAppointmentGroupReservationsFromDB(
@@ -33,6 +40,19 @@ const getSingleAppointmentGroupReservation = catchAsync(async (req, res) => {
     res,
     httpStatus.OK,
     'Appointment Group reservation fetch succesfully',
+    result,
+  );
+});
+
+const getUserAppointmentGroupReservationList = catchAsync(async (req, res) => {
+  const result =
+    await AppointmentGroupReservationServices.getUserAppointmentGroupReservationListFromDB(
+      req.params.email,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'User appointment Group reservation list fetch succesfully',
     result,
   );
 });
@@ -62,6 +82,8 @@ const deleteAppointmentGroupReservation = catchAsync(async (req, res) => {
 
 export const AppointmentGroupReservationController = {
   createAppointmentGroupReservation,
+  createAppointmentGroupReservationByUser,
+  getUserAppointmentGroupReservationList,
   getAllAppointmentGroupReservation,
   getSingleAppointmentGroupReservation,
   updateAppointmentGroupReservation,

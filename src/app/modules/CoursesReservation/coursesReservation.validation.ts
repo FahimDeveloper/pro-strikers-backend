@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const createValidation = z.object({
+const createByAdminValidation = z.object({
   body: z.object({
     first_name: z.string({
       required_error: 'First name is required',
@@ -47,7 +47,34 @@ const createValidation = z.object({
   }),
 });
 
-const updateValidation = z.object({
+const createByUserValidation = z.object({
+  body: z.object({
+    course_data: createByAdminValidation,
+    payment_info: z.object({
+      transaction_id: z.string(),
+      user: z.string({
+        required_error: 'user is required',
+        invalid_type_error: 'user must be a string',
+      }),
+      email: z
+        .string({
+          required_error: 'email is required',
+          invalid_type_error: 'email must be a string',
+        })
+        .email('Invalid email address'),
+      amount: z.number({
+        required_error: 'amount is required',
+        invalid_type_error: 'amount must be a number',
+      }),
+      service: z.string({
+        required_error: 'service is required',
+        invalid_type_error: 'service must be a string',
+      }),
+    }),
+  }),
+});
+
+const updateByAdminValidation = z.object({
   body: z.object({
     first_name: z
       .string({
@@ -109,6 +136,7 @@ const updateValidation = z.object({
 });
 
 export const courseReservationValidations = {
-  createValidation,
-  updateValidation,
+  createByAdminValidation,
+  createByUserValidation,
+  updateByAdminValidation,
 };

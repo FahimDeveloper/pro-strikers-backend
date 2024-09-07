@@ -1,22 +1,78 @@
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { IFacilityReservation } from './facilityReservation.interface';
+import {
+  IFacilityReservation,
+  IFacilityReservationByUser,
+} from './facilityReservation.interface';
 import { FacilityReservation } from './facilityReservation.model';
 import { SlotBooking } from '../SlotBooking/slotBooking.model';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
+import { User } from '../User/user.model';
+import Payment from '../Payment/payment.modal';
 
 const createFacilityReservationIntoDB = async (
   id: string,
   payload: IFacilityReservation,
 ) => {
-  const deleteSlots = await SlotBooking.deleteMany({
-    user: id,
-    training: payload.facility,
-  });
-  if (deleteSlots) {
-    const result = await FacilityReservation.create(payload);
-    return result;
-  } else {
-    throw new Error('Failed your facility reservation');
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    await SlotBooking.deleteMany(
+      {
+        user: id,
+        training: payload.facility,
+      },
+      { session },
+    );
+    await FacilityReservation.create([payload], { session });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (err) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Failed your facility reservation',
+    );
+  }
+};
+
+const createFacilityReservationByUserIntoDB = async (
+  id: string,
+  payload: IFacilityReservationByUser,
+) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const { facility_data, membership_info, payment_info } = payload;
+    await SlotBooking.deleteMany(
+      {
+        user: id,
+        training: facility_data.facility,
+      },
+      { session },
+    );
+    if (membership_info) {
+      await User.findByIdAndUpdate(
+        membership_info.user_id,
+        membership_info.membership,
+        { session },
+      );
+    }
+    await FacilityReservation.create([payload], { session });
+    await Payment.create([payment_info], { session });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (err) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Failed your facility reservation',
+    );
   }
 };
 
@@ -92,4 +148,5 @@ export const FacilityReservationServices = {
   getSingleFacilityReservationFromDB,
   deleteFacilityReservationFromDB,
   getFacilityReservationSlotsFromDB,
+  createFacilityReservationByUserIntoDB,
 };

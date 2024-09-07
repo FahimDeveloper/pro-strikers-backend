@@ -12,6 +12,11 @@ router.get(
 );
 
 router.post(
+  '/user/continue-social-login',
+  AuthenticationControllers.continueWithSocial,
+);
+
+router.post(
   '/user/login',
   validateRequest(AuthenticationValidations.loginValidation),
   AuthenticationControllers.loginUser,

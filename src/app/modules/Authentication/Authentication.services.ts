@@ -10,6 +10,7 @@ import { ROLE } from '../../utils/role';
 import { Admin } from '../Admin/admin.model';
 import { ResetPassService } from '../ResetPass/resetPass.services';
 import { sendEmail } from '../../utils/sendEmail';
+import { generateRandomPassword } from '../../utils/generateRandomPassword';
 
 const loginUserIntoDB = async (payload: ILogin) => {
   const user = await User.isUserExistsByEmail(payload.email);
@@ -63,6 +64,62 @@ const loginUserIntoDB = async (payload: ILogin) => {
     accessToken,
     refreshToken,
   };
+};
+
+const continueWithSocialIntoDB = async (payload: any) => {
+  const user = await User.findOne({
+    email: payload.email,
+  });
+
+  const randomPass = generateRandomPassword();
+
+  const jwtPayload = {
+    email: payload.email,
+    role: 'user',
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string,
+  );
+
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_refresh_secret as string,
+    config.jwt_refresh_expires_in as string,
+  );
+
+  if (!user) {
+    const result = await User.create({ ...payload, password: randomPass });
+    if (result) {
+      await sendEmail({
+        email: payload.email,
+        password: randomPass,
+        provider: payload.provider,
+      });
+    }
+    const { _id, first_name, last_name, image, email, role } = result;
+    return {
+      user: { _id, first_name, last_name, image, email, role },
+      accessToken,
+      refreshToken,
+    };
+  } else {
+    if (user.provider !== payload.provider) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'You are trying to access with wrong provider, your account has different provider',
+      );
+    } else {
+      const { _id, first_name, last_name, image, email, role } = user;
+      return {
+        user: { _id, first_name, last_name, image, email, role },
+        accessToken,
+        refreshToken,
+      };
+    }
+  }
 };
 
 const registerUserIntoDB = async (payload: IRegister) => {
@@ -389,5 +446,6 @@ export const AuthenticationServices = {
   forgetPasswordForAdmin,
   forgetPasswordForUser,
   resetUserPasswordIntoDB,
+  continueWithSocialIntoDB,
   // resetPassword,
 };

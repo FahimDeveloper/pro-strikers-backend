@@ -1,11 +1,13 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { IUser } from './user.interface';
+import { IUser, IUserMembership } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { sendEmail } from '../../utils/sendEmail';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
+import mongoose from 'mongoose';
+import Payment from '../Payment/payment.modal';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
@@ -46,6 +48,32 @@ const updateUserIntoDB = async (
     result = await User.findByIdAndUpdate(id, payload);
   }
   return result;
+};
+
+const createMembershipByUserIntoDB = async (
+  id: string,
+  payload: IUserMembership,
+) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const { membership, payment_info } = payload;
+    const result = await User.findByIdAndUpdate(id, membership, { session });
+    if (!result) {
+      throw new Error('Failed to get membership');
+    }
+    await Payment.create([payment_info], { session });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.message || 'Failed to get membership',
+    );
+  }
 };
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
@@ -94,4 +122,5 @@ export const UserServices = {
   getMembershipUsersFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,
+  createMembershipByUserIntoDB,
 };

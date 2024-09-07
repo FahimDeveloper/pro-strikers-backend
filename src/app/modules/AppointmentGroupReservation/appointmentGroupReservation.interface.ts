@@ -11,7 +11,19 @@ export interface IAppointmentGroupReservation {
   city: string;
   state: string;
   sport: string;
-  appointment_date: Date;
+  appointment_date: string;
+  voucher_applied: boolean;
   zip_code: string;
   trainer: mongoose.Types.ObjectId;
+}
+
+export interface IAppointmentGroupReservationByUser {
+  appointment_data: IAppointmentGroupReservation;
+  payment_info: {
+    transaction_id: string;
+    user: mongoose.Types.ObjectId;
+    amount: number;
+    email: string;
+    service: string;
+  };
 }

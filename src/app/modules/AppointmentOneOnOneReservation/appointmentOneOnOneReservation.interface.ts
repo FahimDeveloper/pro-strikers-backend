@@ -12,6 +12,7 @@ export interface IAppointmentOneOnOneReservation {
   state: string;
   sport: string;
   zip_code: string;
+  voucher_applied: boolean;
   trainer: mongoose.Types.ObjectId;
   bookings: IAppointmentBookings[];
 }
@@ -20,4 +21,15 @@ export interface IAppointmentBookings {
   date: string;
   time_slot: string;
   training: mongoose.Types.ObjectId;
+}
+
+export interface IAppointmentOneOnOneReservationByUser {
+  appointment_data: IAppointmentOneOnOneReservation;
+  payment_info: {
+    transaction_id: string;
+    user: mongoose.Types.ObjectId;
+    amount: number;
+    email: string;
+    service: string;
+  };
 }

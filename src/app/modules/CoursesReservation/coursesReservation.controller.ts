@@ -5,6 +5,11 @@ import { CourseReservationServices } from './coursesReservation.services';
 
 const createCourseReservation = catchAsync(async (req, res) => {
   await CourseReservationServices.createCourseReservationIntoDB(req.body);
+  sendResponse(res, httpStatus.CREATED, 'Reservation create success');
+});
+
+const createCourseReservationByUser = catchAsync(async (req, res) => {
+  await CourseReservationServices.createCourseReservationByUserIntoDB(req.body);
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
@@ -17,6 +22,19 @@ const getAllCoursesReservation = catchAsync(async (req, res) => {
     'Coursees reservation fetch succesfully',
     result,
     count,
+  );
+});
+
+const getUserCourseReservationList = catchAsync(async (req, res) => {
+  const result =
+    await CourseReservationServices.getUserCourseReservationListFromDB(
+      req.params.email,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Course reservation fetch succesfully',
+    result,
   );
 });
 
@@ -48,6 +66,8 @@ const deleteCourseReservation = catchAsync(async (req, res) => {
 
 export const CourseReservationController = {
   createCourseReservation,
+  createCourseReservationByUser,
+  getUserCourseReservationList,
   getAllCoursesReservation,
   getSingleCourseReservation,
   updateCourseReservation,
