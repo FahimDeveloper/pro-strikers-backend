@@ -17,8 +17,8 @@ const createAppointmentOneOnOneReservationIntoDB = async (
     session.startTransaction();
     await SlotBooking.deleteMany(
       {
-        user: id,
-        training: payload.appointment,
+        user: new mongoose.Types.ObjectId(id),
+        training: new mongoose.Types.ObjectId(payload.appointment),
       },
       session,
     );
@@ -43,8 +43,8 @@ const createAppointmentOneOnOneReservationByUserIntoDB = async (
     session.startTransaction();
     await SlotBooking.deleteMany(
       {
-        user: id,
-        training: appointment_data.appointment,
+        user: new mongoose.Types.ObjectId(id),
+        training: new mongoose.Types.ObjectId(appointment_data.appointment),
       },
       session,
     );

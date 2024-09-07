@@ -20,8 +20,8 @@ const createFacilityReservationIntoDB = async (
     session.startTransaction();
     await SlotBooking.deleteMany(
       {
-        user: id,
-        training: payload.facility,
+        user: new mongoose.Types.ObjectId(id),
+        training: new mongoose.Types.ObjectId(payload.facility),
       },
       { session },
     );
@@ -44,13 +44,13 @@ const createFacilityReservationByUserIntoDB = async (
   payload: IFacilityReservationByUser,
 ) => {
   const session = await mongoose.startSession();
+  const { facility_data, membership_info, payment_info } = payload;
   try {
     session.startTransaction();
-    const { facility_data, membership_info, payment_info } = payload;
     await SlotBooking.deleteMany(
       {
-        user: id,
-        training: facility_data.facility,
+        user: new mongoose.Types.ObjectId(id),
+        training: new mongoose.Types.ObjectId(facility_data.facility),
       },
       { session },
     );
