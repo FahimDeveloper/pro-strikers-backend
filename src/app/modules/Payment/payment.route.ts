@@ -38,3 +38,5 @@ route.delete(
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   PaymentControllers.deletePayment,
 );
+
+export const PaymentRoutes = route;
