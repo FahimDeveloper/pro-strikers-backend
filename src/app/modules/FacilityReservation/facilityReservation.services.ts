@@ -9,7 +9,7 @@ import { SlotBooking } from '../SlotBooking/slotBooking.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../User/user.model';
-import Payment from '../Payment/payment.modal';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createFacilityReservationIntoDB = async (
   id: string,
@@ -62,7 +62,7 @@ const createFacilityReservationByUserIntoDB = async (
       );
     }
     await FacilityReservation.create([payload], { session });
-    await Payment.create([payment_info], { session });
+    await WebPayment.create([payment_info], { session });
     await session.commitTransaction();
     await session.endSession();
     return;

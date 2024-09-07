@@ -8,7 +8,7 @@ import { AppointmentGroupReservation } from './appointmentGroupReservation.model
 import { GroupAppointmentSchedule } from '../GroupAppointmentSchedule/groupAppointmentSchedule.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
-import Payment from '../Payment/payment.modal';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createAppointmentGroupReservationIntoDB = async (
   payload: IAppointmentGroupReservation,
@@ -52,7 +52,7 @@ const createAppointmentGroupReservationByUserIntoDB = async (
       throw new Error('Appointment capacity exceeded');
     }
     await AppointmentGroupReservation.create([appointment_data], { session });
-    await Payment.create([payment_info], { session });
+    await WebPayment.create([payment_info], { session });
     await session.commitTransaction();
     await session.endSession();
     return;

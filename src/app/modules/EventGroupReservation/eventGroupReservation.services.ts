@@ -8,7 +8,7 @@ import {
 import { EventGroupReservation } from './eventGroupReservation.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
-import Payment from '../Payment/payment.modal';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createEventGroupReservationIntoDB = async (
   payload: IEventGroupReservation,
@@ -71,7 +71,7 @@ const createEventGroupReservationByUserIntoDB = async (
       await EventGroupReservation.create([event_data], {
         session,
       });
-      await Payment.create([payment_info], { session });
+      await WebPayment.create([payment_info], { session });
       await session.commitTransaction();
       await session.endSession();
       return;

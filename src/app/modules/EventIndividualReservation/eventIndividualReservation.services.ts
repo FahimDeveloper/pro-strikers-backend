@@ -7,9 +7,9 @@ import {
   IEventIndividualReservationByUser,
 } from './eventIndividualReservation.interface';
 import { EventIndividualReservation } from './eventIndividualReservation.model';
-import Payment from '../Payment/payment.modal';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createEventIndividualReservationIntoDB = async (
   payload: IEventIndividualReservation,
@@ -72,7 +72,7 @@ const createEventIndividualReservationByUserIntoDB = async (
       await EventIndividualReservation.create([event_data], {
         session,
       });
-      await Payment.create([payment_info], { session });
+      await WebPayment.create([payment_info], { session });
       await session.commitTransaction();
       await session.endSession();
       return;

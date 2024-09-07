@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export interface IPayment {
+export interface IWebPayment {
   transaction_id: string;
   amount: number;
   user: mongoose.Types.ObjectId;

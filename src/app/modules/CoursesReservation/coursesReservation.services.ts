@@ -8,7 +8,7 @@ import {
 } from './coursesReservation.interface';
 import { CourseReservation } from './coursesReservation.model';
 import mongoose from 'mongoose';
-import Payment from '../Payment/payment.modal';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
   const session = await mongoose.startSession();
@@ -63,7 +63,7 @@ const createCourseReservationByUserIntoDB = async (
         { new: true, runValidators: true, session },
       );
       await CourseReservation.create([course_data], { session });
-      await Payment.create([payment_info], { session });
+      await WebPayment.create([payment_info], { session });
       await session.commitTransaction();
       await session.endSession();
       return;

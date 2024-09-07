@@ -7,7 +7,7 @@ import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { sendEmail } from '../../utils/sendEmail';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
 import mongoose from 'mongoose';
-import Payment from '../Payment/payment.modal';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
@@ -62,7 +62,7 @@ const createMembershipByUserIntoDB = async (
     if (!result) {
       throw new Error('Failed to get membership');
     }
-    await Payment.create([payment_info], { session });
+    await WebPayment.create([payment_info], { session });
     await session.commitTransaction();
     await session.endSession();
     return;

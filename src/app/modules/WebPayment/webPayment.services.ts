@@ -1,16 +1,16 @@
 import mongoose from 'mongoose';
-import { IPayment } from './payment.interface';
-import Payment from './payment.modal';
+import { IWebPayment } from './webPayment.interface';
 import QueryBuilder from '../../builder/QueryBuilder';
+import WebPayment from './webPayment.modal';
 
-const createPaymentIntoDB = async (payload: IPayment) => {
-  const result = await Payment.create(payload);
+const createPaymentIntoDB = async (payload: IWebPayment) => {
+  const result = await WebPayment.create(payload);
   return result;
 };
 
 const getPaymentListFromDB = async (query: Record<string, unknown>) => {
   const paymentQuery = new QueryBuilder(
-    Payment.find().populate([
+    WebPayment.find().populate([
       {
         path: 'user',
       },
@@ -29,17 +29,20 @@ const getPaymentListFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getUserPaymentListFormDB = async (id: string) => {
-  const result = await Payment.find({ user: id });
+  const result = await WebPayment.find({ user: id });
   return result;
 };
 
-const updatePaymentIntoDB = async (id: string, payload: Partial<IPayment>) => {
-  const result = await Payment.findByIdAndUpdate(id, payload);
+const updatePaymentIntoDB = async (
+  id: string,
+  payload: Partial<IWebPayment>,
+) => {
+  const result = await WebPayment.findByIdAndUpdate(id, payload);
   return result;
 };
 
 const deletePaymentFromDB = async (id: string) => {
-  const result = await Payment.findByIdAndDelete(id);
+  const result = await WebPayment.findByIdAndDelete(id);
   return result;
 };
 

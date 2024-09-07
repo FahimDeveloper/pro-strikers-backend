@@ -6,7 +6,7 @@ import {
   IAppointmentOneOnOneReservationByUser,
 } from './appointmentOneOnOneReservation.interface';
 import { AppointmentOneOnOneReservation } from './appointmentOneOnOneReservation.model';
-import Payment from '../Payment/payment.modal';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createAppointmentOneOnOneReservationIntoDB = async (
   id: string,
@@ -51,7 +51,7 @@ const createAppointmentOneOnOneReservationByUserIntoDB = async (
     await AppointmentOneOnOneReservation.create([appointment_data], {
       session,
     });
-    await Payment.create([payment_info], { session });
+    await WebPayment.create([payment_info], { session });
     await session.commitTransaction();
     await session.endSession();
     return;

@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
-import { IPayment } from './payment.interface';
+import { IWebPayment } from './webPayment.interface';
 
-const PaymentSchema = new Schema<IPayment>(
+const WebPaymentSchema = new Schema<IWebPayment>(
   {
     transaction_id: { type: String, required: true },
     amount: { type: Number, required: true },
@@ -12,6 +12,6 @@ const PaymentSchema = new Schema<IPayment>(
   { timestamps: true, versionKey: false },
 );
 
-const Payment = model<IPayment>('Payment', PaymentSchema);
+const WebPayment = model<IWebPayment>('WebPayment', WebPaymentSchema);
 
-export default Payment;
+export default WebPayment;

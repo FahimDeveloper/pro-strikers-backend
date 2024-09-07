@@ -1,9 +1,9 @@
 import express from 'express';
 import authMiddleware from '../../middlewares/authMiddleware';
 import { ROLE } from '../../utils/role';
-import { PaymentControllers } from './payment.controller';
+import { PaymentControllers } from './webPayment.controller';
 import validateRequest from '../../middlewares/validateRequest';
-import { PaymentValidations } from './payment.validations';
+import { PaymentValidations } from './webPayment.validations';
 
 const route = express.Router();
 
@@ -39,4 +39,4 @@ route.delete(
   PaymentControllers.deletePayment,
 );
 
-export const PaymentRoutes = route;
+export const WebPaymentRoutes = route;

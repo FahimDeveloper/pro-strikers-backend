@@ -8,7 +8,7 @@ import {
 } from './classReservation.interface';
 import { ClassReservation } from './classReservation.model';
 import mongoose from 'mongoose';
-import Payment from '../Payment/payment.modal';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createClassReservationIntoDB = async (payload: IClassReservation) => {
   const date = new Date(payload.class_date);
@@ -47,7 +47,7 @@ const createClassReservationByUserIntoDB = async (
       throw new Error('Class capacity exceeded');
     }
     await ClassReservation.create([class_data], { session });
-    await Payment.create([payment_info], { session });
+    await WebPayment.create([payment_info], { session });
     await session.commitTransaction();
     await session.endSession();
     return;
