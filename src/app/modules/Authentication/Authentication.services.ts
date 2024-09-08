@@ -127,7 +127,10 @@ const registerUserIntoDB = async (payload: IRegister) => {
   if (user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User Already exists');
   }
-  const result = await User.create(payload);
+  const result = await User.create({
+    ...payload,
+    provider: 'email with password',
+  });
 
   const jwtPayload = {
     email: payload.email,
