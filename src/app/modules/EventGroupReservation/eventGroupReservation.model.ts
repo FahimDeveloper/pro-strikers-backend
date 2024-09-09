@@ -25,7 +25,7 @@ const eventGroupReservationSchema = new Schema<IEventGroupReservation>(
     age: { type: Number, required: true },
     street_address: { type: String, required: true },
     city: { type: String, required: true },
-    voucher_applied: { type: Boolean, required: true },
+    voucher_applied: { type: Boolean, required: true, default: false },
     // preferred_time: { type: String, required: true },
     // preferred_date: { type: String, required: true },
     state: { type: String, required: true },

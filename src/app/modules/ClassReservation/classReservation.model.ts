@@ -19,7 +19,7 @@ const classReservationSchema = new Schema<IClassReservation>(
       required: true,
     },
     class_date: { type: String, required: true },
-    voucher_applied: { type: Boolean, required: true },
+    voucher_applied: { type: Boolean, required: true, default: false },
     street_address: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
