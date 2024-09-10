@@ -13,7 +13,7 @@ app.use(cookieParser());
 const corsConfig = {
   origin: [
     'https://prostrikers-admin.netlify.app',
-    'https://pro-strikers.netlify.app',
+    'https://prostrikers-web.netlify.app',
     'http://localhost:4000',
     'http://localhost:4001',
   ],
