@@ -139,7 +139,6 @@ const getSingleAppointmentOneOnOneReservationFromDB = async (id: string) => {
 };
 
 const deleteAppointmentOneOnOneReservationFromDB = async (id: string) => {
-  console.log(id);
   const result = await AppointmentOneOnOneReservation.findByIdAndDelete(id);
   return result;
 };

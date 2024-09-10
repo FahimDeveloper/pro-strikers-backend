@@ -168,7 +168,6 @@ const getAppointmentByIdDateFromDB = async ({
   id: string;
   date: Date;
 }) => {
-  console.log(id, date);
   const queryDate = new Date(date);
   const daysOfWeek = [
     'Sunday',
