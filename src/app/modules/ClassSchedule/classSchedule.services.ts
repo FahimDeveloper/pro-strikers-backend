@@ -176,8 +176,7 @@ const getClassByIdDateFromDB = async ({
     'Friday',
     'Saturday',
   ];
-  const dayOfWeek = daysOfWeek[queryDate.getDay()];
-  console.log(dayOfWeek);
+  const dayOfWeek = daysOfWeek[queryDate.getUTCDay()];
   const result = await ClassSchedule.findOne({
     _id: new mongoose.Types.ObjectId(id),
     schedules: {
