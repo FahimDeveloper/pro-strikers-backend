@@ -30,6 +30,7 @@ const userSchema = new Schema<IUser, UserModel>(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     role: {
       type: String,

@@ -35,6 +35,7 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     description: {
       type: String,
