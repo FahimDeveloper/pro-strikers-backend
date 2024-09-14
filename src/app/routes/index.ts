@@ -22,6 +22,7 @@ import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
 import { AuthenticationRoutes } from '../modules/Authentication/Authentication.route';
 import { StripePaymentRoutes } from '../modules/StripePayment/stripePayment.route';
+import { WebPaymentRoutes } from '../modules/WebPayment/webPayment.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -115,6 +116,10 @@ const mainRoutes = [
   },
   {
     path: '/payments',
+    route: WebPaymentRoutes,
+  },
+  {
+    path: '/stripe-payment',
     route: StripePaymentRoutes,
   },
 ];

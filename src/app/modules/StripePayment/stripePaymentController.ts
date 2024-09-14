@@ -1,5 +1,6 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
 
 const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 
@@ -12,10 +13,16 @@ const stripePaymentIntent = catchAsync(async (req, res) => {
       enabled: true,
     },
   });
-
-  res.status(httpStatus.OK).json({
+  const result = {
     clientSecret: paymentIntent.client_secret,
-  });
+    transection_id: paymentIntent.id,
+  };
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Payment intent created successfully',
+    result,
+  );
 });
 
 export const StripePaymentController = {

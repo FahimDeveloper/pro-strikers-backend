@@ -8,8 +8,20 @@ export interface ICourseReservation {
   age: number;
   course: mongoose.Types.ObjectId;
   street_address: string;
+  voucher_applied: boolean;
   city: string;
   state: string;
   sport: string;
   zip_code: string;
+}
+
+export interface ICourseReservationByUser {
+  course_data: ICourseReservation;
+  payment_info: {
+    transaction_id: string;
+    user: mongoose.Types.ObjectId;
+    amount: number;
+    email: string;
+    service: string;
+  };
 }

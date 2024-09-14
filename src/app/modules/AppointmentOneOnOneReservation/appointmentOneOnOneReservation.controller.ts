@@ -11,6 +11,32 @@ const createAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
+const createAppointmentOneOnOneReservationByUser = catchAsync(
+  async (req, res) => {
+    await AppointmentOneOnOneReservationServices.createAppointmentOneOnOneReservationByUserIntoDB(
+      req.params.id,
+      req.body,
+    );
+    sendResponse(res, httpStatus.CREATED, 'Reservation success');
+  },
+);
+
+const getUserAppointmentOneOnOneReservationList = catchAsync(
+  async (req, res) => {
+    const { result, count } =
+      await AppointmentOneOnOneReservationServices.getUserAppointmentOneOnOneReservationListFromDB(
+        req.query,
+      );
+    sendResponse(
+      res,
+      httpStatus.OK,
+      'User appointment Group reservation list fetch succesfully',
+      result,
+      count,
+    );
+  },
+);
+
 const getAppointmentOneOnOneReservationSlots = catchAsync(async (req, res) => {
   const result =
     await AppointmentOneOnOneReservationServices.getAppointmentOneOnOneReservationSlotsFromDB(
@@ -76,6 +102,8 @@ const deleteAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
 
 export const AppointmentOneOnOneReservationController = {
   createAppointmentOneOnOneReservation,
+  createAppointmentOneOnOneReservationByUser,
+  getUserAppointmentOneOnOneReservationList,
   getAllAppointmentOneOnOneReservations,
   getSingleAppointmentOneOnOneReservation,
   updateAppointmentOneOnOneReservation,

@@ -29,7 +29,6 @@ const getSingleLaneFromDB = async (id: string) => {
 };
 
 const getLanesFromDB = async () => {
-  console.log('hello');
   const result = await Lane.find().select('lane_title');
   return result;
 };

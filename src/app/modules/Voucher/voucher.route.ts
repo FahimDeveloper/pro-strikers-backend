@@ -17,7 +17,7 @@ route.get(
   authMiddleware(ROLE.admin, ROLE.superAdmin),
   VoucherControllers.getSingleVoucher,
 );
-route.get('/use', authMiddleware(ROLE.user), VoucherControllers.getVoucher);
+route.post('/use', authMiddleware(ROLE.user), VoucherControllers.getVoucher);
 route.post(
   '/create',
   validateRequest(VoucherValidations.createValidation),
@@ -28,7 +28,7 @@ route.patch(
   '/update/:id',
   validateRequest(VoucherValidations.updateValidation),
   authMiddleware(ROLE.admin, ROLE.superAdmin),
-  VoucherControllers.createVoucher,
+  VoucherControllers.updateVoucher,
 );
 route.delete(
   '/delete/:id',

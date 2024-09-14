@@ -14,27 +14,40 @@ route.get(
 );
 
 route.get(
+  '/user',
+  authMiddleware(ROLE.user),
+  CourseReservationController.getUserCourseReservationList,
+);
+
+route.get(
   '/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   CourseReservationController.getSingleCourseReservation,
 );
 
 route.post(
-  '/create',
-  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
-  validateRequest(courseReservationValidations.createValidation),
+  '/user/create',
+  authMiddleware(ROLE.user),
+  validateRequest(courseReservationValidations.createByUserValidation),
+  CourseReservationController.createCourseReservationByUser,
+);
+
+route.post(
+  '/admin/create',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(courseReservationValidations.createByAdminValidation),
   CourseReservationController.createCourseReservation,
 );
 
 route.patch(
-  '/update/:id',
+  '/admin/update/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  validateRequest(courseReservationValidations.updateValidation),
+  validateRequest(courseReservationValidations.updateByAdminValidation),
   CourseReservationController.updateCourseReservation,
 );
 
 route.delete(
-  '/delete/:id',
+  '/admin/delete/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   CourseReservationController.deleteCourseReservation,
 );

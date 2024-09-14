@@ -8,6 +8,14 @@ const createFacilityReservation = catchAsync(async (req, res) => {
     req.params.id,
     req.body,
   );
+  sendResponse(res, httpStatus.CREATED, 'Reservation create success');
+});
+
+const createFacilityReservationByUser = catchAsync(async (req, res) => {
+  await FacilityReservationServices.createFacilityReservationByUserIntoDB(
+    req.params.id,
+    req.body,
+  );
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
 });
 
@@ -20,6 +28,20 @@ const getAllFacilitiesReservation = catchAsync(async (req, res) => {
     res,
     httpStatus.OK,
     'Facilities reservation fetch succesfully',
+    result,
+    count,
+  );
+});
+
+const getUserFacilitiesReservation = catchAsync(async (req, res) => {
+  const { count, result } =
+    await FacilityReservationServices.getAllFacilitiesReservationsFromDB(
+      req.query,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'User facilities reservation fetch succesfully',
     result,
     count,
   );
@@ -73,4 +95,6 @@ export const FacilityReservationController = {
   updateFacilityReservation,
   deleteFacilityReservation,
   getFacilityReservationSlots,
+  createFacilityReservationByUser,
+  getUserFacilitiesReservation,
 };

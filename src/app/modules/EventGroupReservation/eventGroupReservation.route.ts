@@ -14,27 +14,40 @@ route.get(
 );
 
 route.get(
+  '/user',
+  authMiddleware(ROLE.user),
+  EventGroupReservationController.getUserEventGroupReservationList,
+);
+
+route.get(
   '/:id',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
   EventGroupReservationController.getSingleEventGroupReservation,
 );
 
 route.post(
-  '/create',
-  authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
-  validateRequest(EventGroupResrvationValidations.createValidation),
+  '/user/create',
+  authMiddleware(ROLE.user),
+  validateRequest(EventGroupResrvationValidations.createByUserValidation),
+  EventGroupReservationController.createEventGroupReservationByuser,
+);
+
+route.post(
+  '/admin/create',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  validateRequest(EventGroupResrvationValidations.createByAdminValidation),
   EventGroupReservationController.createEventGroupReservation,
 );
 
 route.patch(
-  '/update/:id',
+  '/admin/update/:id',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
-  validateRequest(EventGroupResrvationValidations.updateValidation),
+  validateRequest(EventGroupResrvationValidations.updateByAdminValidation),
   EventGroupReservationController.updateEventGroupReservation,
 );
 
 route.delete(
-  '/delete/:id',
+  '/admin/delete/:id',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
   EventGroupReservationController.deleteEventGroupReservation,
 );

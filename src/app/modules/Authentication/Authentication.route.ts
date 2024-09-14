@@ -3,12 +3,19 @@ import validateRequest from '../../middlewares/validateRequest';
 import { AuthenticationValidations } from './Authentication.validation';
 import { AuthenticationControllers } from './Authentication.controller';
 import { UserValidations } from '../User/user.validation';
+import authMiddleware from '../../middlewares/authMiddleware';
+import { ROLE } from '../../utils/role';
 
 const router = express.Router();
 
 router.get(
   '/forgot-password/link-verify/:token',
   AuthenticationControllers.verifyUiLink,
+);
+
+router.post(
+  '/user/continue-social-login',
+  AuthenticationControllers.continueWithSocial,
 );
 
 router.post(
@@ -21,6 +28,12 @@ router.post(
   '/user/registration',
   validateRequest(UserValidations.createValidation),
   AuthenticationControllers.registerUser,
+);
+
+router.post(
+  '/user/:id/change-password',
+  authMiddleware(ROLE.user),
+  AuthenticationControllers.changePassword,
 );
 
 router.post(

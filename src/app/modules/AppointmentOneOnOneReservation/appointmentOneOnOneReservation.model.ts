@@ -29,6 +29,7 @@ const appointmentOneOnOneReservationSchema =
         ref: 'Admin',
         required: true,
       },
+      voucher_applied: { type: Boolean, required: true, default: false },
       street_address: { type: String, required: true },
       city: { type: String, required: true },
       state: { type: String, required: true },

@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { IAppointmentGroupReservation } from './appointmentGroupReservation.interface';
+import {
+  IAppointmentGroupReservation,
+  IAppointmentGroupReservationByUser,
+} from './appointmentGroupReservation.interface';
 import { AppointmentGroupReservation } from './appointmentGroupReservation.model';
 import { GroupAppointmentSchedule } from '../GroupAppointmentSchedule/groupAppointmentSchedule.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createAppointmentGroupReservationIntoDB = async (
   payload: IAppointmentGroupReservation,
@@ -25,6 +29,41 @@ const createAppointmentGroupReservationIntoDB = async (
   }
   const result = await AppointmentGroupReservation.create(payload);
   return result;
+};
+
+const createAppointmentGroupReservationByUserIntoDB = async (
+  payload: IAppointmentGroupReservationByUser,
+) => {
+  const session = await mongoose.startSession();
+  const { appointment_data, payment_info } = payload;
+  try {
+    session.startTransaction();
+    const appointment = await GroupAppointmentSchedule.findById(
+      appointment_data.appointment,
+    );
+    if (!appointment) {
+      throw new Error('Appointment not found');
+    }
+    const count = await AppointmentGroupReservation.find({
+      _id: appointment._id,
+      day: appointment_data.appointment_date,
+    }).countDocuments();
+    if (count >= appointment.capacity) {
+      throw new Error('Appointment capacity exceeded');
+    }
+    await AppointmentGroupReservation.create([appointment_data], { session });
+    await WebPayment.create([payment_info], { session });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.message || 'Appointment registration failed',
+    );
+  }
 };
 
 const updateAppointmentGroupReservationIntoDB = async (
@@ -49,12 +88,36 @@ const getAllAppointmentGroupReservationsFromDB = async (
       },
       {
         path: 'appointment',
-        select: 'appointment_name',
       },
     ]),
     query,
   )
     .search(['email', 'phone'])
+    .filter()
+    .paginate();
+  const result = await appointmentGroupReservationQuery?.modelQuery;
+  const count = await appointmentGroupReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
+const getUserAppointmentGroupReservationListFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const appointmentGroupReservationQuery = new QueryBuilder(
+    AppointmentGroupReservation.find().populate([
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+      {
+        path: 'appointment',
+      },
+    ]),
+    query,
+  )
     .filter()
     .paginate();
   const result = await appointmentGroupReservationQuery?.modelQuery;
@@ -79,6 +142,8 @@ export const AppointmentGroupReservationServices = {
   createAppointmentGroupReservationIntoDB,
   updateAppointmentGroupReservationIntoDB,
   getAllAppointmentGroupReservationsFromDB,
+  createAppointmentGroupReservationByUserIntoDB,
+  getUserAppointmentGroupReservationListFromDB,
   getSingleAppointmentGroupReservationFromDB,
   deleteAppointmentGroupReservationFromDB,
 };

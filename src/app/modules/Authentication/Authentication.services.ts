@@ -10,6 +10,7 @@ import { ROLE } from '../../utils/role';
 import { Admin } from '../Admin/admin.model';
 import { ResetPassService } from '../ResetPass/resetPass.services';
 import { sendEmail } from '../../utils/sendEmail';
+import { generateRandomPassword } from '../../utils/generateRandomPassword';
 
 const loginUserIntoDB = async (payload: ILogin) => {
   const user = await User.isUserExistsByEmail(payload.email);
@@ -65,12 +66,71 @@ const loginUserIntoDB = async (payload: ILogin) => {
   };
 };
 
+const continueWithSocialIntoDB = async (payload: any) => {
+  const user = await User.findOne({
+    email: payload.email,
+  });
+
+  const randomPass = generateRandomPassword();
+
+  const jwtPayload = {
+    email: payload.email,
+    role: 'user',
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string,
+  );
+
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_refresh_secret as string,
+    config.jwt_refresh_expires_in as string,
+  );
+
+  if (!user) {
+    const result = await User.create({ ...payload, password: randomPass });
+    if (result) {
+      await sendEmail({
+        email: payload.email,
+        password: randomPass,
+        provider: payload.provider,
+      });
+    }
+    const { _id, first_name, last_name, image, email, role } = result;
+    return {
+      user: { _id, first_name, last_name, image, email, role },
+      accessToken,
+      refreshToken,
+    };
+  } else {
+    if (user.provider !== payload.provider) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'You are trying to access with wrong provider, your account has different provider',
+      );
+    } else {
+      const { _id, first_name, last_name, image, email, role } = user;
+      return {
+        user: { _id, first_name, last_name, image, email, role },
+        accessToken,
+        refreshToken,
+      };
+    }
+  }
+};
+
 const registerUserIntoDB = async (payload: IRegister) => {
   const user = await User.isUserExistsByEmail(payload.email);
   if (user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User Already exists');
   }
-  const result = await User.create(payload);
+  const result = await User.create({
+    ...payload,
+    provider: 'email with password',
+  });
 
   const jwtPayload = {
     email: payload.email,
@@ -152,57 +212,38 @@ const loginAdminIntoDB = async (payload: ILogin) => {
   };
 };
 
-// const changePassword = async (
-//   userData: JwtPayload,
-//   payload: { oldPassword: string; newPassword: string },
-// ) => {
-//   // checking if the user is exist
-//   const user = await User.isUserExistsByCustomId(userData.userId);
+const changePasswordIntoDB = async (id: string, payload: any) => {
+  const user = await User.findById(id).select('+password');
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
 
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
-//   }
-//   // checking if the user is already deleted
+  //checking if the password is correct
+  const passwordMatch = await User.isPasswordMatched(
+    payload.current_password,
+    user?.password,
+  );
+  if (!passwordMatch) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Current password is incorrect');
+  }
 
-//   const isDeleted = user?.isDeleted;
+  //hash new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.new_password,
+    Number(config.bcrypt_salt_rounds),
+  );
 
-//   if (isDeleted) {
-//     throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
-//   }
-
-//   // checking if the user is blocked
-
-//   const userStatus = user?.status;
-
-//   if (userStatus === 'blocked') {
-//     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
-//   }
-
-//   //checking if the password is correct
-
-//   if (!(await User.isPasswordMatched(payload.oldPassword, user?.password)))
-//     throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
-
-//   //hash new password
-//   const newHashedPassword = await bcrypt.hash(
-//     payload.newPassword,
-//     Number(config.bcrypt_salt_rounds),
-//   );
-
-//   await User.findOneAndUpdate(
-//     {
-//       id: userData.userId,
-//       role: userData.role,
-//     },
-//     {
-//       password: newHashedPassword,
-//       needsPasswordChange: false,
-//       passwordChangedAt: new Date(),
-//     },
-//   );
-
-//   return null;
-// };
+  const result = await User.findByIdAndUpdate(id, {
+    password: newHashedPassword,
+  });
+  if (!result) {
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Password change failed',
+    );
+  }
+  return;
+};
 
 const refreshToken = async (token: string) => {
   const decoded = verifyToken(token, config.jwt_refresh_secret as string);
@@ -256,7 +297,7 @@ const verifyCode = async ({ token, otp }: { token: string; otp: number }) => {
   ) as JwtPayload;
   const result = await ResetPassService.verifyResetCode({ email, code: otp });
   if (!result) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'code not valid');
+    throw new AppError(httpStatus.BAD_REQUEST, 'code invalid');
   }
   return result;
 };
@@ -389,5 +430,6 @@ export const AuthenticationServices = {
   forgetPasswordForAdmin,
   forgetPasswordForUser,
   resetUserPasswordIntoDB,
-  // resetPassword,
+  continueWithSocialIntoDB,
+  changePasswordIntoDB,
 };

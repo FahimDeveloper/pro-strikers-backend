@@ -12,7 +12,6 @@ const userSchema = new Schema<IUser, UserModel>(
     },
     last_name: {
       type: String,
-      required: true,
     },
     image: {
       type: String,
@@ -22,7 +21,6 @@ const userSchema = new Schema<IUser, UserModel>(
     gender: {
       type: String,
       enum: ['male', 'female'],
-      required: true,
     },
     email: {
       type: String,
@@ -32,17 +30,37 @@ const userSchema = new Schema<IUser, UserModel>(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     role: {
       type: String,
       enum: ['user'],
       default: 'user',
     },
-    phone: {
+    provider: {
       type: String,
       required: true,
+      default: 'email with password',
+    },
+    phone: {
+      type: String,
     },
     date_of_birth: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    nationality: {
+      type: String,
+    },
+    street_address: {
       type: String,
     },
     membership: {
@@ -53,10 +71,10 @@ const userSchema = new Schema<IUser, UserModel>(
       type: Boolean,
     },
     issue_date: {
-      type: Date,
+      type: String,
     },
     expiry_date: {
-      type: Date,
+      type: String,
     },
     package_name: {
       type: String,
@@ -72,24 +90,9 @@ const userSchema = new Schema<IUser, UserModel>(
   },
 );
 
-// userSchema.pre('save', async function (next) {
-//   const user = this; // doc
-//   // hashing password and save into DB
-//   user.password = await bcrypt.hash(
-//     user.password,
-//     Number(config.bcrypt_salt_rounds),
-//   );
-//   next();
-// });
-
 userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt(Number(config.bcrypt_salt_rounds));
   this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-userSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 

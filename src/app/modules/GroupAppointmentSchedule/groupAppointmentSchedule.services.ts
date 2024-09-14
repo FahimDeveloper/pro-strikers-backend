@@ -43,122 +43,130 @@ const getAppointmentsByQueryDateFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const queryDate = new Date(query.date as string);
-  const daysOfWeek = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
-  const dayOfWeek = daysOfWeek[queryDate.getDay()];
 
-  const matchConditions: Record<string, any> = {
-    sport: query.sport,
-    schedules: {
-      $elemMatch: {
-        day: dayOfWeek,
-        active: true,
+  if (queryDate < new Date()) {
+    return [];
+  } else {
+    const daysOfWeek = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+    const dayOfWeek = daysOfWeek[queryDate.getDay()];
+
+    const matchConditions: Record<string, any> = {
+      sport: query.sport,
+      schedules: {
+        $elemMatch: {
+          day: dayOfWeek,
+          active: true,
+        },
       },
-    },
-  };
+    };
 
-  if (query.trainer) {
-    matchConditions.trainer = new mongoose.Types.ObjectId(
-      query.trainer as string,
-    );
-  }
+    if (query.trainer) {
+      matchConditions.trainer = new mongoose.Types.ObjectId(
+        query.trainer as string,
+      );
+    }
 
-  const results = await GroupAppointmentSchedule.aggregate([
-    {
-      $match: matchConditions,
-    },
-    {
-      $unwind: '$schedules',
-    },
-    {
-      $match: {
-        'schedules.day': dayOfWeek,
-        'schedules.active': true,
+    const results = await GroupAppointmentSchedule.aggregate([
+      {
+        $match: matchConditions,
       },
-    },
-    {
-      $lookup: {
-        from: 'appointmentgroupreservations',
-        let: { appointmentId: '$_id', reservationDate: query.date },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ['$appointment', '$$appointmentId'] },
-                  {
-                    $gte: [
-                      '$date',
-                      new Date(queryDate.setUTCHours(0, 0, 0, 0)),
-                    ],
-                  },
-                  {
-                    $lt: [
-                      '$date',
-                      new Date(queryDate.setUTCHours(23, 59, 59, 999)),
-                    ],
-                  },
-                ],
+      {
+        $unwind: '$schedules',
+      },
+      {
+        $match: {
+          'schedules.day': dayOfWeek,
+          'schedules.active': true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'appointmentgroupreservations',
+          let: { appointmentId: '$_id', reservationDate: query.date },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$appointment', '$$appointmentId'] },
+                    {
+                      $gte: [
+                        '$date',
+                        new Date(queryDate.setUTCHours(0, 0, 0, 0)),
+                      ],
+                    },
+                    {
+                      $lt: [
+                        '$date',
+                        new Date(queryDate.setUTCHours(23, 59, 59, 999)),
+                      ],
+                    },
+                  ],
+                },
               },
             },
-          },
-          {
-            $count: 'enrolledCount',
-          },
-        ],
-        as: 'enrollmentData',
-      },
-    },
-    {
-      $addFields: {
-        enrolled: {
-          $ifNull: [{ $arrayElemAt: ['$enrollmentData.enrolledCount', 0] }, 0],
+            {
+              $count: 'enrolledCount',
+            },
+          ],
+          as: 'enrollmentData',
         },
       },
-    },
-    {
-      $lookup: {
-        from: 'admins',
-        localField: 'trainer',
-        foreignField: '_id',
-        as: 'trainer',
-      },
-    },
-    {
-      $unwind: {
-        path: '$trainer',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        appointment_name: 1,
-        sport: 1,
-        price: 1,
-        description: 1,
-        enrolled: 1,
-        schedules: 1,
-        createdAt: 1,
-        updatedAt: 1,
-        capacity: 1,
-        trainer: {
-          _id: '$trainer._id',
-          first_name: '$trainer.first_name',
-          last_name: '$trainer.last_name',
+      {
+        $addFields: {
+          enrolled: {
+            $ifNull: [
+              { $arrayElemAt: ['$enrollmentData.enrolledCount', 0] },
+              0,
+            ],
+          },
         },
       },
-    },
-  ]).exec();
+      {
+        $lookup: {
+          from: 'admins',
+          localField: 'trainer',
+          foreignField: '_id',
+          as: 'trainer',
+        },
+      },
+      {
+        $unwind: {
+          path: '$trainer',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          appointment_name: 1,
+          sport: 1,
+          price: 1,
+          description: 1,
+          enrolled: 1,
+          schedules: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          capacity: 1,
+          trainer: {
+            _id: '$trainer._id',
+            first_name: '$trainer.first_name',
+            last_name: '$trainer.last_name',
+          },
+        },
+      },
+    ]).exec();
 
-  return results;
+    return results;
+  }
 };
 
 const getAppointmentByIdDateFromDB = async ({
@@ -168,34 +176,41 @@ const getAppointmentByIdDateFromDB = async ({
   id: string;
   date: Date;
 }) => {
-  console.log(id, date);
   const queryDate = new Date(date);
-  const daysOfWeek = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
-  const dayOfWeek = daysOfWeek[queryDate.getDay()];
-  const result = await GroupAppointmentSchedule.findOne({
-    _id: new mongoose.Types.ObjectId(id),
-    schedules: {
-      $elemMatch: {
-        day: dayOfWeek,
-        active: true,
-      },
-    },
-  });
-  if (!result) {
+
+  if (queryDate < new Date()) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      'Appointment not found, Please check ID and date is available or not',
+      'Date cannot be less than current date',
     );
+  } else {
+    const daysOfWeek = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+    const dayOfWeek = daysOfWeek[queryDate.getDay()];
+    const result = await GroupAppointmentSchedule.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+      schedules: {
+        $elemMatch: {
+          day: dayOfWeek,
+          active: true,
+        },
+      },
+    });
+    if (!result) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Appointment not found, Please check ID and date is available or not',
+      );
+    }
+    return result;
   }
-  return result;
 };
 
 const getSingleAppointmentFromDB = async (id: string) => {
@@ -215,9 +230,7 @@ const getAppointmentByIdFromDB = async (id: string) => {
 };
 
 const deleteAppointmentFromDB = async (id: string) => {
-  const result = await GroupAppointmentSchedule.findByIdAndUpdate(id, {
-    isDeleted: true,
-  });
+  const result = await GroupAppointmentSchedule.findByIdAndDelete(id);
   return result;
 };
 

@@ -53,11 +53,6 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
   { timestamps: true, versionKey: false },
 );
 
-courseScheduleSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  next();
-});
-
 export const CourseSchedule = model<ICourseSchedule>(
   'CoursesSchedule',
   courseScheduleSchema,

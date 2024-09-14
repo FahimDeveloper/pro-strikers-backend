@@ -14,6 +14,12 @@ route.get(
 );
 
 route.get(
+  '/user',
+  authMiddleware(ROLE.user),
+  FacilityReservationController.getUserFacilitiesReservation,
+);
+
+route.get(
   '/slots',
   authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   FacilityReservationController.getFacilityReservationSlots,
@@ -26,21 +32,28 @@ route.get(
 );
 
 route.post(
-  '/create/:id',
-  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
-  validateRequest(FacilityReservationValidations.createValidation),
+  '/user/create/:id',
+  authMiddleware(ROLE.user),
+  validateRequest(FacilityReservationValidations.createByUserValidation),
+  FacilityReservationController.createFacilityReservationByUser,
+);
+
+route.post(
+  '/admin/create/:id',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(FacilityReservationValidations.createByAdminValidation),
   FacilityReservationController.createFacilityReservation,
 );
 
 route.patch(
-  '/update/:id',
+  '/admin/update/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  validateRequest(FacilityReservationValidations.updateValidation),
+  validateRequest(FacilityReservationValidations.updateByAdminValidation),
   FacilityReservationController.updateFacilityReservation,
 );
 
 route.delete(
-  '/delete/:id',
+  '/admin/delete/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilityReservationController.deleteFacilityReservation,
 );

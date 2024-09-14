@@ -9,7 +9,7 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
   AppointmentOneOnOneReservationController.getAllAppointmentOneOnOneReservations,
 );
 
@@ -20,22 +20,41 @@ route.get(
 );
 
 route.get(
+  '/user',
+  authMiddleware(ROLE.user),
+  AppointmentOneOnOneReservationController.getUserAppointmentOneOnOneReservationList,
+);
+
+route.get(
   '/:id',
-  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
   AppointmentOneOnOneReservationController.getSingleAppointmentOneOnOneReservation,
 );
 
 route.post(
-  '/create/:id',
-  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
-  validateRequest(AppointmentOneOnOneReservationValidations.createValidation),
+  '/admin/create/:id',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(
+    AppointmentOneOnOneReservationValidations.createByAdminValidation,
+  ),
   AppointmentOneOnOneReservationController.createAppointmentOneOnOneReservation,
 );
 
+route.post(
+  '/user/create/:id',
+  authMiddleware(ROLE.user),
+  validateRequest(
+    AppointmentOneOnOneReservationValidations.createByUserValidation,
+  ),
+  AppointmentOneOnOneReservationController.createAppointmentOneOnOneReservationByUser,
+);
+
 route.patch(
-  '/update/:id',
+  '/admin/update/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  validateRequest(AppointmentOneOnOneReservationValidations.updateValidation),
+  validateRequest(
+    AppointmentOneOnOneReservationValidations.updateByAdminValidation,
+  ),
   AppointmentOneOnOneReservationController.updateAppointmentOneOnOneReservation,
 );
 

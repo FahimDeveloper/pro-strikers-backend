@@ -9,7 +9,7 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   ClassSheduleControllers.getAllClasses,
 );
 
@@ -25,21 +25,21 @@ route.get(
 
 route.post(
   '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(classScheduleValidations.createValidation),
   ClassSheduleControllers.createClass,
 );
 
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(classScheduleValidations.updateValidation),
   ClassSheduleControllers.updateClass,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   ClassSheduleControllers.deleteClass,
 );
 

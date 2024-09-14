@@ -11,7 +11,7 @@ const createValidation = z.object({
       required_error: 'discount type is required',
     }),
     discount_value: z.number({
-      invalid_type_error: 'discount value must be string',
+      invalid_type_error: 'discount value must be number',
       required_error: 'discount value is required',
     }),
     start_date: z.string({
@@ -49,18 +49,18 @@ const updateValidation = z.object({
       })
       .optional(),
     discount_value: z
-      .string({
-        invalid_type_error: 'discount value must be string',
+      .number({
+        invalid_type_error: 'discount value must be number',
       })
       .optional(),
     start_date: z
-      .date({
-        invalid_type_error: 'start date type must be string and date type',
+      .string({
+        invalid_type_error: 'start date type must be string',
       })
       .optional(),
     end_date: z
-      .date({
-        invalid_type_error: 'end date type must be string and date type',
+      .string({
+        invalid_type_error: 'end date type must be string',
       })
       .optional(),
     voucher_code: z

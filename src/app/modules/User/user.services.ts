@@ -1,26 +1,33 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { IUser } from './user.interface';
+import { IUser, IUserMembership } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../errors/AppError';
-import fs from 'fs';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { sendEmail } from '../../utils/sendEmail';
+import { generateRandomPassword } from '../../utils/generateRandomPassword';
+import mongoose from 'mongoose';
+import WebPayment from '../WebPayment/webPayment.modal';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
   if (findUser) {
     throw new AppError(httpStatus.CONFLICT, 'User already exists!');
   }
+  const randomPass = generateRandomPassword();
   let result;
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
-    result = await User.create({ ...payload, image: url });
+    result = await User.create({
+      ...payload,
+      image: url,
+      password: randomPass,
+    });
   } else {
-    result = await User.create(payload);
+    result = await User.create({ ...payload, password: randomPass });
   }
   if (result) {
-    await sendEmail({ email: payload.email, password: payload.password });
+    await sendEmail({ email: payload.email, password: randomPass });
   }
   return result;
 };
@@ -41,6 +48,32 @@ const updateUserIntoDB = async (
     result = await User.findByIdAndUpdate(id, payload);
   }
   return result;
+};
+
+const createMembershipByUserIntoDB = async (
+  id: string,
+  payload: IUserMembership,
+) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const { membership, payment_info } = payload;
+    const result = await User.findByIdAndUpdate(id, membership, { session });
+    if (!result) {
+      throw new Error('Failed to get membership');
+    }
+    await WebPayment.create([payment_info], { session });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.message || 'Failed to get membership',
+    );
+  }
 };
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
@@ -89,4 +122,5 @@ export const UserServices = {
   getMembershipUsersFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,
+  createMembershipByUserIntoDB,
 };
