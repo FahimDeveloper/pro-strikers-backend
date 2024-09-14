@@ -28,9 +28,19 @@ const getPaymentListFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
-const getUserPaymentListFormDB = async (id: string) => {
-  const result = await WebPayment.find({ user: id });
-  return result;
+const getUserPaymentListFormDB = async (
+  query: Record<string, unknown>,
+  id: string,
+) => {
+  const paymentQuery = new QueryBuilder(WebPayment.find({ user: id }), query)
+    .filter()
+    .paginate();
+  const result = await paymentQuery?.modelQuery;
+  const count = await paymentQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
 };
 
 const updatePaymentIntoDB = async (

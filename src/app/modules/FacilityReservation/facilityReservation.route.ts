@@ -14,6 +14,12 @@ route.get(
 );
 
 route.get(
+  '/user',
+  authMiddleware(ROLE.user),
+  FacilityReservationController.getUserFacilitiesReservation,
+);
+
+route.get(
   '/slots',
   authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   FacilityReservationController.getFacilityReservationSlots,

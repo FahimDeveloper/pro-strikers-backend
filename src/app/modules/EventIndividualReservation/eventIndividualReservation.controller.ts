@@ -44,15 +44,16 @@ const getAllEventIndividualReservations = catchAsync(async (req, res) => {
 });
 
 const getUserEventIndividualReservationList = catchAsync(async (req, res) => {
-  const result =
+  const { result, count } =
     await EventIndividualReservationServices.getUserEventIndividualReservationListFromDB(
-      req.params.email,
+      req.query,
     );
   sendResponse(
     res,
     httpStatus.OK,
     'User event group reservations fetched successfully',
     result,
+    count,
   );
 });
 

@@ -45,15 +45,16 @@ const getSingleAppointmentGroupReservation = catchAsync(async (req, res) => {
 });
 
 const getUserAppointmentGroupReservationList = catchAsync(async (req, res) => {
-  const result =
+  const { result, count } =
     await AppointmentGroupReservationServices.getUserAppointmentGroupReservationListFromDB(
-      req.params.email,
+      req.query,
     );
   sendResponse(
     res,
     httpStatus.OK,
     'User appointment Group reservation list fetch succesfully',
     result,
+    count,
   );
 });
 

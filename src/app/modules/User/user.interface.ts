@@ -10,8 +10,13 @@ export interface IUser {
   email: string;
   password: string;
   role: 'user';
-  phone: string;
+  phone?: string;
   provider: 'email with password' | 'google' | 'facebook';
+  street_address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  nationality?: string;
   date_of_birth?: string;
   membership?: boolean;
   status?: boolean;

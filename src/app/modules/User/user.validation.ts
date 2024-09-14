@@ -6,10 +6,11 @@ const createValidation = z.object({
       invalid_type_error: 'first name must be string',
       required_error: 'first name is required',
     }),
-    last_name: z.string({
-      invalid_type_error: 'last name must be string',
-      required_error: 'last name is required',
-    }),
+    last_name: z
+      .string({
+        invalid_type_error: 'last name must be string',
+      })
+      .optional(),
     gender: z.enum(['male', 'female']).optional(),
     email: z
       .string({
@@ -31,6 +32,31 @@ const createValidation = z.object({
     phone: z
       .string({
         invalid_type_error: 'phone must be string',
+      })
+      .optional(),
+    city: z
+      .string({
+        invalid_type_error: 'city must be string',
+      })
+      .optional(),
+    state: z
+      .string({
+        invalid_type_error: 'state must be string',
+      })
+      .optional(),
+    street_address: z
+      .string({
+        invalid_type_error: 'streed address must be string',
+      })
+      .optional(),
+    nationality: z
+      .string({
+        invalid_type_error: 'nationality must be string',
+      })
+      .optional(),
+    country: z
+      .string({
+        invalid_type_error: 'county must be string',
       })
       .optional(),
     date_of_birth: z
@@ -101,6 +127,31 @@ const updateValidation = z.object({
       phone: z
         .string({
           invalid_type_error: 'phone must be string',
+        })
+        .optional(),
+      city: z
+        .string({
+          invalid_type_error: 'city must be string',
+        })
+        .optional(),
+      state: z
+        .string({
+          invalid_type_error: 'state must be string',
+        })
+        .optional(),
+      street_address: z
+        .string({
+          invalid_type_error: 'streed address must be string',
+        })
+        .optional(),
+      nationality: z
+        .string({
+          invalid_type_error: 'nationality must be string',
+        })
+        .optional(),
+      country: z
+        .string({
+          invalid_type_error: 'county must be string',
         })
         .optional(),
       date_of_birth: z

@@ -14,7 +14,7 @@ route.get(
 );
 
 route.get(
-  '/user/:email',
+  '/user',
   authMiddleware(ROLE.user),
   CourseReservationController.getUserCourseReservationList,
 );

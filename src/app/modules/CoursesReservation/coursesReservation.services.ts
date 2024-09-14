@@ -113,9 +113,25 @@ const getSingleCourseReservationFromDB = async (id: string) => {
   return result;
 };
 
-const getUserCourseReservationListFromDB = async (email: string) => {
-  const result = await CourseReservation.find({ email: email });
-  return result;
+const getUserCourseReservationListFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const CourseReservationQuery = new QueryBuilder(
+    CourseReservation.find().populate([
+      {
+        path: 'course',
+      },
+    ]),
+    query,
+  )
+    .filter()
+    .paginate();
+  const result = await CourseReservationQuery?.modelQuery;
+  const count = await CourseReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
 };
 
 const deleteCourseReservationFromDB = async (id: string) => {

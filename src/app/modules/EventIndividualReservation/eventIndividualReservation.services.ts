@@ -121,11 +121,21 @@ const getSingleEventIndividualReservationFromDB = async (id: string) => {
   return result;
 };
 
-const getUserEventIndividualReservationListFromDB = async (email: string) => {
-  const result = await EventIndividualReservation.find({
-    email: email,
-  }).populate('event');
-  return result;
+const getUserEventIndividualReservationListFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const EventIndividualReservationQuery = new QueryBuilder(
+    EventIndividualReservation.find().populate('event'),
+    query,
+  )
+    .filter()
+    .paginate();
+  const result = await EventIndividualReservationQuery.modelQuery;
+  const count = await EventIndividualReservationQuery.countTotal();
+  return {
+    count,
+    result,
+  };
 };
 
 const deleteEventIndividualReservationFromDB = async (id: string) => {

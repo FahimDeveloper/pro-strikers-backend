@@ -20,7 +20,7 @@ route.get(
 );
 
 route.get(
-  'user/:email',
+  '/user',
   authMiddleware(ROLE.user),
   AppointmentOneOnOneReservationController.getUserAppointmentOneOnOneReservationList,
 );

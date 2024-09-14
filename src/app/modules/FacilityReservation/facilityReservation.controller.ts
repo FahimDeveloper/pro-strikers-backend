@@ -33,6 +33,20 @@ const getAllFacilitiesReservation = catchAsync(async (req, res) => {
   );
 });
 
+const getUserFacilitiesReservation = catchAsync(async (req, res) => {
+  const { count, result } =
+    await FacilityReservationServices.getAllFacilitiesReservationsFromDB(
+      req.query,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'User facilities reservation fetch succesfully',
+    result,
+    count,
+  );
+});
+
 const getFacilityReservationSlots = catchAsync(async (req, res) => {
   const result =
     await FacilityReservationServices.getFacilityReservationSlotsFromDB(
@@ -82,4 +96,5 @@ export const FacilityReservationController = {
   deleteFacilityReservation,
   getFacilityReservationSlots,
   createFacilityReservationByUser,
+  getUserFacilitiesReservation,
 };

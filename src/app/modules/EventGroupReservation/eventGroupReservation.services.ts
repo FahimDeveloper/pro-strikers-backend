@@ -112,11 +112,21 @@ const getAllEventGroupReservationsFromDB = async (
   };
 };
 
-const getUserEventGroupReservationListFromDB = async (email: string) => {
-  const result = await EventGroupReservation.find({ email: email }).populate(
-    'event',
-  );
-  return result;
+const getUserEventGroupReservationListFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const EventGroupReservationQuery = new QueryBuilder(
+    EventGroupReservation.find().populate('event'),
+    query,
+  )
+    .filter()
+    .paginate();
+  const result = await EventGroupReservationQuery.modelQuery;
+  const count = await EventGroupReservationQuery.countTotal();
+  return {
+    count,
+    result,
+  };
 };
 
 const getSingleEventGroupReservationFromDB = async (id: string) => {

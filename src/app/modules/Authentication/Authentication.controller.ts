@@ -59,6 +59,11 @@ const loginAdmin = catchAsync(async (req, res) => {
   });
 });
 
+const changePassword = catchAsync(async (req, res) => {
+  await AuthenticationServices.changePasswordIntoDB(req.params.id, req.body);
+  sendResponse(res, httpStatus.OK, 'Password changed successfully!');
+});
+
 const continueWithSocial = catchAsync(async (req, res) => {
   const result = await AuthenticationServices.continueWithSocialIntoDB(
     req.body,
@@ -151,6 +156,5 @@ export const AuthenticationControllers = {
   resetUserPassword,
   userForgetPassword,
   continueWithSocial,
-  // changePassword,
-  // forgetPassword,
+  changePassword,
 };

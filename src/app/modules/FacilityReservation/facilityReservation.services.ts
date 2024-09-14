@@ -91,12 +91,32 @@ const getAllFacilitiesReservationsFromDB = async (
     FacilityReservation.find().populate([
       {
         path: 'facility',
-        select: 'facility_name duration',
       },
     ]),
     query,
   )
     .search(['user_email'])
+    .filter()
+    .paginate();
+  const result = await facilityReservationQuery?.modelQuery;
+  const count = await facilityReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
+const getUserFacilitiesReservationsFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const facilityReservationQuery = new QueryBuilder(
+    FacilityReservation.find().populate([
+      {
+        path: 'facility',
+      },
+    ]),
+    query,
+  )
     .filter()
     .paginate();
   const result = await facilityReservationQuery?.modelQuery;
@@ -149,4 +169,5 @@ export const FacilityReservationServices = {
   deleteFacilityReservationFromDB,
   getFacilityReservationSlotsFromDB,
   createFacilityReservationByUserIntoDB,
+  getUserFacilitiesReservationsFromDB,
 };

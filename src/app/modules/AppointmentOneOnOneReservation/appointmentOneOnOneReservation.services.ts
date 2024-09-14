@@ -125,12 +125,28 @@ const getAllAppointmentOneOnOneReservationsFromDB = async (
 };
 
 const getUserAppointmentOneOnOneReservationListFromDB = async (
-  email: string,
+  query: Record<string, unknown>,
 ) => {
-  const result = await AppointmentOneOnOneReservation.find({
-    email: email,
-  }).populate('appointment');
-  return result;
+  const appointmentOneOnOneReservationQuery = new QueryBuilder(
+    AppointmentOneOnOneReservation.find().populate([
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+      {
+        path: 'appointment',
+      },
+    ]),
+    query,
+  )
+    .filter()
+    .paginate();
+  const result = await appointmentOneOnOneReservationQuery?.modelQuery;
+  const count = await appointmentOneOnOneReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
 };
 
 const getSingleAppointmentOneOnOneReservationFromDB = async (id: string) => {

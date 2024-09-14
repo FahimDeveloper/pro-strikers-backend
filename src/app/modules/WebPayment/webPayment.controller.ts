@@ -22,10 +22,17 @@ const getPaymentList = catchAsync(async (req, res) => {
 });
 
 const getUserPaymentList = catchAsync(async (req, res) => {
-  const result = await PaymentServices.getUserPaymentListFormDB(
+  const { result, count } = await PaymentServices.getUserPaymentListFormDB(
+    req.query,
     req.params.userId,
   );
-  sendResponse(res, httpStatus.OK, 'Payment fetched successfully', result);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Payment List fetched successfully',
+    result,
+    count,
+  );
 });
 
 const updatePayment = catchAsync(async (req, res) => {

@@ -95,9 +95,29 @@ const getAllClassesReservationsFromDB = async (
   };
 };
 
-const getUserClassReservationListFromDB = async (email: string) => {
-  const result = await ClassReservation.find({ email: email });
-  return result;
+const getUserClassReservationListFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const classReservationQuery = new QueryBuilder(
+    ClassReservation.find().populate([
+      {
+        path: 'class',
+      },
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+    ]),
+    query,
+  )
+    .filter()
+    .paginate();
+  const result = await classReservationQuery?.modelQuery;
+  const count = await classReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
 };
 
 const getSingleClassReservationFromDB = async (id: string) => {

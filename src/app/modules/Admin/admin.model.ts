@@ -35,6 +35,7 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     description: {
       type: String,
@@ -62,7 +63,7 @@ adminSchema.pre('save', async function (next) {
 
 //checking if user is already exist!
 adminSchema.statics.isAdminExists = async function (email: string) {
-  const existingUser = await Admin.findOne({ email });
+  const existingUser = await Admin.findOne({ email }).select('+password');
   return existingUser;
 };
 

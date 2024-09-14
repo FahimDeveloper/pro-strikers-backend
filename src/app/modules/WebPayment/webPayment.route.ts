@@ -15,7 +15,7 @@ route.get(
 
 route.get(
   '/:userId',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.user),
   PaymentControllers.getUserPaymentList,
 );
 

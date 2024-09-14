@@ -88,7 +88,6 @@ const getAllAppointmentGroupReservationsFromDB = async (
       },
       {
         path: 'appointment',
-        select: 'appointment_name',
       },
     ]),
     query,
@@ -104,11 +103,29 @@ const getAllAppointmentGroupReservationsFromDB = async (
   };
 };
 
-const getUserAppointmentGroupReservationListFromDB = async (email: string) => {
-  const result = await AppointmentGroupReservation.find({
-    email: email,
-  }).populate('appointment');
-  return result;
+const getUserAppointmentGroupReservationListFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const appointmentGroupReservationQuery = new QueryBuilder(
+    AppointmentGroupReservation.find().populate([
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+      {
+        path: 'appointment',
+      },
+    ]),
+    query,
+  )
+    .filter()
+    .paginate();
+  const result = await appointmentGroupReservationQuery?.modelQuery;
+  const count = await appointmentGroupReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
 };
 
 const getSingleAppointmentGroupReservationFromDB = async (id: string) => {

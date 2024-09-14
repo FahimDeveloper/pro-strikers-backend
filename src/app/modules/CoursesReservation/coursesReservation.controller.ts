@@ -26,15 +26,16 @@ const getAllCoursesReservation = catchAsync(async (req, res) => {
 });
 
 const getUserCourseReservationList = catchAsync(async (req, res) => {
-  const result =
+  const { result, count } =
     await CourseReservationServices.getUserCourseReservationListFromDB(
-      req.params.email,
+      req.query,
     );
   sendResponse(
     res,
     httpStatus.OK,
     'Course reservation fetch succesfully',
     result,
+    count,
   );
 });
 
