@@ -14,9 +14,7 @@ async function dbConnection() {
       : config.database_local_url;
   try {
     await mongoose.connect(url as string);
-    app.listen(port, () => {
-      console.log(`app server listening on ${port}`);
-    });
+    console.log(`app server listening on ${port}`);
   } catch (err) {
     console.log(err);
   }
@@ -42,3 +40,5 @@ process.on('unhandledRejection', () => {
   }
   process.exit(1);
 });
+
+export default app;
