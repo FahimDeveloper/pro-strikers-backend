@@ -12,6 +12,7 @@ export interface ICourseReservation {
   city: string;
   state: string;
   sport: string;
+  trainer: mongoose.Types.ObjectId;
   zip_code: string;
 }
 

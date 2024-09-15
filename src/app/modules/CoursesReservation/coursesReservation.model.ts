@@ -16,6 +16,7 @@ const courseReservationSchema = new Schema<ICourseReservation>(
     street_address: { type: String, required: true },
     voucher_applied: { type: Boolean, required: true, default: false },
     city: { type: String, required: true },
+    trainer: { type: Schema.Types.ObjectId, required: true },
     state: { type: String, required: true },
     sport: { type: String, required: true },
     zip_code: { type: String, required: true },
