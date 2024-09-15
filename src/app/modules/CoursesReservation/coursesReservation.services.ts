@@ -94,6 +94,10 @@ const getAllCoursesReservationsFromDB = async (
       {
         path: 'course',
       },
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
     ]),
     query,
   )
@@ -120,6 +124,10 @@ const getUserCourseReservationListFromDB = async (
     CourseReservation.find().populate([
       {
         path: 'course',
+      },
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
       },
     ]),
     query,
