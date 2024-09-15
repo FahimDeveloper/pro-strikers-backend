@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { Server } from 'http';
-import app from './app';
+import { app } from './app';
 import config from './app/config';
+import { Server } from 'http';
 
 const port = process.env.PORT || config.port;
 
@@ -14,9 +14,7 @@ async function dbConnection() {
       : config.database_local_url;
   try {
     await mongoose.connect(url as string);
-    app.listen(port, () => {
-      console.log(`app server listening on ${port}`);
-    });
+    console.log(`app server listening on ${port}`);
   } catch (err) {
     console.log(err);
   }
