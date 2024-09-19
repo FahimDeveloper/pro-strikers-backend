@@ -8,8 +8,12 @@ const port = process.env.PORT || config.port;
 let server: Server;
 
 async function dbConnection() {
+  const url =
+    config.node_env === 'production'
+      ? config.database_url
+      : config.database_local_url;
   try {
-    await mongoose.connect(config.database_url as string);
+    await mongoose.connect(url as string);
     app.listen(port, () => {
       console.log(`app server listening on ${port}`);
     });
