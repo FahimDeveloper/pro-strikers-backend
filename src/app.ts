@@ -14,6 +14,8 @@ const corsConfig = {
   origin: [
     'https://test.admin.prostrikers.com',
     'https://test.prostrikers.com',
+    'https://prostrikers-web.netlify.app',
+    'https://prostrikers-admin.netlify.app',
     'http://localhost:4000',
     'http://localhost:4001',
   ],
