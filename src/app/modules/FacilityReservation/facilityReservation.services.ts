@@ -130,13 +130,14 @@ const getUserFacilitiesReservationsFromDB = async (
 const getFacilityReservationSlotsFromDB = async (
   query: Record<string, unknown>,
 ) => {
-  const { date, training } = query;
+  const { date, training, lane } = query;
   const result = await FacilityReservation.aggregate([
     { $unwind: '$bookings' },
     {
       $match: {
         'bookings.date': date,
         'bookings.training': new mongoose.Types.ObjectId(training as string),
+        'bookings.lane': lane,
       },
     },
     {
@@ -145,6 +146,7 @@ const getFacilityReservationSlotsFromDB = async (
         date: '$bookings.date',
         time_slot: '$bookings.time_slot',
         training: '$bookings.training',
+        lane: '$bookings.lane',
       },
     },
   ]);

@@ -5,7 +5,17 @@ const FacilityBookingsSchema = new Schema(
   {
     date: { type: String, required: true },
     time_slot: { type: String, required: true },
+    lane: { type: String, required: true },
     training: { type: Schema.Types.ObjectId, ref: 'Training', required: true },
+  },
+  { versionKey: false, _id: false },
+);
+
+const AddonBookingsSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    hours: { type: String, required: true },
+    lane: { type: String, required: true },
   },
   { versionKey: false, _id: false },
 );
@@ -29,6 +39,7 @@ const FacilityReservationSchema = new Schema<IFacilityReservation>(
     sport: { type: String, required: true },
     zip_code: { type: String, required: true },
     bookings: { type: [FacilityBookingsSchema], required: true },
+    addons: { type: [AddonBookingsSchema] },
   },
   { versionKey: false, timestamps: true },
 );

@@ -11,6 +11,10 @@ const appointmentBookingsSchemaValidation = z.object({
     required_error: 'Time slot is required',
     invalid_type_error: 'Time slot must be a string',
   }),
+  lane: z.string({
+    required_error: 'Lane is required',
+    invalid_type_error: 'Lane must be a string',
+  }),
   training: z
     .string({
       required_error: 'Training ID is required',
@@ -77,7 +81,29 @@ const createByAdminValidation = z.object({
     }),
     bookings: z.array(appointmentBookingsSchemaValidation, {
       required_error: 'Bookings are required',
+      invalid_type_error: 'Bookings must be array of object',
     }),
+    addons: z
+      .array(
+        z.object(
+          {
+            name: z.string({
+              required_error: 'addon name is required',
+              invalid_type_error: 'addon name must be string',
+            }),
+            hours: z.string({
+              required_error: 'addon hours is required',
+              invalid_type_error: 'addon hours must be number',
+            }),
+            lane: z.string({
+              required_error: 'addon lane is required',
+              invalid_type_error: 'addon lane must be number',
+            }),
+          },
+          { invalid_type_error: 'addons must be array of object' },
+        ),
+      )
+      .optional(),
   }),
 });
 
@@ -138,7 +164,29 @@ const createByUserValidation = z.object({
       }),
       bookings: z.array(appointmentBookingsSchemaValidation, {
         required_error: 'Bookings are required',
+        invalid_type_error: 'Bookings must be array of object',
       }),
+      addons: z
+        .array(
+          z.object(
+            {
+              name: z.string({
+                required_error: 'addon name is required',
+                invalid_type_error: 'addon name must be string',
+              }),
+              hours: z.string({
+                required_error: 'addon hours is required',
+                invalid_type_error: 'addon hours must be number',
+              }),
+              lane: z.string({
+                required_error: 'addon lane is required',
+                invalid_type_error: 'addon lane must be number',
+              }),
+            },
+            { invalid_type_error: 'addons must be array of object' },
+          ),
+        )
+        .optional(),
     }),
     membership_info: z
       .object({
@@ -262,7 +310,30 @@ const updateByAdminValidation = z.object({
         invalid_type_error: 'Zip code must be a string',
       })
       .optional(),
-    bookings: z.array(appointmentBookingsSchemaValidation).optional(),
+    bookings: z
+      .array(appointmentBookingsSchemaValidation, {
+        invalid_type_error: 'Bookings must be array of object',
+      })
+      .optional(),
+    addons: z
+      .array(
+        z
+          .object(
+            {
+              name: z.string({
+                required_error: 'addon name is required',
+                invalid_type_error: 'addon name must be string',
+              }),
+              hours: z.string({
+                required_error: 'addon hours is required',
+                invalid_type_error: 'addon hours must be number',
+              }),
+            },
+            { invalid_type_error: 'addons must be array of object' },
+          )
+          .optional(),
+      )
+      .optional(),
   }),
 });
 

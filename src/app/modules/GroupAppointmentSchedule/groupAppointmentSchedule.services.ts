@@ -43,8 +43,11 @@ const getAppointmentsByQueryDateFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const queryDate = new Date(query.date as string);
-
-  if (queryDate < new Date()) {
+  const date = new Date();
+  if (
+    queryDate.getDate() < date.getDate() &&
+    queryDate.getMonth() <= date.getMonth()
+  ) {
     return [];
   } else {
     const daysOfWeek = [
@@ -177,7 +180,6 @@ const getAppointmentByIdDateFromDB = async ({
   date: Date;
 }) => {
   const queryDate = new Date(date);
-
   if (queryDate < new Date()) {
     throw new AppError(
       httpStatus.BAD_REQUEST,

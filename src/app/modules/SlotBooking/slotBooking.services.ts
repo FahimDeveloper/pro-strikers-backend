@@ -8,6 +8,7 @@ const createSlotBookingIntoDB = async (payload: ISlotBooking) => {
     training: payload.training,
     time_slot: payload.time_slot,
     date: payload.date,
+    lane: payload?.lane,
   });
   if (findTheSlot) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Slot already booked');

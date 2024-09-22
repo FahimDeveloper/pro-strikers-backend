@@ -4,9 +4,8 @@ import sendResponse from '../../utils/sendResponse';
 import { LaneServices } from './lane.services';
 
 const createLane = catchAsync(async (req, res) => {
-  const files = req.files;
-  const result = await LaneServices.createLaneIntoDB(req.body, files);
-  sendResponse(res, httpStatus.CREATED, 'Lane created successfully', result);
+  await LaneServices.createLaneIntoDB(req.body);
+  sendResponse(res, httpStatus.CREATED, 'Lane created successfully');
 });
 
 const getAllLanes = catchAsync(async (req, res) => {
@@ -25,13 +24,8 @@ const getLanes = catchAsync(async (req, res) => {
 });
 
 const updateLane = catchAsync(async (req, res) => {
-  const files = req.files;
-  const result = await LaneServices.updateLaneIntoDB(
-    req.params.id,
-    req.body,
-    files,
-  );
-  sendResponse(res, httpStatus.OK, 'Lane updated successfully', result);
+  await LaneServices.updateLaneIntoDB(req.params.id, req.body);
+  sendResponse(res, httpStatus.OK, 'Lane updated successfully');
 });
 
 const deleteLane = catchAsync(async (req, res) => {

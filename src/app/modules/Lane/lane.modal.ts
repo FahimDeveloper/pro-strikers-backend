@@ -1,24 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IAddon, ILane } from './lane.interface';
-
-const AddonSchema = new Schema<IAddon>({
-  addon_title: {
-    type: String,
-    required: true,
-  },
-  addon_description: {
-    type: String,
-    required: true,
-  },
-  addon_price: {
-    type: Number,
-    required: true,
-  },
-  addon_image: {
-    type: String,
-    required: true,
-  },
-});
+import { ILane } from './lane.interface';
 
 const LaneSchema = new Schema<ILane>(
   {
@@ -31,11 +12,6 @@ const LaneSchema = new Schema<ILane>(
       type: String,
       required: true,
     },
-    addon: {
-      type: Boolean,
-      required: true,
-    },
-    addons: [AddonSchema],
   },
   { timestamps: true, versionKey: false },
 );

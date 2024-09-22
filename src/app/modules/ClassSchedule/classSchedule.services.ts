@@ -41,8 +41,11 @@ const getSingleClassFromDB = async (id: string) => {
 
 const getClassByQueryDataFromDB = async (query: Record<string, unknown>) => {
   const queryDate = new Date(query.date as string);
-
-  if (queryDate < new Date()) {
+  const date = new Date();
+  if (
+    queryDate.getDate() < date.getDate() &&
+    queryDate.getMonth() <= date.getMonth()
+  ) {
     return [];
   } else {
     const daysOfWeek = [

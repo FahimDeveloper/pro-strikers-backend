@@ -23,6 +23,7 @@ import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppoi
 import { AuthenticationRoutes } from '../modules/Authentication/Authentication.route';
 import { StripePaymentRoutes } from '../modules/StripePayment/stripePayment.route';
 import { WebPaymentRoutes } from '../modules/WebPayment/webPayment.route';
+import { AddonRoutes } from '../modules/Addon/addon.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -77,6 +78,10 @@ const mainRoutes = [
   {
     path: '/lanes',
     route: LaneRoutes,
+  },
+  {
+    path: '/addons',
+    route: AddonRoutes,
   },
   {
     path: '/orders',

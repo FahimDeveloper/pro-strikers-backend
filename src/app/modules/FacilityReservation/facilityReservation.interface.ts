@@ -14,11 +14,19 @@ export interface IFacilityReservation {
   sport: string;
   zip_code: string;
   bookings: IFacilityBookings[];
+  addons: IAddon[];
+}
+
+export interface IAddon {
+  name: string;
+  hours: number;
+  lane: string;
 }
 
 export interface IFacilityBookings {
   date: string;
   time_slot: string;
+  lane: string;
   training: mongoose.Types.ObjectId;
 }
 
