@@ -10,7 +10,7 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin),
   AdminControllers.getAllAdminUsers,
 );
 
@@ -19,7 +19,7 @@ route.get('/trainers', AdminControllers.getAllTrainers);
 route.post(
   '/create',
   upload.single('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -39,7 +39,7 @@ route.get(
 route.patch(
   '/update/:id',
   upload.single('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);

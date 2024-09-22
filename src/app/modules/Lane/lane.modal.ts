@@ -14,6 +14,10 @@ const AddonSchema = new Schema<IAddon>({
     type: Number,
     required: true,
   },
+  addon_image: {
+    type: String,
+    required: true,
+  },
 });
 
 const LaneSchema = new Schema<ILane>(
@@ -21,6 +25,7 @@ const LaneSchema = new Schema<ILane>(
     lane_title: {
       type: String,
       required: true,
+      unique: true,
     },
     description: {
       type: String,

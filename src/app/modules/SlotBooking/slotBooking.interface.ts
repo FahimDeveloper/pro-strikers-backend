@@ -6,4 +6,5 @@ export interface ISlotBooking {
   user: mongoose.Schema.Types.ObjectId;
   time_slot: string;
   date: string;
+  lane?: string;
 }

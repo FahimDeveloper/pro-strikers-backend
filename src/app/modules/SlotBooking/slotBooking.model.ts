@@ -26,6 +26,9 @@ const slotBookingSchema = new Schema<ISlotBooking>(
       type: String,
       required: true,
     },
+    lane: {
+      type: String,
+    },
   },
   { versionKey: false, timestamps: true },
 );

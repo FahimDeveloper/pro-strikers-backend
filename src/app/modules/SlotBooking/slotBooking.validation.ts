@@ -22,6 +22,11 @@ const createValidation = z.object({
       required_error: 'Date is required.',
       invalid_type_error: 'Date must be a string.',
     }),
+    lane: z
+      .string({
+        invalid_type_error: 'Lane must be a string.',
+      })
+      .optional(),
   }),
 });
 

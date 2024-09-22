@@ -13,6 +13,10 @@ const createSlotBookingIntoDB = async (payload: ISlotBooking) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Slot already booked');
   }
   const result = await SlotBooking.create(payload);
+
+  if (!result) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Slot already booked');
+  }
   return result;
 };
 

@@ -51,7 +51,7 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
       required: true,
     },
     lane: {
-      type: String,
+      type: [String],
       required: true,
     },
     schedules: [facilityScheduleDaySchema],

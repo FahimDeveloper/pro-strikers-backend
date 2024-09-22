@@ -47,7 +47,6 @@ const createValidation = z.object({
       invalid_type_error: 'Addon must be a boolean',
       required_error: 'Addon is required',
     }),
-
     addons: z.array(createAddonValidation).optional(),
   }),
 });
@@ -69,8 +68,8 @@ const updateValidation = z.object({
         invalid_type_error: 'Addon must be a boolean',
       })
       .optional(),
-
-    addons: z.array(updateAddonValidation).optional(),
+    new_addons: z.array(updateAddonValidation.optional()).optional(),
+    old_addons: z.array(updateAddonValidation.optional()).optional(),
   }),
 });
 

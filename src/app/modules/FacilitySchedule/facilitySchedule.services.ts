@@ -1,9 +1,6 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
-import {
-  IFacilityDaySchedule,
-  IFacilitySchedule,
-} from './facilitySchedule.interface';
+import { IFacilitySchedule } from './facilitySchedule.interface';
 import { FacilitySchedule } from './facilitySchedule.model';
 import AppError from '../../errors/AppError';
 
