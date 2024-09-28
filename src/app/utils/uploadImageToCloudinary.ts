@@ -14,11 +14,15 @@ export const uploadImageIntoCloduinary = async (file: any) => {
   if (!path) {
     throw new AppError(httpStatus.NOT_FOUND, 'image path not found');
   }
-  const result = await cloudinary.uploader.upload(path, {
-    resource_type: 'image',
-  });
-  fs.unlinkSync(path);
-  return {
-    url: result.secure_url,
-  };
+  try {
+    const result = await cloudinary.uploader.upload(path, {
+      resource_type: 'image',
+      quality: 80,
+      format: 'webp',
+    });
+    fs.unlinkSync(path);
+    return { url: result.secure_url };
+  } catch (error: any) {
+    throw new AppError(httpStatus.BAD_REQUEST, error.message);
+  }
 };

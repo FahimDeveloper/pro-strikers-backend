@@ -13,6 +13,11 @@ export interface IAdmin {
   role: IRole;
   description: string;
   password: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  nationality?: string;
+  street_address?: string;
 }
 
 export interface AdminMethods extends Model<IAdmin> {

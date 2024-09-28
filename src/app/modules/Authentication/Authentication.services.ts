@@ -212,7 +212,7 @@ const loginAdminIntoDB = async (payload: ILogin) => {
   };
 };
 
-const changePasswordIntoDB = async (id: string, payload: any) => {
+const changeUserPasswordIntoDB = async (id: string, payload: any) => {
   const user = await User.findById(id).select('+password');
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
@@ -234,6 +234,39 @@ const changePasswordIntoDB = async (id: string, payload: any) => {
   );
 
   const result = await User.findByIdAndUpdate(id, {
+    password: newHashedPassword,
+  });
+  if (!result) {
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Password change failed',
+    );
+  }
+  return;
+};
+
+const changeAdminPasswordIntoDB = async (id: string, payload: any) => {
+  const user = await Admin.findById(id).select('+password');
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  //checking if the password is correct
+  const passwordMatch = await Admin.isPasswordMatched(
+    payload.current_password,
+    user?.password,
+  );
+  if (!passwordMatch) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Current password is incorrect');
+  }
+
+  //hash new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.new_password,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  const result = await Admin.findByIdAndUpdate(id, {
     password: newHashedPassword,
   });
   if (!result) {
@@ -431,5 +464,6 @@ export const AuthenticationServices = {
   forgetPasswordForUser,
   resetUserPasswordIntoDB,
   continueWithSocialIntoDB,
-  changePasswordIntoDB,
+  changeUserPasswordIntoDB,
+  changeAdminPasswordIntoDB,
 };

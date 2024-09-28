@@ -41,6 +41,21 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
       type: String,
       required: true,
     },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    nationality: {
+      type: String,
+    },
+    street_address: {
+      type: String,
+    },
   },
   {
     timestamps: true,

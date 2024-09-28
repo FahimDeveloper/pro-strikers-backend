@@ -13,13 +13,17 @@ export const uploadMultipleImageIntoCloduinary = async (files: any) => {
   if (!files.length) {
     throw new AppError(httpStatus.NOT_FOUND, 'images not found');
   }
-  const urls = [];
-  for (const file of files) {
-    const result = await cloudinary.uploader.upload(file.path, {
-      resource_type: 'image',
-    });
-    urls.push(result.secure_url);
-    fs.unlinkSync(file.path);
+  try {
+    const urls = [];
+    for (const file of files) {
+      const result = await cloudinary.uploader.upload(file.path, {
+        resource_type: 'image',
+      });
+      urls.push(result.secure_url);
+      fs.unlinkSync(file.path);
+    }
+    return urls;
+  } catch (error: any) {
+    throw new AppError(httpStatus.BAD_REQUEST, error.message);
   }
-  return urls;
 };

@@ -36,7 +36,11 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
         }
         throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
       }
-    } else if (role === ROLE.admin || role === ROLE.superAdmin) {
+    } else if (
+      role === ROLE.admin ||
+      role === ROLE.superAdmin ||
+      ROLE.trainer
+    ) {
       const user = await Admin.isAdminExists(email);
       if (!user) {
         if (file) {

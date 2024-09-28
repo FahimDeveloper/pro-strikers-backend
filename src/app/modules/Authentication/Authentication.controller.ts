@@ -59,8 +59,19 @@ const loginAdmin = catchAsync(async (req, res) => {
   });
 });
 
-const changePassword = catchAsync(async (req, res) => {
-  await AuthenticationServices.changePasswordIntoDB(req.params.id, req.body);
+const changeUserPassword = catchAsync(async (req, res) => {
+  await AuthenticationServices.changeUserPasswordIntoDB(
+    req.params.id,
+    req.body,
+  );
+  sendResponse(res, httpStatus.OK, 'Password changed successfully!');
+});
+
+const changeAdminPassword = catchAsync(async (req, res) => {
+  await AuthenticationServices.changeAdminPasswordIntoDB(
+    req.params.id,
+    req.body,
+  );
   sendResponse(res, httpStatus.OK, 'Password changed successfully!');
 });
 
@@ -156,5 +167,6 @@ export const AuthenticationControllers = {
   resetUserPassword,
   userForgetPassword,
   continueWithSocial,
-  changePassword,
+  changeUserPassword,
+  changeAdminPassword,
 };

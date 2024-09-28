@@ -108,7 +108,7 @@ const getAllAppointmentOneOnOneReservationsFromDB = async (
       },
       {
         path: 'appointment',
-        select: 'appointment_name duration',
+        select: 'appointment_name duration price description',
       },
     ]),
     query,

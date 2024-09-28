@@ -11,10 +11,6 @@ const appointmentBookingsSchemaValidation = z.object({
     required_error: 'Time slot is required',
     invalid_type_error: 'Time slot must be a string',
   }),
-  lane: z.string({
-    required_error: 'Lane is required',
-    invalid_type_error: 'Lane must be a string',
-  }),
   training: z
     .string({
       required_error: 'Training ID is required',
@@ -95,9 +91,13 @@ const createByAdminValidation = z.object({
               required_error: 'addon hours is required',
               invalid_type_error: 'addon hours must be number',
             }),
-            lane: z.string({
-              required_error: 'addon lane is required',
-              invalid_type_error: 'addon lane must be number',
+            image: z.string({
+              required_error: 'addon image is required',
+              invalid_type_error: 'addon image must be number',
+            }),
+            price: z.string({
+              required_error: 'addon price is required',
+              invalid_type_error: 'addon price must be number',
             }),
           },
           { invalid_type_error: 'addons must be array of object' },
@@ -174,13 +174,17 @@ const createByUserValidation = z.object({
                 required_error: 'addon name is required',
                 invalid_type_error: 'addon name must be string',
               }),
-              hours: z.string({
+              hours: z.number({
                 required_error: 'addon hours is required',
                 invalid_type_error: 'addon hours must be number',
               }),
-              lane: z.string({
-                required_error: 'addon lane is required',
-                invalid_type_error: 'addon lane must be number',
+              image: z.string({
+                required_error: 'addon image is required',
+                invalid_type_error: 'addon image must be number',
+              }),
+              price: z.number({
+                required_error: 'addon price is required',
+                invalid_type_error: 'addon price must be number',
               }),
             },
             { invalid_type_error: 'addons must be array of object' },
@@ -317,21 +321,27 @@ const updateByAdminValidation = z.object({
       .optional(),
     addons: z
       .array(
-        z
-          .object(
-            {
-              name: z.string({
-                required_error: 'addon name is required',
-                invalid_type_error: 'addon name must be string',
-              }),
-              hours: z.string({
-                required_error: 'addon hours is required',
-                invalid_type_error: 'addon hours must be number',
-              }),
-            },
-            { invalid_type_error: 'addons must be array of object' },
-          )
-          .optional(),
+        z.object(
+          {
+            name: z.string({
+              required_error: 'addon name is required',
+              invalid_type_error: 'addon name must be string',
+            }),
+            hours: z.string({
+              required_error: 'addon hours is required',
+              invalid_type_error: 'addon hours must be number',
+            }),
+            image: z.string({
+              required_error: 'addon image is required',
+              invalid_type_error: 'addon image must be number',
+            }),
+            price: z.string({
+              required_error: 'addon price is required',
+              invalid_type_error: 'addon price must be number',
+            }),
+          },
+          { invalid_type_error: 'addons must be array of object' },
+        ),
       )
       .optional(),
   }),

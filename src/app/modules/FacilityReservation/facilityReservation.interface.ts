@@ -20,13 +20,13 @@ export interface IFacilityReservation {
 export interface IAddon {
   name: string;
   hours: number;
-  lane: string;
+  image: string;
+  price: number;
 }
 
 export interface IFacilityBookings {
   date: string;
   time_slot: string;
-  lane: string;
   training: mongoose.Types.ObjectId;
 }
 

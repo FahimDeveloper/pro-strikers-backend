@@ -27,7 +27,6 @@ const updateAddonIntoDB = async (
   payload: Partial<IAddonInfo>,
   files: any,
 ) => {
-  console.log(payload);
   if (files?.length > 0) {
     const imageUrls = await uploadMultipleImageIntoCloduinary(files);
     const oldAddons = payload?.old_addons;

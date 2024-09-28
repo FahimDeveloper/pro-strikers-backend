@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IFacilityReservation } from './facilityReservation.interface';
+import { IAddon, IFacilityReservation } from './facilityReservation.interface';
 
 const FacilityBookingsSchema = new Schema(
   {
@@ -11,11 +11,12 @@ const FacilityBookingsSchema = new Schema(
   { versionKey: false, _id: false },
 );
 
-const AddonBookingsSchema = new Schema(
+const AddonBookingsSchema = new Schema<IAddon>(
   {
     name: { type: String, required: true },
-    hours: { type: String, required: true },
-    lane: { type: String, required: true },
+    hours: { type: Number, required: true },
+    image: { type: String, required: true },
+    price: { type: Number, required: true },
   },
   { versionKey: false, _id: false },
 );
