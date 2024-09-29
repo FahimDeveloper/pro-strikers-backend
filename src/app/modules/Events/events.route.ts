@@ -11,6 +11,12 @@ const route = express.Router();
 route.get('/', EventControllers.getAllEvents);
 route.get('/:id', EventControllers.getSingleEvent);
 route.post(
+  '/event',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  validateRequest(EventValidations.idValidation),
+  EventControllers.getEventById,
+);
+route.post(
   '/create',
   upload.single('image'),
   authMiddleware(ROLE.admin, ROLE.superAdmin),

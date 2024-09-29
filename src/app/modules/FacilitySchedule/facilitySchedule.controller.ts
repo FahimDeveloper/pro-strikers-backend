@@ -29,9 +29,7 @@ const getSingleFacility = catchAsync(async (req, res) => {
 });
 
 const getFacilityById = catchAsync(async (req, res) => {
-  const result = await FacilityScheduleServices.getFaciliyByIdFromDB(
-    req.params.id,
-  );
+  const result = await FacilityScheduleServices.getFaciliyByIdFromDB(req.body);
   sendResponse(res, httpStatus.OK, 'Facility fetch succesfully', result);
 });
 

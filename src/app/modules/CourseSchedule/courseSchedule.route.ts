@@ -16,6 +16,13 @@ route.get(
 );
 
 route.post(
+  '/course',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(courseScheduleValidations.idValidation),
+  CourseSheduleControllers.getCourseById,
+);
+
+route.post(
   '/create',
   authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(courseScheduleValidations.createValidation),

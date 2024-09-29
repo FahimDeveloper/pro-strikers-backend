@@ -15,7 +15,12 @@ route.get(
 
 route.get('/by-query-date', ClassSheduleControllers.getClassByQueryDate);
 
-route.post('/by-id-date', ClassSheduleControllers.getClassByIdDate);
+route.post(
+  '/by-id-date',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(classScheduleValidations.idValidation),
+  ClassSheduleControllers.getClassByIdDate,
+);
 
 route.get(
   '/:id',

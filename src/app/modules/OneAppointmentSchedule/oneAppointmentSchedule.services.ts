@@ -53,12 +53,12 @@ const getSingleAppointmentFromDB = async (id: string) => {
   return result;
 };
 
-const getAppointmentByIdFromDB = async (id: string) => {
-  const result = await OneAppointmentSchedule.findById(id);
+const getAppointmentByIdFromDB = async (payload: any) => {
+  const result = await OneAppointmentSchedule.findById(payload.id);
   if (!result) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      'Could not find the appointment',
+      'Appointment not found, please provide a valid ID',
     );
   }
   return result;

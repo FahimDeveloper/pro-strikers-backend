@@ -16,6 +16,8 @@ route.get(
 
 route.post(
   '/by-id-date',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(groupAppointmentScheduleValidations.idValidation),
   GroupAppointmentSheduleControllers.getAppointmentByIdDate,
 );
 

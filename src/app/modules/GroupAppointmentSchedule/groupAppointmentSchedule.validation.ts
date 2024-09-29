@@ -1,3 +1,4 @@
+import mongoose, { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
 const createValidation = z.object({
@@ -117,7 +118,16 @@ const updateValidation = z.object({
   }),
 });
 
+const idValidation = z.object({
+  body: z.object({
+    id: z.string().refine(val => mongoose.Types.ObjectId.isValid(val), {
+      message: 'Invalid ID',
+    }),
+  }),
+});
+
 export const groupAppointmentScheduleValidations = {
   createValidation,
   updateValidation,
+  idValidation,
 };

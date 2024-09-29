@@ -180,7 +180,7 @@ const getAppointmentByIdDateFromDB = async ({
   date: Date;
 }) => {
   const queryDate = new Date(date);
-  if (queryDate < new Date()) {
+  if (queryDate.getDate() < new Date().getDate()) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       'Date cannot be less than current date',

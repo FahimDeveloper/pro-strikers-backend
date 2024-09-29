@@ -46,10 +46,13 @@ const getFacilityByQueryFromDB = async (query: Record<string, unknown>) => {
   }
 };
 
-const getFaciliyByIdFromDB = async (id: string) => {
-  const result = await FacilitySchedule.findById(id);
+const getFaciliyByIdFromDB = async (payload: any) => {
+  const result = await FacilitySchedule.findById(payload.id);
   if (!result) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Could not find the facility');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Facility not found, please provide a valid ID',
+    );
   }
   return result;
 };

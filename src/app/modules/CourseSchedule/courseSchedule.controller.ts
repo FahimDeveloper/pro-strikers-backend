@@ -22,8 +22,8 @@ const getSingleCourse = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Course fetch succesfully', result);
 });
 
-const getCourseByDate = catchAsync(async (req, res) => {
-  const result = await CourseScheduleServices.getCourseByDateFromDB(req.body);
+const getCourseById = catchAsync(async (req, res) => {
+  const result = await CourseScheduleServices.getCourseByIdFromDB(req.body);
   sendResponse(res, httpStatus.OK, 'Course fetch succesfully', result);
 });
 
@@ -43,5 +43,5 @@ export const CourseSheduleControllers = {
   getSingleCourse,
   updateCourse,
   deleteCourse,
-  getCourseByDate,
+  getCourseById,
 };

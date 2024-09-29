@@ -32,12 +32,15 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
   return { result, count };
 };
 
-const getCourseByDateFromDB = async (payload: any) => {
+const getCourseByIdFromDB = async (payload: any) => {
   const result = await CourseSchedule.findById(payload.id).select(
-    'sport trainer start_date',
+    'sport trainer',
   );
   if (!result) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Course not found');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Course not found, please provide a valid ID',
+    );
   }
   return result;
 };
@@ -57,6 +60,6 @@ export const CourseScheduleServices = {
   updateCourseIntoDB,
   getAllCoursesFromDB,
   getSingleCourseFromDB,
-  getCourseByDateFromDB,
+  getCourseByIdFromDB,
   deleteCourseFromDB,
 };

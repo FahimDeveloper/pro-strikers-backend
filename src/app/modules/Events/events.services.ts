@@ -44,6 +44,17 @@ const getSingleEventFromDB = async (id: string) => {
   return result;
 };
 
+const getEventsByIdFromDB = async (payload: any) => {
+  const result = await Event.findById(payload.id);
+  if (!result) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Event not found, please provide a valid ID',
+    );
+  }
+  return result;
+};
+
 const deleteEventFromDB = async (id: string) => {
   const result = await Event.findByIdAndDelete(id);
   return result;
@@ -55,4 +66,5 @@ export const EventServices = {
   getAllEventsFromDB,
   getSingleEventFromDB,
   deleteEventFromDB,
+  getEventsByIdFromDB,
 };

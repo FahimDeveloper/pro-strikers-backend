@@ -22,8 +22,9 @@ route.post(
   OneAppointmentSheduleControllers.createAppointment,
 );
 route.post(
-  '/:id',
+  '/appointment',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(oneAppointmentScheduleValidations.idValidation),
   OneAppointmentSheduleControllers.getAppointmentById,
 );
 

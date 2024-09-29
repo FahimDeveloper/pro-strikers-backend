@@ -22,7 +22,7 @@ const getAllAppointments = catchAsync(async (req, res) => {
 
 const getAppointmentById = catchAsync(async (req, res) => {
   const result = await OneAppointmentScheduleServices.getAppointmentByIdFromDB(
-    req.params.id,
+    req.body,
   );
   sendResponse(res, httpStatus.OK, 'Appointment fetch succesfully', result);
 });

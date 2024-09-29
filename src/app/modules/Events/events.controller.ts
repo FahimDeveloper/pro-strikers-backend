@@ -25,6 +25,11 @@ const getSingleEvent = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Event fetched successfully', result);
 });
 
+const getEventById = catchAsync(async (req, res) => {
+  const result = await EventServices.getSingleEventFromDB(req.body);
+  sendResponse(res, httpStatus.OK, 'Event fetched successfully', result);
+});
+
 const updateEvent = catchAsync(async (req, res) => {
   const file = req.file;
   const result = await EventServices.updateEventIntoDB(
@@ -46,4 +51,5 @@ export const EventControllers = {
   getSingleEvent,
   updateEvent,
   deleteEvent,
+  getEventById,
 };

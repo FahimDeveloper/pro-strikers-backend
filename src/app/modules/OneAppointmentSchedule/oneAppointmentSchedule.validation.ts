@@ -130,7 +130,16 @@ const updateValidation = z.object({
   }),
 });
 
+const idValidation = z.object({
+  body: z.object({
+    id: z.string().refine(val => mongoose.Types.ObjectId.isValid(val), {
+      message: 'Invalid ID',
+    }),
+  }),
+});
+
 export const oneAppointmentScheduleValidations = {
   createValidation,
   updateValidation,
+  idValidation,
 };

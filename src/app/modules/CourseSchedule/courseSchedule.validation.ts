@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { z } from 'zod';
 
 const createValidation = z.object({
@@ -110,7 +111,16 @@ const updateValidation = z.object({
   }),
 });
 
+const idValidation = z.object({
+  body: z.object({
+    id: z.string().refine(val => mongoose.Types.ObjectId.isValid(val), {
+      message: 'Invalid Id',
+    }),
+  }),
+});
+
 export const courseScheduleValidations = {
   createValidation,
   updateValidation,
+  idValidation,
 };

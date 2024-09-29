@@ -29,8 +29,9 @@ route.post(
 );
 
 route.post(
-  '/:id',
+  '/facility',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(facilityScheduleValidations.idValidation),
   FacilitySheduleControllers.getFacilityById,
 );
 
