@@ -3,7 +3,9 @@ import { TErrorSources, TGenericErrorResponse } from '../interface/error';
 import fs from 'fs';
 
 const handleZodError = (err: ZodError, file: any): TGenericErrorResponse => {
+  const message: string[] = [];
   const errorSources: TErrorSources = err.issues.map((issue: ZodIssue) => {
+    message.push(issue.message);
     return {
       path: issue?.path[issue.path.length - 1],
       message: issue.message,
@@ -16,7 +18,7 @@ const handleZodError = (err: ZodError, file: any): TGenericErrorResponse => {
   }
   return {
     statusCode,
-    message: 'Validation Error',
+    message: message[0],
     errorSources,
   };
 };

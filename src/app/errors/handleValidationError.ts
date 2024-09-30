@@ -7,7 +7,7 @@ const handleValidationError = (
   const message: string[] = [];
   const errorSources: TErrorSources = Object.values(err.errors).map(
     (val: mongoose.Error.ValidatorError | mongoose.Error.CastError) => {
-      message.push(val.message);
+      message.push(val?.message);
       return {
         path: val?.path,
         message: val?.message,
@@ -18,7 +18,7 @@ const handleValidationError = (
   const statusCode = 400;
   return {
     statusCode,
-    message: message[0],
+    message: message[1],
     errorSources,
   };
 };

@@ -9,6 +9,7 @@ import { EventGroupReservation } from './eventGroupReservation.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import WebPayment from '../WebPayment/webPayment.modal';
+import moment from 'moment';
 
 const createEventGroupReservationIntoDB = async (
   payload: IEventGroupReservation,
@@ -23,7 +24,14 @@ const createEventGroupReservationIntoDB = async (
     });
     if (!checkEvent) {
       throw new Error('Event not found, Please check event Id and event sport');
-    } else if (checkEvent.allowed_registrations === checkEvent.registration) {
+    } else if (checkEvent._id) {
+      const endDate = new Date(checkEvent?.registration_end);
+      if (new Date().getDate() > endDate.getDate()) {
+        throw new Error(
+          `This event registration period has been closed ${moment(endDate).format('dddd, MMMM Do YYYY')}`,
+        );
+      }
+    } else if (checkEvent.allowed_registrations <= checkEvent.registration) {
       throw new Error('Event is fully registered, please choose another event');
     } else {
       await Event.findByIdAndUpdate(

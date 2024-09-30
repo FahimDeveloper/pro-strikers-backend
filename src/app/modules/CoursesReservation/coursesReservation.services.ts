@@ -9,6 +9,7 @@ import {
 import { CourseReservation } from './coursesReservation.model';
 import mongoose from 'mongoose';
 import WebPayment from '../WebPayment/webPayment.modal';
+import moment from 'moment';
 
 const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
   const session = await mongoose.startSession();
@@ -17,10 +18,17 @@ const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
     const checkCourse = await CourseSchedule.findById(payload.course);
     if (!checkCourse) {
       throw new Error('Bootcamp not found, Please enter a valid Bootcamp ID');
-    } else if (checkCourse?.sport !== payload.sport) {
-      throw new Error('Reservation sport and bootcamp sport not match');
-    } else if (checkCourse.capacity === checkCourse.enrolled) {
-      throw new Error('Course is fully booked, please choose another course');
+    } else if (checkCourse._id) {
+      const endDate = new Date(checkCourse?.end_date);
+      if (new Date().getDate() > endDate.getDate()) {
+        throw new Error(
+          `This Bootcamp period has been closed ${moment(endDate).format('dddd, MMMM Do YYYY')}`,
+        );
+      }
+    } else if (checkCourse.capacity <= checkCourse.enrolled) {
+      throw new Error(
+        'Bootcamp is fully booked, please choose another bootcamp',
+      );
     } else {
       await CourseSchedule.findByIdAndUpdate(
         payload.course,

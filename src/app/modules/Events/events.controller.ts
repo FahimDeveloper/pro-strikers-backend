@@ -26,7 +26,7 @@ const getSingleEvent = catchAsync(async (req, res) => {
 });
 
 const getEventById = catchAsync(async (req, res) => {
-  const result = await EventServices.getSingleEventFromDB(req.body);
+  const result = await EventServices.getEventsByIdFromDB(req.body);
   sendResponse(res, httpStatus.OK, 'Event fetched successfully', result);
 });
 

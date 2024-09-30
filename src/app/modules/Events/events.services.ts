@@ -51,6 +51,11 @@ const getEventsByIdFromDB = async (payload: any) => {
       httpStatus.NOT_FOUND,
       'Event not found, please provide a valid ID',
     );
+  } else if (result.event_type !== payload.event_type) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'Event ID not match with event type, Please check the event ID and event type',
+    );
   }
   return result;
 };

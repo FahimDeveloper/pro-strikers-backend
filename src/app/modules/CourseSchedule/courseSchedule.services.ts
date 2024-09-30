@@ -3,7 +3,6 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { ICourseSchedule } from './courseSchedule.interface';
 import { CourseSchedule } from './courseSchedule.model';
 import AppError from '../../errors/AppError';
-import moment from 'moment';
 
 const createCourseIntoDB = async (payload: ICourseSchedule) => {
   const result = await CourseSchedule.create(payload);
