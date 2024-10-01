@@ -133,14 +133,9 @@ const updateValidation = z.object({
 
 const idValidation = z.object({
   body: z.object({
-    id: z
-      .number({
-        invalid_type_error: 'course id must be number',
-        required_error: 'course id is required',
-      })
-      .refine(val => mongoose.Types.ObjectId.isValid(val), {
-        message: 'Invalid ObjectId',
-      }),
+    id: z.string().refine(val => mongoose.Types.ObjectId.isValid(val), {
+      message: 'Invalid ObjectId',
+    }),
   }),
 });
 

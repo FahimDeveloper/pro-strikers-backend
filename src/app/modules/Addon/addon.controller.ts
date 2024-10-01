@@ -26,7 +26,6 @@ const getSingleAddon = catchAsync(async (req, res) => {
 });
 
 const getSportAddons = catchAsync(async (req, res) => {
-  console.log('hello');
   const result = await AddonServices.getSportAddonsFromDB(req.query);
   sendResponse(res, httpStatus.OK, 'Addons fetched successfully', result);
 });
