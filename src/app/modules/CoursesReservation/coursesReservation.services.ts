@@ -12,33 +12,34 @@ import WebPayment from '../WebPayment/webPayment.modal';
 import moment from 'moment';
 
 const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
+  console.log(payload);
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
     const checkCourse = await CourseSchedule.findById(payload.course);
     if (!checkCourse) {
       throw new Error('Bootcamp not found, Please enter a valid Bootcamp ID');
-    } else if (checkCourse._id) {
+    } else {
       const endDate = new Date(checkCourse?.end_date);
       if (new Date().getDate() > endDate.getDate()) {
         throw new Error(
           `This Bootcamp period has been closed ${moment(endDate).format('dddd, MMMM Do YYYY')}`,
         );
+      } else if (checkCourse.capacity <= checkCourse.enrolled) {
+        throw new Error(
+          'Bootcamp is fully booked, please choose another bootcamp',
+        );
+      } else {
+        await CourseSchedule.findByIdAndUpdate(
+          payload.course,
+          { $inc: { enrolled: 1 } },
+          { new: true, runValidators: true, session },
+        );
+        await CourseReservation.create([payload], { session });
+        await session.commitTransaction();
+        await session.endSession();
+        return;
       }
-    } else if (checkCourse.capacity <= checkCourse.enrolled) {
-      throw new Error(
-        'Bootcamp is fully booked, please choose another bootcamp',
-      );
-    } else {
-      await CourseSchedule.findByIdAndUpdate(
-        payload.course,
-        { $inc: { enrolled: 1 } },
-        { new: true, runValidators: true, session },
-      );
-      await CourseReservation.create([payload], { session });
-      await session.commitTransaction();
-      await session.endSession();
-      return;
     }
   } catch (error: any) {
     await session.abortTransaction();
