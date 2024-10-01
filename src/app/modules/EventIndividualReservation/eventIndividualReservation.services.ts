@@ -25,25 +25,27 @@ const createEventIndividualReservationIntoDB = async (
     });
     if (!checkEvent) {
       throw new Error('Event not found, Please check event Id and event sport');
-    } else if (checkEvent._id) {
+    } else {
       const endDate = new Date(checkEvent?.registration_end);
       if (new Date().getDate() > endDate.getDate()) {
         throw new Error(
           `This event registration period has been closed ${moment(endDate).format('dddd, MMMM Do YYYY')}`,
         );
+      } else if (checkEvent.allowed_registrations === checkEvent.registration) {
+        throw new Error(
+          'Event is fully registered, please choose another event',
+        );
+      } else {
+        await Event.findByIdAndUpdate(
+          payload.event,
+          { $inc: { registration: 1 } },
+          { new: true, runValidators: true, session },
+        );
+        await EventIndividualReservation.create([payload], { session });
+        await session.commitTransaction();
+        await session.endSession();
+        return;
       }
-    } else if (checkEvent.allowed_registrations === checkEvent.registration) {
-      throw new Error('Event is fully registered, please choose another event');
-    } else {
-      await Event.findByIdAndUpdate(
-        payload.event,
-        { $inc: { registration: 1 } },
-        { new: true, runValidators: true, session },
-      );
-      await EventIndividualReservation.create([payload], { session });
-      await session.commitTransaction();
-      await session.endSession();
-      return;
     }
   } catch (error: any) {
     await session.abortTransaction();
