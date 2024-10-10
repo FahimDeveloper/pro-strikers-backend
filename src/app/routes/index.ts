@@ -24,6 +24,7 @@ import { AuthenticationRoutes } from '../modules/Authentication/Authentication.r
 import { StripePaymentRoutes } from '../modules/StripePayment/stripePayment.route';
 import { WebPaymentRoutes } from '../modules/WebPayment/webPayment.route';
 import { AddonRoutes } from '../modules/Addon/addon.route';
+import { BrandRoutes } from '../modules/Brand/brand.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -82,6 +83,10 @@ const mainRoutes = [
   {
     path: '/addons',
     route: AddonRoutes,
+  },
+  {
+    path: '/brands',
+    route: BrandRoutes,
   },
   {
     path: '/orders',
