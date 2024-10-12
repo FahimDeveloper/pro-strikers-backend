@@ -372,7 +372,7 @@ const forgetPasswordForUser = async (email: string) => {
     '15m',
   );
   const ui_link = config.user_reset_pass_live_ui_link;
-  const link = `/reset-password/${ui_link}/${user._id}/${resetToken}`;
+  const link = `${ui_link}/reset-password/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
   return;
 };
