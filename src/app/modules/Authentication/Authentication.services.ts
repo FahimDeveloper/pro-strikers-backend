@@ -378,7 +378,7 @@ const forgetPasswordForUser = async (email: string) => {
     config.node_env === 'production'
       ? config.user_reset_pass_live_ui_link
       : config.user_reset_pass_test_ui_link;
-  const link = `/reset-password/${ui_link}/${user._id}/${resetToken}`;
+  const link = `${ui_link}/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
   return;
 };

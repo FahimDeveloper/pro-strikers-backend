@@ -2,22 +2,22 @@ import express, { NextFunction, Request, Response } from 'express';
 import { ROLE } from '../../utils/role';
 import authMiddleware from '../../middlewares/authMiddleware';
 import validateRequest from '../../middlewares/validateRequest';
-import { StoreControllers } from './store.controller';
-import { StoreValidations } from './store.validation';
+import { ProductControllers } from './product.controller';
 import { upload } from '../../middlewares/multer.middleware';
+import { ProductValidations } from './product.validation';
 
 const route = express.Router();
 
 route.get(
   '/products',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  StoreControllers.getAllProducts,
+  ProductControllers.getAllProducts,
 );
 
 route.get(
   '/products/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  StoreControllers.getSingleProduct,
+  ProductControllers.getSingleProduct,
 );
 
 route.post(
@@ -30,8 +30,8 @@ route.post(
     }
     next();
   },
-  validateRequest(StoreValidations.createValidation),
-  StoreControllers.createProduct,
+  validateRequest(ProductValidations.createValidation),
+  ProductControllers.createProduct,
 );
 
 route.patch(
@@ -44,14 +44,14 @@ route.patch(
     }
     next();
   },
-  validateRequest(StoreValidations.updateValidation),
-  StoreControllers.updateProduct,
+  validateRequest(ProductValidations.updateValidation),
+  ProductControllers.updateProduct,
 );
 
 route.delete(
   '/products/delete/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  StoreControllers.deleteProduct,
+  ProductControllers.deleteProduct,
 );
 
-export const StoreRoutes = route;
+export const ProductRoutes = route;

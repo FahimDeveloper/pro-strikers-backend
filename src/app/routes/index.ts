@@ -8,7 +8,7 @@ import { FacilityRoutes } from '../modules/FacilitySchedule/facilitySchedule.rou
 import { VoucherRoute } from '../modules/Voucher/voucher.route';
 import { PostRoutes } from '../modules/Post/post.route';
 import { EventRoutes } from '../modules/Events/events.route';
-import { StoreRoutes } from '../modules/Store/store.route';
+import { ProductRoutes } from '../modules/Product/product.route';
 import { LaneRoutes } from '../modules/Lane/lane.route';
 import { OrderRoutes } from '../modules/Orders/order.route';
 import { ClassReservationRoutes } from '../modules/ClassReservation/classReservation.route';
@@ -73,8 +73,8 @@ const mainRoutes = [
     route: PostRoutes,
   },
   {
-    path: '/stores',
-    route: StoreRoutes,
+    path: '/products',
+    route: ProductRoutes,
   },
   {
     path: '/lanes',

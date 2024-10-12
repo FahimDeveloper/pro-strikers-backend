@@ -17,10 +17,13 @@ const createValidation = z.object({
       .refine(val => mongoose.Types.ObjectId.isValid(val), {
         message: 'Invalid product ID',
       }),
-    status: z.string({
-      invalid_type_error: 'Status must be a string',
-      required_error: 'Status is required',
-    }),
+    status: z
+      .enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled'], {
+        invalid_type_error:
+          'Status must be one of: pending, processing, shipped, delivered, cancelled',
+        required_error: 'Status is required',
+      })
+      .default('pending'),
     category: z.string({
       invalid_type_error: 'category must be a string',
       required_error: 'category is required',
@@ -55,9 +58,9 @@ const updateValidation = z.object({
       })
       .optional(),
     status: z
-      .string({
-        invalid_type_error: 'Status must be a string',
-        required_error: 'Status is required',
+      .enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled'], {
+        invalid_type_error:
+          'Status must be one of: pending, processing, shipped, delivered, cancelled',
       })
       .optional(),
     quantity: z
