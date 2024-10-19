@@ -18,8 +18,6 @@ const corsConfig = {
     'https://prostrikers.com',
     'https://prostrikers-web.netlify.app',
     'https://prostrikers-admin.netlify.app',
-    'http://localhost:4000',
-    'http://localhost:4001',
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
