@@ -57,10 +57,11 @@ const loginUserIntoDB = async (payload: ILogin) => {
     );
   }
 
-  const { _id, first_name, last_name, image, email, role } = user;
+  const { _id, first_name, last_name, image, email, phone, verified, role } =
+    user;
 
   return {
-    user: { _id, first_name, last_name, image, email, role },
+    user: { _id, first_name, last_name, image, email, phone, verified, role },
     accessToken,
     refreshToken,
   };
@@ -91,7 +92,11 @@ const continueWithSocialIntoDB = async (payload: any) => {
   );
 
   if (!user) {
-    const result = await User.create({ ...payload, password: randomPass });
+    const result = await User.create({
+      ...payload,
+      password: randomPass,
+      verified: true,
+    });
     if (result) {
       await sendEmail({
         email: payload.email,
@@ -99,9 +104,10 @@ const continueWithSocialIntoDB = async (payload: any) => {
         provider: payload.provider,
       });
     }
-    const { _id, first_name, last_name, image, email, role } = result;
+    const { _id, first_name, last_name, image, email, phone, verified, role } =
+      result;
     return {
-      user: { _id, first_name, last_name, image, email, role },
+      user: { _id, first_name, last_name, image, email, phone, verified, role },
       accessToken,
       refreshToken,
     };
@@ -112,9 +118,27 @@ const continueWithSocialIntoDB = async (payload: any) => {
         'You are trying to access with wrong provider, your account has different provider',
       );
     } else {
-      const { _id, first_name, last_name, image, email, role } = user;
+      const {
+        _id,
+        first_name,
+        last_name,
+        image,
+        email,
+        phone,
+        verified,
+        role,
+      } = user;
       return {
-        user: { _id, first_name, last_name, image, email, role },
+        user: {
+          _id,
+          first_name,
+          last_name,
+          image,
+          email,
+          phone,
+          verified,
+          role,
+        },
         accessToken,
         refreshToken,
       };
@@ -143,19 +167,82 @@ const registerUserIntoDB = async (payload: IRegister) => {
     config.jwt_access_expires_in as string,
   );
 
+  const emailAccessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_remember_access_expires_in as string,
+  );
+
+  const emailVerifyLink = `${config.web_app_test_ui_link}/verify-email/${emailAccessToken}`;
+  await sendEmail({ email: payload.email, emailVerifyLink });
+
   const refreshToken = createToken(
     jwtPayload,
     config.jwt_refresh_secret as string,
     config.jwt_refresh_expires_in as string,
   );
 
-  const { _id, first_name, last_name, image, email, role } = result;
+  const { _id, first_name, last_name, image, email, phone, verified, role } =
+    result;
 
   return {
-    user: { _id, first_name, last_name, image, email, role },
+    user: { _id, first_name, last_name, image, email, phone, verified, role },
     accessToken,
     refreshToken,
   };
+};
+
+const emailVerifyIntoDB = async (token: string) => {
+  const decodedToken = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+  const user = await User.findOne({ email: decodedToken.email });
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'user not found!');
+  }
+  if (user?.verified) {
+    const { _id, first_name, last_name, image, email, phone, verified, role } =
+      user;
+    return {
+      _id,
+      first_name,
+      last_name,
+      image,
+      email,
+      phone,
+      verified,
+      role,
+    };
+  } else {
+    const result = await User.findByIdAndUpdate(
+      user.id,
+      { verified: true },
+      { new: true, runValidators: true },
+    );
+    if (result) {
+      const {
+        _id,
+        first_name,
+        last_name,
+        image,
+        email,
+        phone,
+        verified,
+        role,
+      } = result;
+      return {
+        _id,
+        first_name,
+        last_name,
+        image,
+        email,
+        verified,
+        phone,
+        role,
+      };
+    }
+  }
 };
 
 const loginAdminIntoDB = async (payload: ILogin) => {
@@ -203,10 +290,10 @@ const loginAdminIntoDB = async (payload: ILogin) => {
     );
   }
 
-  const { _id, first_name, last_name, image, email, role } = user;
+  const { _id, first_name, last_name, image, email, phone, role } = user;
 
   return {
-    user: { _id, first_name, last_name, image, email, role },
+    user: { _id, first_name, last_name, image, email, phone, role },
     accessToken,
     refreshToken,
   };
@@ -350,7 +437,7 @@ const forgetPasswordForAdmin = async (email: string) => {
     config.jwt_access_secret as string,
     '15m',
   );
-  const ui_link = config.admin_reset_pass_live_ui_link;
+  const ui_link = config.web_app_test_ui_link;
   const link = `${ui_link}/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
   return;
@@ -371,8 +458,8 @@ const forgetPasswordForUser = async (email: string) => {
     config.jwt_access_secret as string,
     '15m',
   );
-  const ui_link = config.user_reset_pass_live_ui_link;
-  const link = `${ui_link}/reset-password/${user._id}/${resetToken}`;
+  const ui_link = config.website_test_ui_link;
+  const link = `/reset-password/${ui_link}/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
   return;
 };
@@ -447,6 +534,7 @@ const resetUserPasswordIntoDB = async (payload: {
 
 export const AuthenticationServices = {
   loginUserIntoDB,
+  emailVerifyIntoDB,
   registerUserIntoDB,
   loginAdminIntoDB,
   refreshToken,

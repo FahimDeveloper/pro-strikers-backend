@@ -26,4 +26,10 @@ route.delete(
   OrderControllers.deleteOrder,
 );
 
+route.patch(
+  '/:id/cancel',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  OrderControllers.cancelOrder,
+);
+
 export const OrderRoutes = route;

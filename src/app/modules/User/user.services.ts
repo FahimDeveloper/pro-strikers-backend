@@ -24,7 +24,11 @@ const createUserIntoDB = async (payload: IUser, file: any) => {
       password: randomPass,
     });
   } else {
-    result = await User.create({ ...payload, password: randomPass });
+    result = await User.create({
+      ...payload,
+      password: randomPass,
+      verified: true,
+    });
   }
   if (result) {
     await sendEmail({ email: payload.email, password: randomPass });
@@ -40,12 +44,22 @@ const updateUserIntoDB = async (
   let result;
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
-    result = await User.findByIdAndUpdate(id, {
-      ...payload,
-      image: url,
-    });
+    result = await User.findByIdAndUpdate(
+      id,
+      {
+        ...payload,
+        image: url,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
   } else {
-    result = await User.findByIdAndUpdate(id, payload);
+    result = await User.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
   }
   return result;
 };

@@ -1,42 +1,46 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { ROLE } from '../../utils/role';
 import authMiddleware from '../../middlewares/authMiddleware';
+import { ROLE } from '../../utils/role';
 import validateRequest from '../../middlewares/validateRequest';
-import { StoreControllers } from './store.controller';
-import { StoreValidations } from './store.validation';
+import { BrandValidations } from './brand.validation';
+import { BrandControllers } from './brand.controller';
 import { upload } from '../../middlewares/multer.middleware';
 
 const route = express.Router();
 
 route.get(
-  '/products',
+  '/',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  StoreControllers.getAllProducts,
+  BrandControllers.getAllBrands,
 );
 
 route.get(
-  '/products/:id',
+  '/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  StoreControllers.getSingleProduct,
+  BrandControllers.getSingleBrand,
+);
+
+route.get(
+  '/category/:category',
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  BrandControllers.getBrandsByCategory,
 );
 
 route.post(
-  '/products/create',
-  upload.array('image'),
+  '/create',
+  upload.single('image'),
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
-    if (req.body.data) {
-      req.body = JSON.parse(req.body.data);
-    }
+    req.body = JSON.parse(req.body.data);
     next();
   },
-  validateRequest(StoreValidations.createValidation),
-  StoreControllers.createProduct,
+  validateRequest(BrandValidations.createValidation),
+  BrandControllers.createBrand,
 );
 
 route.patch(
-  '/products/update/:id',
-  upload.array('image'),
+  '/update/:id',
+  upload.single('image'),
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
@@ -44,14 +48,14 @@ route.patch(
     }
     next();
   },
-  validateRequest(StoreValidations.updateValidation),
-  StoreControllers.updateProduct,
+  validateRequest(BrandValidations.updateValidation),
+  BrandControllers.updateBrand,
 );
 
 route.delete(
-  '/products/delete/:id',
+  '/delete/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  StoreControllers.deleteProduct,
+  BrandControllers.deleteBrand,
 );
 
-export const StoreRoutes = route;
+export const BrandRoutes = route;

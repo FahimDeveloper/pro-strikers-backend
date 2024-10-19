@@ -27,6 +27,11 @@ const userSchema = new Schema<IUser, UserModel>(
       required: true,
       unique: true,
     },
+    verified: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     password: {
       type: String,
       required: true,

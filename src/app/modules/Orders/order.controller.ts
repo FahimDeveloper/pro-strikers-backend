@@ -34,10 +34,16 @@ const deleteOrder = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Order deleted successfully');
 });
 
+const cancelOrder = catchAsync(async (req, res) => {
+  await OrderServices.cancelOrderFromDB(req.params.id);
+  sendResponse(res, httpStatus.OK, 'Order cancelled successfully');
+});
+
 export const OrderControllers = {
   createOrder,
   getAllOrders,
   getSingleOrder,
   updateOrder,
   deleteOrder,
+  cancelOrder,
 };
