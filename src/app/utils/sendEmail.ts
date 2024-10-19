@@ -3,6 +3,7 @@ import config from '../config';
 
 type TProp = {
   email: string;
+  emailVerifyLink?: string;
   link?: string;
   code?: number;
   password?: string;
@@ -11,6 +12,7 @@ type TProp = {
 
 export const sendEmail = async ({
   email,
+  emailVerifyLink,
   link,
   code,
   password,
@@ -44,6 +46,33 @@ export const sendEmail = async ({
     });
   }
 
+  if (emailVerifyLink) {
+    await transporter.sendMail({
+      from: config.node_mailer_mail,
+      to: email,
+      subject: 'Verify your account',
+      html: `<div>
+      Please verify your account as soon as possible <a href="${emailVerifyLink}">${emailVerifyLink}</a>
+<br/><br/>
+The link will be expired after 7 days
+<br/><br/>
+If you did not create this account, please ignore this email or contact our support team immediately at admin@prostrikers.com.
+<br/><br/>
+Thank you for joining us, and we look forward to providing you with a great experience.
+<br/><br/>
+Best regards,
+<br/><br/>
+Prostrikers Team
+<br/>
+2230 16th St, Sacramento, CA 95818, United States.
+<br/>
+Email: admin@prostrikers.com
+<br/>
+Phone: (916)-890-5834</p>
+      </div>`,
+    });
+  }
+
   if (!provider && password) {
     await transporter.sendMail({
       from: config.node_mailer_mail,
@@ -53,7 +82,7 @@ export const sendEmail = async ({
 <br/>
 Welcome to Pro Strikers! We are excited to have you join our family.
 <br/>
-Your account has been successfully created. Your temporary password is <span style="font-size: 22px; font-weight: 500;">${password}</span>
+Your account has been created successfully. Your temporary password is <span style="font-size: 22px; font-weight: 500;">${password}</span>
 <br/>
 To ensure the security of your account, we recommend that you change your password immediately.
 <br/>
@@ -98,7 +127,7 @@ Phone: (916)-890-5834</p>`,
 <br/>
 Welcome to Pro Strikers! We are excited to have you join our family.
 <br/>
-Your account has been successfully created by ${provider} login. We are provide you a temporary password for login with your email and pass if you need. Password is <span style="font-size: 22px; font-weight: 500;">${password}</span>
+Your account has been created successfully by ${provider} login. We are provide you a temporary password for login with your email and pass if you need. Password is <span style="font-size: 22px; font-weight: 500;">${password}</span>
 <br/>
 To ensure the security of your account, we recommend that you change your password immediately.
 <br/>

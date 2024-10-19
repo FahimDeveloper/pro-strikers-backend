@@ -41,6 +41,13 @@ const registerUser = catchAsync(async (req, res) => {
   });
 });
 
+const emailVerify = catchAsync(async (req, res) => {
+  const result = await AuthenticationServices.emailVerifyIntoDB(
+    req.params.token,
+  );
+  sendResponse(res, httpStatus.OK, 'User Verification Successfull', result);
+});
+
 const loginAdmin = catchAsync(async (req, res) => {
   const result = await AuthenticationServices.loginAdminIntoDB(req.body);
 
@@ -155,6 +162,7 @@ const resetUserPassword = catchAsync(async (req, res) => {
 });
 
 export const AuthenticationControllers = {
+  emailVerify,
   loginUser,
   registerUser,
   loginAdmin,

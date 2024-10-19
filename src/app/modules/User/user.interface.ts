@@ -12,6 +12,7 @@ export interface IUser {
   role: 'user';
   phone?: string;
   provider: 'email with password' | 'google' | 'facebook';
+  verified: boolean;
   street_address?: string;
   city?: string;
   state?: string;

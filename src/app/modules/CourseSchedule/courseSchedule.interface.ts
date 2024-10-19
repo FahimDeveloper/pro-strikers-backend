@@ -1,7 +1,6 @@
 import { Types } from 'mongoose';
 
 export interface ICourseSchedule {
-  _id: Types.ObjectId;
   course_name: string;
   sport: string;
   trainer: Types.ObjectId;

@@ -38,12 +38,22 @@ const updateAdminUserIntoDB = async (
   let result;
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
-    result = await Admin.findByIdAndUpdate(id, {
-      ...payload,
-      image: url,
-    });
+    result = await Admin.findByIdAndUpdate(
+      id,
+      {
+        ...payload,
+        image: url,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
   } else {
-    result = await Admin.findByIdAndUpdate(id, payload);
+    result = await Admin.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
   }
   return result;
 };
