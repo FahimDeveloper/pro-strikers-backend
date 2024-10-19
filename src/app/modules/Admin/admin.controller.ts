@@ -18,8 +18,9 @@ const updateAdminUser = catchAsync(async (req, res) => {
   );
   let result;
   if (updateInfo) {
-    const { _id, first_name, last_name, phone, email, role } = updateInfo;
-    result = { _id, first_name, last_name, phone, email, role };
+    const { _id, first_name, last_name, phone, email, role, image } =
+      updateInfo;
+    result = { _id, first_name, last_name, phone, email, role, image };
   }
   sendResponse(res, httpStatus.OK, 'Admin user updated succesfully', result);
 });
