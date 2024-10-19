@@ -11,8 +11,17 @@ const createAdminUser = catchAsync(async (req, res) => {
 
 const updateAdminUser = catchAsync(async (req, res) => {
   const file = req.file;
-  await AdminServices.updateAdminUserIntoDB(req.params.id, req.body, file);
-  sendResponse(res, httpStatus.OK, 'Admin user updated succesfully');
+  const updateInfo = await AdminServices.updateAdminUserIntoDB(
+    req.params.id,
+    req.body,
+    file,
+  );
+  let result;
+  if (updateInfo) {
+    const { _id, first_name, last_name, phone, email, role } = updateInfo;
+    result = { _id, first_name, last_name, phone, email, role };
+  }
+  sendResponse(res, httpStatus.OK, 'Admin user updated succesfully', result);
 });
 
 const getAllAdminUsers = catchAsync(async (req, res) => {
