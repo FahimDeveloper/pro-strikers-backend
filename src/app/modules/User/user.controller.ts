@@ -23,9 +23,18 @@ const updateUser = catchAsync(async (req, res) => {
   );
   let result;
   if (updateInfo) {
-    const { _id, first_name, last_name, phone, email, verified, role } =
+    const { _id, first_name, last_name, phone, email, verified, role, image } =
       updateInfo;
-    result = { _id, first_name, last_name, phone, email, verified, role };
+    result = {
+      _id,
+      first_name,
+      last_name,
+      phone,
+      email,
+      verified,
+      role,
+      image,
+    };
   }
   sendResponse(res, httpStatus.OK, 'User is updated succesfully', result);
 });
