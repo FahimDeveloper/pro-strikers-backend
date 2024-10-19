@@ -26,4 +26,5 @@ export default {
   website_local_ui_link: process.env.WEBSITE_LOCAL_UI_LINK,
   node_mailer_mail: process.env.NODEMAILER_MAIL,
   node_mailer_mail_pass: process.env.NODEMAILER_MAIL_PASS,
+  stripe_sk_key: process.env.STRIPE_SK_KEY,
 };

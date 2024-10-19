@@ -3,8 +3,8 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { IOrder } from './order.interface';
 import { Order } from './order.model';
 import AppError from '../../errors/AppError';
-import { Store } from '../Product/product.model';
 import mongoose from 'mongoose';
+import { Product } from '../Product/product.model';
 
 const createOrderIntoDB = async (payload: IOrder) => {
   const result = await Order.create(payload);
@@ -52,7 +52,7 @@ const cancelOrderFromDB = async (id: string) => {
       throw new Error('Failed order cancellation, Try again');
     }
 
-    const result = await Store.findByIdAndUpdate(
+    const result = await Product.findByIdAndUpdate(
       order.product,
       { $inc: { quantity: order.quantity } },
       { new: true, runValidators: true },
