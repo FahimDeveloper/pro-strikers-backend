@@ -1,8 +1,10 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
+import config from '../../config';
 
-const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+const sk_key = config.stripe_sk_key;
+const stripe = require('stripe')(sk_key);
 
 const stripePaymentIntent = catchAsync(async (req, res) => {
   const amount = Math.round(req.body.amount * 100);
