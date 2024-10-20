@@ -11,14 +11,7 @@ export const app: Application = express();
 app.use(express.json());
 app.use(cookieParser());
 const corsConfig = {
-  origin: [
-    'https://test.admin.prostrikers.com',
-    'https://test.prostrikers.com',
-    'https://admin.prostrikers.com',
-    'https://prostrikers.com',
-    'https://prostrikers-web.netlify.app',
-    'https://prostrikers-admin.netlify.app',
-  ],
+  origin: ['https://admin.prostrikers.com', 'https://prostrikers.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
 };
