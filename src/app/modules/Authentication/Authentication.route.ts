@@ -13,7 +13,7 @@ router.get(
   AuthenticationControllers.verifyUiLink,
 );
 
-router.post('/user/verify/:token', AuthenticationControllers.emailVerify);
+router.get('/user/verify/:token', AuthenticationControllers.emailVerify);
 
 router.post(
   '/user/continue-social-login',

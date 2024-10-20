@@ -25,6 +25,7 @@ import { StripePaymentRoutes } from '../modules/StripePayment/stripePayment.rout
 import { WebPaymentRoutes } from '../modules/WebPayment/webPayment.route';
 import { AddonRoutes } from '../modules/Addon/addon.route';
 import { BrandRoutes } from '../modules/Brand/brand.route';
+import { MembershipCancellationRoutes } from '../modules/MembershipCancellation/membershipCancellation.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -131,6 +132,10 @@ const mainRoutes = [
   {
     path: '/stripe-payment',
     route: StripePaymentRoutes,
+  },
+  {
+    path: '/cancellation/memberships',
+    route: MembershipCancellationRoutes,
   },
 ];
 
