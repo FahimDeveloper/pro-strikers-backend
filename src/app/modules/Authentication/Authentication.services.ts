@@ -170,7 +170,7 @@ const registerUserIntoDB = async (payload: IRegister) => {
   const emailAccessToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
-    config.jwt_remember_access_expires_in as string,
+    '30d',
   );
 
   const emailVerifyLink = `${config.web_app_test_ui_link}/verify-email/${emailAccessToken}`;
