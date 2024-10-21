@@ -24,6 +24,14 @@ const createMembershipCancellation = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'Cancellation created succesfully');
 });
 
+const getMembershipCancellationByEmail = catchAsync(async (req, res) => {
+  const result =
+    await MembershipCancellationServices.getMembershipCancellationByEmailFromDB(
+      req.params.email,
+    );
+  sendResponse(res, httpStatus.OK, 'Cancellation fetch succesfully', result);
+});
+
 const getSingleMembershipCancellation = catchAsync(async (req, res) => {
   const result =
     await MembershipCancellationServices.getSingleMembershipCancellationFromDB(
@@ -51,6 +59,7 @@ export const MembershipCancellationController = {
   getAllMembershipCancellation,
   createMembershipCancellation,
   getSingleMembershipCancellation,
+  getMembershipCancellationByEmail,
   updateMembershipCancellation,
   deleteMembershipCancellation,
 };

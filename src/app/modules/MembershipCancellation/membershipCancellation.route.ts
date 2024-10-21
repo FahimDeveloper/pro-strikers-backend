@@ -19,6 +19,12 @@ route.get(
   MembershipCancellationController.getSingleMembershipCancellation,
 );
 
+route.get(
+  '/user/:email',
+  authMiddleware(ROLE.user),
+  MembershipCancellationController.getMembershipCancellationByEmail,
+);
+
 route.post(
   '/create',
   authMiddleware(ROLE.user),
