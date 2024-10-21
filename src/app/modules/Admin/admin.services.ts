@@ -12,7 +12,12 @@ const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   if (findAdminUser) {
     throw new AppError(httpStatus.CONFLICT, 'Admin user already exists!');
   }
-  const randomPass = generateRandomPassword();
+  let randomPass;
+  if (payload.role === 'manager' || payload.role === 'staff') {
+    randomPass = 'prostrikers-member';
+  } else {
+    randomPass = generateRandomPassword();
+  }
   let result;
   if (file?.path) {
     const { url } = await uploadImageIntoCloduinary(file);
@@ -24,10 +29,12 @@ const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   } else {
     result = await Admin.create({ ...payload, password: randomPass });
   }
-  if (result) {
+  if (result && (payload.role === 'manager' || payload.role === 'staff')) {
+    return result;
+  } else {
     await sendEmail({ email: payload.email, password: randomPass });
+    return result;
   }
-  return result;
 };
 
 const updateAdminUserIntoDB = async (
