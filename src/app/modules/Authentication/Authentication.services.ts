@@ -173,7 +173,7 @@ const registerUserIntoDB = async (payload: IRegister) => {
     config.jwt_remember_access_expires_in as string,
   );
 
-  const emailVerifyLink = `${config.web_app_test_ui_link}/verify-email/${emailAccessToken}`;
+  const emailVerifyLink = `${config.website_local_ui_link}/verify/${emailAccessToken}`;
   await sendEmail({ email: payload.email, emailVerifyLink });
 
   const refreshToken = createToken(
@@ -463,8 +463,8 @@ const forgetPasswordForUser = async (email: string) => {
   );
   const ui_link =
     config.node_env === 'production'
-      ? config.website_live_ui_link
-      : config.website_test_ui_link;
+      ? config.website_test_ui_link
+      : config.website_local_ui_link;
   const link = `${ui_link}/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
   return;

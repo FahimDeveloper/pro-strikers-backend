@@ -54,7 +54,7 @@ export const sendEmail = async ({
       html: `<div>
       Please verify your account as soon as possible <a href="${emailVerifyLink}">${emailVerifyLink}</a>
 <br/><br/>
-The link will be expired after 7 days
+The link will be expired after 30 days
 <br/><br/>
 If you did not create this account, please ignore this email or contact our support team immediately at admin@prostrikers.com.
 <br/><br/>
