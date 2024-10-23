@@ -173,7 +173,7 @@ const registerUserIntoDB = async (payload: IRegister) => {
     '30d',
   );
 
-  const emailVerifyLink = `${config.website_test_ui_link}/verify/${emailAccessToken}`;
+  const emailVerifyLink = `${config.website_test_ui_link}/user/verify/${emailAccessToken}`;
   await sendEmail({ email: payload.email, emailVerifyLink });
 
   const refreshToken = createToken(
