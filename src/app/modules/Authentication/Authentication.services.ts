@@ -195,7 +195,7 @@ const registerUserIntoDB = async (payload: IRegister) => {
 const emailVerifyIntoDB = async (token: string) => {
   const decodedToken = jwt.verify(
     token,
-    config.jwt_access_secret as string,
+    config.jwt_email_access_secret as string,
   ) as JwtPayload;
   const user = await User.findOne({ email: decodedToken.email });
   if (!user) {
