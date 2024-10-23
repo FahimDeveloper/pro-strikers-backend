@@ -437,10 +437,7 @@ const forgetPasswordForAdmin = async (email: string) => {
     config.jwt_access_secret as string,
     '15m',
   );
-  const ui_link =
-    config.node_env === 'production'
-      ? config.web_app_live_ui_link
-      : config.web_app_test_ui_link;
+  const ui_link = config.web_app_local_ui_link;
   const link = `${ui_link}/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
   return;
@@ -461,10 +458,7 @@ const forgetPasswordForUser = async (email: string) => {
     config.jwt_access_secret as string,
     '15m',
   );
-  const ui_link =
-    config.node_env === 'production'
-      ? config.website_test_ui_link
-      : config.website_local_ui_link;
+  const ui_link = config.website_local_ui_link;
   const link = `${ui_link}/${user._id}/${resetToken}`;
   await sendEmail({ email, link });
   return;
