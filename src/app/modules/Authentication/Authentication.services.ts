@@ -169,7 +169,7 @@ const registerUserIntoDB = async (payload: IRegister) => {
 
   const emailAccessToken = createToken(
     jwtPayload,
-    config.jwt_access_secret as string,
+    config.jwt_email_access_secret as string,
     '30d',
   );
 
