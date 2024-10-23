@@ -10,6 +10,7 @@ export default {
   node_env: process.env.NODE_ENV,
   bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUND,
   jwt_access_secret: process.env.JWT_ACCESS_SECRET,
+  jwt_email_access_secret: process.env.JWT_EMAIL_ACCESS_SECRET,
   jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
   jwt_remember_access_expires_in: process.env.JWT_REMEMBER_ACCESS_EXPIRES_IN,
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
