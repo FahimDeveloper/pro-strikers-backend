@@ -192,11 +192,14 @@ const registerUserIntoDB = async (payload: IRegister) => {
   };
 };
 
-const emailVerifyIntoDB = async (token: string) => {
+const emailVerifyIntoDB = async (email: string, token: string) => {
   const decodedToken = jwt.verify(
     token,
     config.jwt_email_access_secret as string,
   ) as JwtPayload;
+  if (decodedToken.email !== email) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Invalid link');
+  }
   const user = await User.findOne({ email: decodedToken.email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'user not found!');
