@@ -161,6 +161,10 @@ const registerUserIntoDB = async (payload: IRegister) => {
     role: 'user',
   };
 
+  console.log(config.jwt_access_secret);
+  console.log(config.jwt_access_expires_in);
+  console.log(config.jwt_email_access_secret);
+
   const accessToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
@@ -173,7 +177,7 @@ const registerUserIntoDB = async (payload: IRegister) => {
     '30d',
   );
 
-  const emailVerifyLink = `${config.website_live_ui_link}/user/verify/${emailAccessToken}`;
+  const emailVerifyLink = `${config.website_local_ui_link}/user/verify/${emailAccessToken}`;
   await sendEmail({ email: payload.email, emailVerifyLink });
 
   const refreshToken = createToken(
