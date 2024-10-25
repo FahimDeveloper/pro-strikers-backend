@@ -12,12 +12,10 @@ app.use(express.json());
 app.use(cookieParser());
 const corsConfig = {
   origin: [
-    'https://test.admin.prostrikers.com',
-    'https://test.prostrikers.com',
     'https://admin.prostrikers.com',
     'https://prostrikers.com',
-    'https://prostrikers-web.netlify.app',
-    'https://prostrikers-admin.netlify.app',
+    'https://test.admin.prostrikers.com',
+    'https://test.prostrikers.com',
     'http://localhost:4000',
     'http://localhost:4001',
   ],

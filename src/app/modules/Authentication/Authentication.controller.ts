@@ -43,6 +43,7 @@ const registerUser = catchAsync(async (req, res) => {
 
 const emailVerify = catchAsync(async (req, res) => {
   const result = await AuthenticationServices.emailVerifyIntoDB(
+    req.params.email,
     req.params.token,
   );
   sendResponse(res, httpStatus.OK, 'User Verification Successfull', result);

@@ -169,11 +169,11 @@ const registerUserIntoDB = async (payload: IRegister) => {
 
   const emailAccessToken = createToken(
     jwtPayload,
-    config.jwt_access_secret as string,
-    config.jwt_remember_access_expires_in as string,
+    config.jwt_email_access_secret as string,
+    '30d',
   );
 
-  const emailVerifyLink = `${config.website_local_ui_link}/verify/${emailAccessToken}`;
+  const emailVerifyLink = `${config.website_live_ui_link}/user/verify/${emailAccessToken}`;
   await sendEmail({ email: payload.email, emailVerifyLink });
 
   const refreshToken = createToken(
@@ -192,11 +192,14 @@ const registerUserIntoDB = async (payload: IRegister) => {
   };
 };
 
-const emailVerifyIntoDB = async (token: string) => {
+const emailVerifyIntoDB = async (email: string, token: string) => {
   const decodedToken = jwt.verify(
     token,
     config.jwt_email_access_secret as string,
   ) as JwtPayload;
+  if (decodedToken.email !== email) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Invalid link');
+  }
   const user = await User.findOne({ email: decodedToken.email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'user not found!');
