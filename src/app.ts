@@ -17,7 +17,6 @@ app.use(
 );
 
 app.options('*', cors());
-
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1', router);
