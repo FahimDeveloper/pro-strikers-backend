@@ -7,23 +7,19 @@ import notFound from './app/middlewares/notFound';
 
 export const app: Application = express();
 
-//parser
+app.use(
+  cors({
+    origin: ['https://prostrikers.com, https://admin.prostrikers.com'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  }),
+);
+
+app.options('*', cors());
+
 app.use(express.json());
 app.use(cookieParser());
-const corsConfig = {
-  origin: [
-    'https://admin.prostrikers.com',
-    'https://prostrikers.com',
-    'https://test.admin.prostrikers.com',
-    'https://test.prostrikers.com',
-    'http://localhost:4000',
-    'http://localhost:4001',
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-};
-app.options('*', cors(corsConfig));
-app.use(cors(corsConfig));
 app.use('/api/v1', router);
 app.get('/', (req: Request, res: Response) => {
   try {

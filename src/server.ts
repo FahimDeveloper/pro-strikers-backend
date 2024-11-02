@@ -8,7 +8,7 @@ const port = process.env.PORT || config.port;
 let server: Server;
 
 async function dbConnection() {
-  const url = config.database_local_url;
+  const url = config.database_url;
   try {
     await mongoose.connect(url as string);
     app.listen(port, () => {

@@ -11,10 +11,11 @@ const loginUser = catchAsync(async (req, res) => {
   const { accessToken, refreshToken, user } = result;
 
   res.cookie('refreshToken', refreshToken, {
-    secure: config.node_env === 'production',
+    domain: '.prostrikers.com',
+    secure: true,
     httpOnly: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 30,
   });
 
   sendResponse(res, httpStatus.OK, 'logged in successfully!', {
@@ -29,10 +30,11 @@ const registerUser = catchAsync(async (req, res) => {
   const { accessToken, refreshToken, user } = result;
 
   res.cookie('refreshToken', refreshToken, {
-    secure: config.node_env === 'production',
+    domain: '.prostrikers.com',
+    secure: true,
     httpOnly: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 30,
   });
 
   sendResponse(res, httpStatus.OK, 'Registration successfull', {
@@ -55,10 +57,11 @@ const loginAdmin = catchAsync(async (req, res) => {
   const { accessToken, refreshToken, user } = result;
 
   res.cookie('refreshToken', refreshToken, {
-    secure: config.node_env === 'production',
+    domain: '.prostrikers.com',
+    secure: true,
     httpOnly: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 30,
   });
 
   sendResponse(res, httpStatus.OK, 'logged in successfully!', {
