@@ -9,7 +9,7 @@ export const app: Application = express();
 
 app.use(
   cors({
-    origin: ['http://localhost:4001', 'https://admin.prostrikers.com'],
+    origin: ['https://prostrikers.com', 'https://admin.prostrikers.com'],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
