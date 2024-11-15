@@ -57,11 +57,10 @@ const loginUserIntoDB = async (payload: ILogin) => {
     );
   }
 
-  const { _id, first_name, last_name, image, email, phone, verified, role } =
-    user;
+  const { _id, first_name, last_name, image, email, phone, role } = user;
 
   return {
-    user: { _id, first_name, last_name, image, email, phone, verified, role },
+    user: { _id, first_name, last_name, image, email, phone, role },
     accessToken,
     refreshToken,
   };
@@ -104,10 +103,9 @@ const continueWithSocialIntoDB = async (payload: any) => {
         provider: payload.provider,
       });
     }
-    const { _id, first_name, last_name, image, email, phone, verified, role } =
-      result;
+    const { _id, first_name, last_name, image, email, phone, role } = result;
     return {
-      user: { _id, first_name, last_name, image, email, phone, verified, role },
+      user: { _id, first_name, last_name, image, email, phone, role },
       accessToken,
       refreshToken,
     };
@@ -118,16 +116,7 @@ const continueWithSocialIntoDB = async (payload: any) => {
         'You are trying to access with wrong provider, your account has different provider',
       );
     } else {
-      const {
-        _id,
-        first_name,
-        last_name,
-        image,
-        email,
-        phone,
-        verified,
-        role,
-      } = user;
+      const { _id, first_name, last_name, image, email, phone, role } = user;
       return {
         user: {
           _id,
@@ -136,7 +125,6 @@ const continueWithSocialIntoDB = async (payload: any) => {
           image,
           email,
           phone,
-          verified,
           role,
         },
         accessToken,
@@ -182,11 +170,10 @@ const registerUserIntoDB = async (payload: IRegister) => {
     config.jwt_refresh_expires_in as string,
   );
 
-  const { _id, first_name, last_name, image, email, phone, verified, role } =
-    result;
+  const { _id, first_name, last_name, image, email, phone, role } = result;
 
   return {
-    user: { _id, first_name, last_name, image, email, phone, verified, role },
+    user: { _id, first_name, last_name, image, email, phone, role },
     accessToken,
     refreshToken,
   };
@@ -203,47 +190,13 @@ const emailVerifyIntoDB = async (email: string, token: string) => {
   const user = await User.findOne({ email: decodedToken.email });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'user not found!');
-  }
-  if (user?.verified) {
-    const { _id, first_name, last_name, image, email, phone, verified, role } =
-      user;
-    return {
-      _id,
-      first_name,
-      last_name,
-      image,
-      email,
-      phone,
-      verified,
-      role,
-    };
   } else {
-    const result = await User.findByIdAndUpdate(
-      user.id,
-      { verified: true },
-      { new: true, runValidators: true },
-    );
-    if (result) {
-      const {
-        _id,
-        first_name,
-        last_name,
-        image,
-        email,
-        phone,
-        verified,
-        role,
-      } = result;
-      return {
-        _id,
-        first_name,
-        last_name,
-        image,
-        email,
-        verified,
-        phone,
-        role,
-      };
+    if (!user?.verified) {
+      await User.findByIdAndUpdate(
+        user.id,
+        { verified: true },
+        { new: true, runValidators: true },
+      );
     }
   }
 };

@@ -35,6 +35,13 @@ const authMiddleware = (...requiredRoles: Partial<IRole[]>) =>
           fs.unlinkSync(file as string);
         }
         throw new AppError(httpStatus.UNAUTHORIZED, 'The user not authorized!');
+      } else {
+        if (!user?.verified) {
+          throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Please verify your email address before any processing. We already send you a verification email when you sign up, check your email',
+          );
+        }
       }
     } else if (
       role === ROLE.admin ||

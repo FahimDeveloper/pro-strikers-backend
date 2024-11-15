@@ -7,11 +7,7 @@ import { SlotBookingValidations } from './slotBooking.validation';
 
 const router = express.Router();
 
-router.get(
-  '/',
-  authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
-  SlotBookingController.getSlotBookings,
-);
+router.get('/', SlotBookingController.getSlotBookings);
 
 router.post(
   '/create',

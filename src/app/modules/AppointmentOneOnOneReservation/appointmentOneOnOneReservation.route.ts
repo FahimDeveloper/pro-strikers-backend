@@ -15,7 +15,6 @@ route.get(
 
 route.get(
   '/slots',
-  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
   AppointmentOneOnOneReservationController.getAppointmentOneOnOneReservationSlots,
 );
 

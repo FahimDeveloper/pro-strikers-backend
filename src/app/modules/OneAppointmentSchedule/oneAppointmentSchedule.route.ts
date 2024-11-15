@@ -9,11 +9,7 @@ const route = express.Router();
 
 route.get('/', OneAppointmentSheduleControllers.getAllAppointments);
 
-route.get(
-  '/:id',
-  authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),
-  OneAppointmentSheduleControllers.getSingleAppointment,
-);
+route.get('/:id', OneAppointmentSheduleControllers.getSingleAppointment);
 
 route.post(
   '/create',
