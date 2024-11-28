@@ -20,8 +20,14 @@ const deleteSlotBooking = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Slot deleted successfully', result);
 });
 
+const deleteSlotsBooking = catchAsync(async (req, res) => {
+  await SlotBookingServices.deleteSlotsBookingFromDB(req.params.id);
+  sendResponse(res, httpStatus.OK, 'Slots deleted successfully');
+});
+
 export const SlotBookingController = {
   createSlotBooking,
   getSlotBookings,
   deleteSlotBooking,
+  deleteSlotsBooking,
 };

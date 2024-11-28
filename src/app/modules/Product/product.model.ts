@@ -1,24 +1,27 @@
 import { Schema, model } from 'mongoose';
 import { IProduct, IVariation } from './product.interface';
 
-const variationSchema = new Schema<IVariation>({
-  color: {
-    type: String,
-    required: false,
+const variationSchema = new Schema<IVariation>(
+  {
+    color: {
+      type: String,
+      required: false,
+    },
+    size: {
+      type: String,
+      required: false,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    stock: {
+      type: Number,
+      required: true,
+    },
   },
-  size: {
-    type: String,
-    required: false,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  stock: {
-    type: Number,
-    required: true,
-  },
-});
+  { _id: false, versionKey: false },
+);
 
 // Product Schema
 const productSchema = new Schema<IProduct>(
@@ -45,6 +48,10 @@ const productSchema = new Schema<IProduct>(
         required: true,
       },
     ],
+    price: {
+      type: Number,
+      required: true,
+    },
     category: {
       type: String,
       required: true,
@@ -70,6 +77,7 @@ const productSchema = new Schema<IProduct>(
   },
   {
     timestamps: true,
+    versionKey: false,
   },
 );
 

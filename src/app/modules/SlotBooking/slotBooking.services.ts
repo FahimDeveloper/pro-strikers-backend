@@ -31,8 +31,14 @@ const deleteSlotBookingFromDB = async (id: string) => {
   return result;
 };
 
+const deleteSlotsBookingFromDB = async (id: string) => {
+  const result = await SlotBooking.deleteMany({ user: id });
+  return result;
+};
+
 export const SlotBookingServices = {
   createSlotBookingIntoDB,
   getSlotBookingsFromDB,
   deleteSlotBookingFromDB,
+  deleteSlotsBookingFromDB,
 };

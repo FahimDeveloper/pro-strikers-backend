@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const variationSchema = z.object({
+const variationValidation = z.object({
   color: z.string().optional(),
   size: z.string().optional(),
   price: z.number().optional(),
@@ -19,6 +19,10 @@ export const createValidation = z.object({
     short_description: z.string({
       required_error: 'Short description is required',
       invalid_type_error: 'Short description must be a string',
+    }),
+    price: z.number({
+      required_error: 'Price is required',
+      invalid_type_error: 'Price must be a number',
     }),
     details: z.string({
       required_error: 'Product details are required',
@@ -45,7 +49,7 @@ export const createValidation = z.object({
       required_error: 'Brand is required',
       invalid_type_error: 'Brand must be a string',
     }),
-    variations: z.array(variationSchema, {
+    variations: z.array(variationValidation, {
       required_error: 'At least one variation is required',
       invalid_type_error: 'Variations must be an array of valid objects',
     }),
@@ -62,6 +66,11 @@ export const updateValidation = z.object({
     short_description: z
       .string({
         invalid_type_error: 'Short description must be a string',
+      })
+      .optional(),
+    price: z
+      .number({
+        invalid_type_error: 'Price must be a number',
       })
       .optional(),
     details: z
@@ -102,7 +111,7 @@ export const updateValidation = z.object({
       })
       .optional(),
     variations: z
-      .array(variationSchema, {
+      .array(variationValidation, {
         invalid_type_error: 'Variations must be an array of valid objects',
       })
       .optional(),

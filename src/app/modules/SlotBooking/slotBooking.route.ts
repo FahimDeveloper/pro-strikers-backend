@@ -22,4 +22,10 @@ router.delete(
   SlotBookingController.deleteSlotBooking,
 );
 
+router.delete(
+  '/delete/user/:id',
+  authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
+  SlotBookingController.deleteSlotsBooking,
+);
+
 export const SlotRoutes = router;

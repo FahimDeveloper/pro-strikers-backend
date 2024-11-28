@@ -11,6 +11,7 @@ export interface IProduct {
   details: string;
   thumbnail: string;
   gallery: string[];
+  price: number;
   category:
     | 'bats'
     | 'gloves'
