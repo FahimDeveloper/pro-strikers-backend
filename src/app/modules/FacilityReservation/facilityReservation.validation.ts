@@ -87,7 +87,7 @@ const createByAdminValidation = z.object({
               required_error: 'addon name is required',
               invalid_type_error: 'addon name must be string',
             }),
-            hours: z.string({
+            hours: z.number({
               required_error: 'addon hours is required',
               invalid_type_error: 'addon hours must be number',
             }),
@@ -95,9 +95,13 @@ const createByAdminValidation = z.object({
               required_error: 'addon image is required',
               invalid_type_error: 'addon image must be number',
             }),
-            price: z.string({
+            price: z.number({
               required_error: 'addon price is required',
               invalid_type_error: 'addon price must be number',
+            }),
+            ini_price: z.number({
+              required_error: 'addon initial price is required',
+              invalid_type_error: 'addon initial price must be number',
             }),
           },
           { invalid_type_error: 'addons must be array of object' },
@@ -185,6 +189,10 @@ const createByUserValidation = z.object({
               price: z.number({
                 required_error: 'addon price is required',
                 invalid_type_error: 'addon price must be number',
+              }),
+              ini_price: z.number({
+                required_error: 'addon initial price is required',
+                invalid_type_error: 'addon initial price must be number',
               }),
             },
             { invalid_type_error: 'addons must be array of object' },
@@ -324,20 +332,19 @@ const updateByAdminValidation = z.object({
         z.object(
           {
             name: z.string({
-              required_error: 'addon name is required',
               invalid_type_error: 'addon name must be string',
             }),
-            hours: z.string({
-              required_error: 'addon hours is required',
+            hours: z.number({
               invalid_type_error: 'addon hours must be number',
             }),
             image: z.string({
-              required_error: 'addon image is required',
               invalid_type_error: 'addon image must be number',
             }),
-            price: z.string({
-              required_error: 'addon price is required',
+            price: z.number({
               invalid_type_error: 'addon price must be number',
+            }),
+            ini_price: z.number({
+              invalid_type_error: 'addon initial price must be number',
             }),
           },
           { invalid_type_error: 'addons must be array of object' },

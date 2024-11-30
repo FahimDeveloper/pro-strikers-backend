@@ -50,6 +50,10 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
       type: Number,
       required: true,
     },
+    ini_price: {
+      type: Number,
+      required: true,
+    },
     lanes: {
       type: [String],
       required: true,

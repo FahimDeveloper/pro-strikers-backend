@@ -27,6 +27,10 @@ const createValidation = z.object({
       invalid_type_error: 'price must be number',
       required_error: 'price is required',
     }),
+    ini_price: z.number({
+      invalid_type_error: 'initial price must be number',
+      required_error: 'initial price is required',
+    }),
     lanes: z.array(
       z.string({
         invalid_type_error: 'lane must be array of string',
@@ -91,6 +95,11 @@ const updateValidation = z.object({
     price: z
       .number({
         invalid_type_error: 'price must be number',
+      })
+      .optional(),
+    ini_price: z
+      .number({
+        invalid_type_error: 'initial price must be number',
       })
       .optional(),
     lanes: z

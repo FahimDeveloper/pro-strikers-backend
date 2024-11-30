@@ -15,6 +15,10 @@ const AddonSchema = new Schema<IAddon>(
       type: Number,
       required: true,
     },
+    addon_ini_price: {
+      type: Number,
+      required: true,
+    },
     addon_image: {
       type: String,
       required: true,

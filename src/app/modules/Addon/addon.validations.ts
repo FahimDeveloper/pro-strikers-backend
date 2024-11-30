@@ -13,6 +13,10 @@ const createAddonValidation = z.object({
     invalid_type_error: 'Addon Price must be a number',
     required_error: 'Addon Price is required',
   }),
+  addon_ini_price: z.number({
+    invalid_type_error: 'Addon Initial Price must be a number',
+    required_error: 'Addon Initial Price is required',
+  }),
 });
 
 const updateAddonValidation = z.object({
@@ -29,6 +33,11 @@ const updateAddonValidation = z.object({
   addon_price: z
     .number({
       invalid_type_error: 'Addon Price must be a number',
+    })
+    .optional(),
+  addon_ini_price: z
+    .number({
+      invalid_type_error: 'Addon Initial Price must be a number',
     })
     .optional(),
 });

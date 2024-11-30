@@ -21,6 +21,7 @@ export interface IAddon {
   name: string;
   hours: number;
   image: string;
+  ini_price: number;
   price: number;
 }
 

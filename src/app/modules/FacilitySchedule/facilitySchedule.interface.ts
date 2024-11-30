@@ -8,6 +8,7 @@ export interface IFacilitySchedule {
   duration: number;
   description: string;
   price: number;
+  ini_price: number;
   lanes: Array<string>;
   schedules: Array<IFacilityDaySchedule>;
 }
