@@ -104,7 +104,7 @@ export const sendRentalBookingConfirmationEmail = async ({
   });
   await transporter.sendMail({
     from: 'ProStrikers <admin@prostrikers.com>',
-    to: 'developerfahim246@gmail.com',
+    to: 'admin@prostrikers.com',
     subject: 'New Booking Alert - ProStrikers',
     html: `
         <html>
@@ -254,7 +254,7 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
   });
   await transporter.sendMail({
     from: 'ProStrikers <admin@prostrikers.com>',
-    to: 'developerfahim246@gmail.com',
+    to: 'admin@prostrikers.com',
     subject: 'New Membership Purchased - ProStrikers',
     html: `
           <html>
