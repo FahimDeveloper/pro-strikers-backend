@@ -4,8 +4,8 @@ import { IAdmin } from './admin.interface';
 import { Admin } from './admin.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
-import { sendEmail } from '../../utils/sendEmail';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
+import { sendTeamMemberAccountConfirmationEmail } from '../../utils/email';
 
 const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   const findAdminUser = await Admin.isAdminExists(payload.email);
@@ -32,7 +32,10 @@ const createAdminUserIntoDB = async (payload: IAdmin, file: any) => {
   if (result && (payload.role === 'manager' || payload.role === 'staff')) {
     return result;
   } else {
-    await sendEmail({ email: payload.email, password: randomPass });
+    await sendTeamMemberAccountConfirmationEmail({
+      email: payload.email,
+      password: randomPass,
+    });
     return result;
   }
 };

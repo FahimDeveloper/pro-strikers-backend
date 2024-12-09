@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import {
   IFacilityReservation,
+  IFacilityReservationByAdmin,
   IFacilityReservationByUser,
 } from './facilityReservation.interface';
 import { FacilityReservation } from './facilityReservation.model';
@@ -10,22 +11,29 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../User/user.model';
 import WebPayment from '../WebPayment/webPayment.modal';
+import { sendRentalBookingConfirmationEmail } from '../../utils/email';
 
 const createFacilityReservationIntoDB = async (
   id: string,
-  payload: IFacilityReservation,
+  payload: IFacilityReservationByAdmin,
 ) => {
+  const { facility_data, amount } = payload;
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
     await SlotBooking.deleteMany(
       {
         user: new mongoose.Types.ObjectId(id),
-        training: new mongoose.Types.ObjectId(payload.facility),
+        training: new mongoose.Types.ObjectId(facility_data.facility),
       },
       { session },
     );
-    await FacilityReservation.create([payload], { session });
+    await FacilityReservation.create([facility_data], { session });
+    await sendRentalBookingConfirmationEmail({
+      email: facility_data?.email,
+      bookings: facility_data,
+      amount: amount,
+    });
     await session.commitTransaction();
     await session.endSession();
     return;
@@ -63,6 +71,11 @@ const createFacilityReservationByUserIntoDB = async (
     }
     await FacilityReservation.create([facility_data], { session });
     await WebPayment.create([payment_info], { session });
+    await sendRentalBookingConfirmationEmail({
+      email: payment_info?.email,
+      bookings: facility_data,
+      amount: payment_info?.amount,
+    });
     await session.commitTransaction();
     await session.endSession();
     return;

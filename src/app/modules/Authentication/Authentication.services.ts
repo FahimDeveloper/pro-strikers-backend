@@ -9,8 +9,13 @@ import bcrypt from 'bcrypt';
 import { ROLE } from '../../utils/role';
 import { Admin } from '../Admin/admin.model';
 import { ResetPassService } from '../ResetPass/resetPass.services';
-import { sendEmail } from '../../utils/sendEmail';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
+import {
+  sendResetPasswordLinkEmail,
+  sendResetPasswordVerifyCodeEmail,
+  sendSocialLoginConfirmationEmail,
+  sendVerifyEmail,
+} from '../../utils/email';
 
 const loginUserIntoDB = async (payload: ILogin) => {
   const user = await User.isUserExistsByEmail(payload.email);
@@ -97,7 +102,7 @@ const continueWithSocialIntoDB = async (payload: any) => {
       verified: true,
     });
     if (result) {
-      await sendEmail({
+      await sendSocialLoginConfirmationEmail({
         email: payload.email,
         password: randomPass,
         provider: payload.provider,
@@ -162,7 +167,7 @@ const registerUserIntoDB = async (payload: IRegister) => {
   );
 
   const emailVerifyLink = `${config.website_live_ui_link}/user/verify/${emailAccessToken}`;
-  await sendEmail({ email: payload.email, emailVerifyLink });
+  await sendVerifyEmail({ email: payload.email, link: emailVerifyLink });
 
   const refreshToken = createToken(
     jwtPayload,
@@ -395,7 +400,7 @@ const forgetPasswordForAdmin = async (email: string) => {
   );
   const ui_link = config.web_app_live_ui_link;
   const link = `${ui_link}/${user._id}/${resetToken}`;
-  await sendEmail({ email, link });
+  await sendResetPasswordLinkEmail({ email, link });
   return;
 };
 
@@ -416,7 +421,7 @@ const forgetPasswordForUser = async (email: string) => {
   );
   const ui_link = config.website_live_ui_link;
   const link = `${ui_link}/reset-password/${user._id}/${resetToken}`;
-  await sendEmail({ email, link });
+  await sendResetPasswordLinkEmail({ email, link });
   return;
 };
 
@@ -430,7 +435,7 @@ const resetCodeSend = async (token: string) => {
     email: email,
     code,
   });
-  await sendEmail({ email, code });
+  await sendResetPasswordVerifyCodeEmail({ email, code });
   return;
 };
 

@@ -23,91 +23,97 @@ const appointmentBookingsSchemaValidation = z.object({
 
 const createByAdminValidation = z.object({
   body: z.object({
-    first_name: z.string({
-      required_error: 'First name is required',
-      invalid_type_error: 'First name must be a string',
-    }),
-    last_name: z.string({
-      required_error: 'Last name is required',
-      invalid_type_error: 'Last name must be a string',
-    }),
-    email: z
-      .string({
-        required_error: 'Email is required',
-        invalid_type_error: 'Email must be a string',
-      })
-      .email({
-        message: 'Invalid email address',
+    facility_data: z.object({
+      first_name: z.string({
+        required_error: 'First name is required',
+        invalid_type_error: 'First name must be a string',
       }),
-    phone: z.string({
-      required_error: 'Phone number is required',
-      invalid_type_error: 'Phone number must be a string',
-    }),
-    age: z.number({
-      required_error: 'Age is required',
-      invalid_type_error: 'Age must be a number',
-    }),
-    facility: z
-      .string({
-        required_error: 'Facility ID is required',
-        invalid_type_error: 'Facility must be a valid ObjectId',
-      })
-      .refine(val => mongoose.Types.ObjectId.isValid(val), {
-        message: 'Invalid ObjectId',
+      last_name: z.string({
+        required_error: 'Last name is required',
+        invalid_type_error: 'Last name must be a string',
       }),
-    street_address: z.string({
-      required_error: 'Street address is required',
-      invalid_type_error: 'Street address must be a string',
+      email: z
+        .string({
+          required_error: 'Email is required',
+          invalid_type_error: 'Email must be a string',
+        })
+        .email({
+          message: 'Invalid email address',
+        }),
+      phone: z.string({
+        required_error: 'Phone number is required',
+        invalid_type_error: 'Phone number must be a string',
+      }),
+      age: z.number({
+        required_error: 'Age is required',
+        invalid_type_error: 'Age must be a number',
+      }),
+      facility: z
+        .string({
+          required_error: 'Facility ID is required',
+          invalid_type_error: 'Facility must be a valid ObjectId',
+        })
+        .refine(val => mongoose.Types.ObjectId.isValid(val), {
+          message: 'Invalid ObjectId',
+        }),
+      street_address: z.string({
+        required_error: 'Street address is required',
+        invalid_type_error: 'Street address must be a string',
+      }),
+      city: z.string({
+        required_error: 'City is required',
+        invalid_type_error: 'City must be a string',
+      }),
+      state: z.string({
+        required_error: 'State is required',
+        invalid_type_error: 'State must be a string',
+      }),
+      sport: z.string({
+        required_error: 'Sport is required',
+        invalid_type_error: 'Sport must be a string',
+      }),
+      zip_code: z.string({
+        required_error: 'Zip code is required',
+        invalid_type_error: 'Zip code must be a string',
+      }),
+      bookings: z.array(appointmentBookingsSchemaValidation, {
+        required_error: 'Bookings are required',
+        invalid_type_error: 'Bookings must be array of object',
+      }),
+      addons: z
+        .array(
+          z.object(
+            {
+              name: z.string({
+                required_error: 'addon name is required',
+                invalid_type_error: 'addon name must be string',
+              }),
+              hours: z.number({
+                required_error: 'addon hours is required',
+                invalid_type_error: 'addon hours must be number',
+              }),
+              image: z.string({
+                required_error: 'addon image is required',
+                invalid_type_error: 'addon image must be number',
+              }),
+              price: z.number({
+                required_error: 'addon price is required',
+                invalid_type_error: 'addon price must be number',
+              }),
+              ini_price: z.number({
+                required_error: 'addon initial price is required',
+                invalid_type_error: 'addon initial price must be number',
+              }),
+            },
+            { invalid_type_error: 'addons must be array of object' },
+          ),
+        )
+        .optional(),
     }),
-    city: z.string({
-      required_error: 'City is required',
-      invalid_type_error: 'City must be a string',
+    amount: z.number({
+      required_error: 'Amount is required',
+      invalid_type_error: 'Amount must be a number',
     }),
-    state: z.string({
-      required_error: 'State is required',
-      invalid_type_error: 'State must be a string',
-    }),
-    sport: z.string({
-      required_error: 'Sport is required',
-      invalid_type_error: 'Sport must be a string',
-    }),
-    zip_code: z.string({
-      required_error: 'Zip code is required',
-      invalid_type_error: 'Zip code must be a string',
-    }),
-    bookings: z.array(appointmentBookingsSchemaValidation, {
-      required_error: 'Bookings are required',
-      invalid_type_error: 'Bookings must be array of object',
-    }),
-    addons: z
-      .array(
-        z.object(
-          {
-            name: z.string({
-              required_error: 'addon name is required',
-              invalid_type_error: 'addon name must be string',
-            }),
-            hours: z.number({
-              required_error: 'addon hours is required',
-              invalid_type_error: 'addon hours must be number',
-            }),
-            image: z.string({
-              required_error: 'addon image is required',
-              invalid_type_error: 'addon image must be number',
-            }),
-            price: z.number({
-              required_error: 'addon price is required',
-              invalid_type_error: 'addon price must be number',
-            }),
-            ini_price: z.number({
-              required_error: 'addon initial price is required',
-              invalid_type_error: 'addon initial price must be number',
-            }),
-          },
-          { invalid_type_error: 'addons must be array of object' },
-        ),
-      )
-      .optional(),
   }),
 });
 

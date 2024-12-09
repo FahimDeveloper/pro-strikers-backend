@@ -37,7 +37,7 @@ export interface UserModel extends Model<IUser> {
 
 export interface IUserMembership {
   membership: {
-    package: string;
+    package_name: string;
     plan: string;
     status: boolean;
     membership: boolean;

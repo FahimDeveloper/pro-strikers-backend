@@ -31,6 +31,11 @@ export interface IFacilityBookings {
   training: mongoose.Types.ObjectId;
 }
 
+export interface IFacilityReservationByAdmin {
+  facility_data: IFacilityReservation;
+  amount: number;
+}
+
 export interface IFacilityReservationByUser {
   facility_data: IFacilityReservation;
   membership_info?: {

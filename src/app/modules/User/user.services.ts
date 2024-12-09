@@ -4,10 +4,13 @@ import { IUser, IUserMembership } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
-import { sendEmail } from '../../utils/sendEmail';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
 import mongoose from 'mongoose';
 import WebPayment from '../WebPayment/webPayment.modal';
+import {
+  sendClientAccountConfirmationEmail,
+  sendMembershipPurchasedConfirmationEmail,
+} from '../../utils/email';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
@@ -31,7 +34,10 @@ const createUserIntoDB = async (payload: IUser, file: any) => {
     });
   }
   if (result) {
-    await sendEmail({ email: payload.email, password: randomPass });
+    await sendClientAccountConfirmationEmail({
+      email: payload.email,
+      password: randomPass,
+    });
   }
   return result;
 };
@@ -77,6 +83,11 @@ const createMembershipByUserIntoDB = async (
       throw new Error('Failed to get membership');
     }
     await WebPayment.create([payment_info], { session });
+    await sendMembershipPurchasedConfirmationEmail({
+      email: payment_info.email,
+      membership: membership,
+      amount: payment_info.amount,
+    });
     await session.commitTransaction();
     await session.endSession();
     return;

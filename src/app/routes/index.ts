@@ -26,6 +26,7 @@ import { WebPaymentRoutes } from '../modules/WebPayment/webPayment.route';
 import { AddonRoutes } from '../modules/Addon/addon.route';
 import { BrandRoutes } from '../modules/Brand/brand.route';
 import { MembershipCancellationRoutes } from '../modules/MembershipCancellation/membershipCancellation.route';
+import { BundleCreditPackageRoutes } from '../modules/BundleCreditPack/bundleCreditPack.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -136,6 +137,10 @@ const mainRoutes = [
   {
     path: '/cancellation/memberships',
     route: MembershipCancellationRoutes,
+  },
+  {
+    path: '/bundle-credit-package',
+    route: BundleCreditPackageRoutes,
   },
 ];
 
