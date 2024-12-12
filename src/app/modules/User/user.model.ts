@@ -68,6 +68,9 @@ const userSchema = new Schema<IUser, UserModel>(
     street_address: {
       type: String,
     },
+    zip_code: {
+      type: String,
+    },
     membership: {
       type: Boolean,
       default: false,

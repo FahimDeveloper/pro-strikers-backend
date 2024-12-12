@@ -14,6 +14,7 @@ export interface IUser {
   provider: 'email with password' | 'google' | 'facebook';
   verified: boolean;
   street_address?: string;
+  zip_code?: string;
   city?: string;
   state?: string;
   country?: string;

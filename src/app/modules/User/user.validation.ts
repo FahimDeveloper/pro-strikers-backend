@@ -49,6 +49,11 @@ const createValidation = z.object({
         invalid_type_error: 'streed address must be string',
       })
       .optional(),
+    zip_code: z
+      .string({
+        invalid_type_error: 'zip code must be string',
+      })
+      .optional(),
     nationality: z
       .string({
         invalid_type_error: 'nationality must be string',
@@ -142,6 +147,11 @@ const updateValidation = z.object({
       street_address: z
         .string({
           invalid_type_error: 'streed address must be string',
+        })
+        .optional(),
+      zip_code: z
+        .string({
+          invalid_type_error: 'zip code must be string',
         })
         .optional(),
       nationality: z

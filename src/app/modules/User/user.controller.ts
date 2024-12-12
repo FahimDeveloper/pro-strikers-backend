@@ -16,26 +16,11 @@ const createMembershipByUser = catchAsync(async (req, res) => {
 
 const updateUser = catchAsync(async (req, res) => {
   const file = req.file;
-  const updateInfo = await UserServices.updateUserIntoDB(
+  const result = await UserServices.updateUserIntoDB(
     req.params.id,
     req.body,
     file,
   );
-  let result;
-  if (updateInfo) {
-    const { _id, first_name, last_name, phone, email, verified, role, image } =
-      updateInfo;
-    result = {
-      _id,
-      first_name,
-      last_name,
-      phone,
-      email,
-      verified,
-      role,
-      image,
-    };
-  }
   sendResponse(res, httpStatus.OK, 'User is updated succesfully', result);
 });
 
