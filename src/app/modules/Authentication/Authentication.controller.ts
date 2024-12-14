@@ -44,10 +44,7 @@ const registerUser = catchAsync(async (req, res) => {
 });
 
 const emailVerify = catchAsync(async (req, res) => {
-  await AuthenticationServices.emailVerifyIntoDB(
-    req.params.email,
-    req.params.token,
-  );
+  await AuthenticationServices.emailVerifyIntoDB(req.params.token);
   sendResponse(res, httpStatus.OK, 'User Verification Successfull');
 });
 
