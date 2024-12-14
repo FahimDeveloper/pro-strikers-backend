@@ -11,7 +11,7 @@ async function dbConnection() {
   const url = config.database_url;
   try {
     await mongoose.connect(url as string);
-    app.listen(port, () => {
+    server = app.listen(port, () => {
       console.log(`app server listening on ${port}`);
     });
   } catch (err) {
@@ -26,8 +26,9 @@ process.on('uncaughtException', () => {
     server.close(() => {
       process.exit(1);
     });
+  } else {
+    process.exit(1);
   }
-  process.exit(1);
 });
 
 process.on('unhandledRejection', () => {
@@ -36,6 +37,7 @@ process.on('unhandledRejection', () => {
     server.close(() => {
       process.exit(1);
     });
+  } else {
+    process.exit(1);
   }
-  process.exit(1);
 });
