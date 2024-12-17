@@ -15,7 +15,7 @@ router.get(
 
 router.get(
   '/:email',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  authMiddleware(ROLE.admin, ROLE.superAdmin, ROLE.user),
   BundleCreditPackageControllers.getUserPurchasedBundleCreditPackages,
 );
 
@@ -27,7 +27,7 @@ router.post(
 );
 
 router.patch(
-  '/:id',
+  '/update/:id',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(BundleCreditPackageValidations.updateValidation),
   BundleCreditPackageControllers.updateUseCreditPackage,

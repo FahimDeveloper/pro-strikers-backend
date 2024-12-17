@@ -2,10 +2,11 @@ import mongoose from 'mongoose';
 
 export interface IBundleCreditPack {
   package: string;
-  user: string;
+  email: string;
   hours: number;
-  validity: Date;
+  validity: string;
   attendance: Array<IAttendance>;
+  piching_machine: boolean;
   active: boolean;
 }
 
@@ -21,10 +22,13 @@ export interface IBundleCreditPackPurchase {
 }
 
 export interface IAttendance {
-  date: Date;
-  times: Array<{
-    hour: number;
-    start_time: Date;
-    end_time: Date;
-  }>;
+  date: string;
+  times: Array<IAttendanceTime>;
+}
+
+export interface IAttendanceTime {
+  cage: string;
+  hour: number;
+  start_time: string;
+  end_time: string;
 }

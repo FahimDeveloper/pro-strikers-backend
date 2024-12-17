@@ -1,11 +1,16 @@
 import { model, Schema } from 'mongoose';
-import { IAttendance, IBundleCreditPack } from './bundleCreditPack.interface';
+import {
+  IAttendance,
+  IAttendanceTime,
+  IBundleCreditPack,
+} from './bundleCreditPack.interface';
 
-const TimeSchema = new Schema(
+const TimeSchema = new Schema<IAttendanceTime>(
   {
+    cage: { type: String, required: true },
     hour: { type: Number, required: true },
-    start_time: { type: Date, required: true },
-    end_time: { type: Date, required: true },
+    start_time: { type: String, required: true },
+    end_time: { type: String, required: true },
   },
   { _id: false },
 );
@@ -13,7 +18,7 @@ const TimeSchema = new Schema(
 const attendanceSchema = new Schema<IAttendance>(
   {
     date: {
-      type: Date,
+      type: String,
       required: true,
     },
     times: [TimeSchema],
@@ -26,7 +31,7 @@ const bundleCreditPackageSchema = new Schema<IBundleCreditPack>({
     type: String,
     required: true,
   },
-  user: {
+  email: {
     type: String,
     required: true,
   },
@@ -35,11 +40,15 @@ const bundleCreditPackageSchema = new Schema<IBundleCreditPack>({
     required: true,
   },
   validity: {
-    type: Date,
+    type: String,
     required: true,
   },
   hours: {
     type: Number,
+    required: true,
+  },
+  piching_machine: {
+    type: Boolean,
     required: true,
   },
   attendance: [attendanceSchema],

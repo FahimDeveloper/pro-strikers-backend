@@ -37,7 +37,7 @@ const getAllPurchsaedBundleCreditPackageFromDB = async (
     BundleCreditPackage.find(),
     query,
   )
-    .search(['user'])
+    .search(['email'])
     .filter()
     .paginate();
   const result = await bundleCreditPackQuery?.modelQuery;
@@ -46,7 +46,7 @@ const getAllPurchsaedBundleCreditPackageFromDB = async (
 };
 
 const getUserPurchasedBundleCreditPackagesFromDB = async (email: string) => {
-  const result = await BundleCreditPackage.find({ user: email });
+  const result = await BundleCreditPackage.find({ email: email });
   return result;
 };
 
