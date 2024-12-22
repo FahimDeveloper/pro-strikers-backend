@@ -5,7 +5,11 @@ import { BundleCreditPackageServices } from './bundleCreditPack.services';
 
 const purchaseBundleCreditPackage = catchAsync(async (req, res) => {
   await BundleCreditPackageServices.purchaseBundleCreditPackageIntoDB(req.body);
-  sendResponse(res, httpStatus.CREATED, 'Purchased bundle Successfully');
+  sendResponse(
+    res,
+    httpStatus.CREATED,
+    'Bundle Cage pack purchased Successfully',
+  );
 });
 
 const getAllPurchasedBundleCreditPackages = catchAsync(async (req, res) => {
