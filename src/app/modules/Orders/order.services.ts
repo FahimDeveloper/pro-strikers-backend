@@ -1,19 +1,75 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { IOrder } from './order.interface';
+import { IOrder, IOrderRequest, ITimeline } from './order.interface';
 import { Order } from './order.model';
 import AppError from '../../errors/AppError';
 import mongoose from 'mongoose';
 import { Product } from '../Product/product.model';
+import WebPayment from '../WebPayment/webPayment.modal';
 
-const createOrderIntoDB = async (payload: IOrder) => {
-  const result = await Order.create(payload);
-  return result;
+const createOrderIntoDB = async (payload: IOrderRequest) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { orders, payment_info } = payload;
+    for (const order of orders) {
+      await Order.create([order], { session });
+    }
+    await WebPayment.create([payment_info], { session });
+    await session.commitTransaction();
+    session.endSession();
+    return;
+  } catch (error: any) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.message || 'Failed to create order',
+    );
+  }
 };
 
-const updateOrderIntoDB = async (id: string, payload: Partial<IOrder>) => {
-  const result = await Order.findByIdAndUpdate(id, payload);
-  return result;
+const updateOrderIntoDB = async (id: string, timeline: ITimeline) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const order = await Order.findById(id);
+    if (!order) {
+      throw new Error('Order not found.');
+    }
+    const product = await Product.findById(order?.product);
+    if (!product) {
+      throw new Error('Product not found.');
+    }
+    if (timeline?.status !== 'pending' && timeline?.status !== 'cancelled') {
+      const variation = product.variations.find(
+        v => v.color === order.color && v.size === order.size,
+      );
+      if (!variation) {
+        throw new Error('Product variation not found.');
+      }
+      variation.stock = Math.max(0, variation.stock - order.quantity);
+      await product.save({ session });
+    }
+    const result = await Order.findByIdAndUpdate(
+      id,
+      {
+        status: timeline.status,
+        $push: {
+          timeline: timeline,
+        },
+      },
+      { new: true, session },
+    );
+    return result;
+  } catch (error: any) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.message || 'Failed to update order status',
+    );
+  }
 };
 
 const getAllOrdersFromDB = async (query: Record<string, unknown>) => {
@@ -36,7 +92,7 @@ const deleteOrderFromDB = async (id: string) => {
   return result;
 };
 
-const cancelOrderFromDB = async (id: string) => {
+const cancelOrderFromDB = async (id: string, timeline: ITimeline) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
@@ -44,27 +100,39 @@ const cancelOrderFromDB = async (id: string) => {
     if (!order) {
       throw new Error('Order not found');
     }
-    const updateOrder = await Order.findByIdAndUpdate(id, {
-      status: 'cancelled',
-    });
-
-    if (!updateOrder) {
-      throw new Error('Failed order cancellation, Try again');
+    const product = await Product.findById(order?.product);
+    if (!product) {
+      throw new Error('Product not found.');
     }
 
-    const result = await Product.findByIdAndUpdate(
-      order.product,
-      { $inc: { quantity: order.quantity } },
-      { new: true, runValidators: true },
+    const variation = product.variations.find(
+      v => v.color === order.color && v.size === order.size,
+    );
+
+    if (!variation) {
+      throw new Error('Product variation not found.');
+    }
+
+    variation.stock = variation.stock + order.quantity;
+    await product.save();
+
+    const result = await Order.findByIdAndUpdate(
+      id,
+      {
+        status: timeline.status,
+        $push: {
+          timeline: timeline,
+        },
+      },
+      { new: true, session: session },
     );
 
     if (!result) {
       throw new Error('Failed order cancellation, Try again');
     }
-
     await session.commitTransaction();
     await session.endSession();
-    return;
+    return result;
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();

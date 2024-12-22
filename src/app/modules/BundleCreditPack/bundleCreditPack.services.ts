@@ -25,7 +25,7 @@ const purchaseBundleCreditPackageIntoDB = async (
     await session.endSession();
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      error?.message || 'Appointment registration failed',
+      error?.message || 'Credit pack purchasing failed',
     );
   }
 };
@@ -45,9 +45,19 @@ const getAllPurchsaedBundleCreditPackageFromDB = async (
   return { result, count };
 };
 
-const getUserPurchasedBundleCreditPackagesFromDB = async (email: string) => {
-  const result = await BundleCreditPackage.find({ email: email });
-  return result;
+const getUserPurchasedBundleCreditPackagesFromDB = async (
+  email: string,
+  query: Record<string, unknown>,
+) => {
+  const bundleCreditPackQuery = new QueryBuilder(
+    BundleCreditPackage.find({ email: email }),
+    query,
+  )
+    .filter()
+    .paginate();
+  const result = await bundleCreditPackQuery?.modelQuery;
+  const count = await bundleCreditPackQuery?.countTotal();
+  return { result, count };
 };
 
 const updateUseCreditPackageIntoDB = async (

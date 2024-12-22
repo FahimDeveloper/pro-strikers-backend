@@ -5,7 +5,7 @@ class QueryBuilder<T> {
   public query: Record<string, unknown>;
 
   constructor(modelQuery: Query<T[], T>, query: Record<string, unknown>) {
-    this.modelQuery = modelQuery;
+    this.modelQuery = modelQuery.sort('-createdAt');
     this.query = query;
   }
 

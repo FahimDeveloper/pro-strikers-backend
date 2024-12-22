@@ -36,36 +36,60 @@ const attendanceSchema = z.object({
 
 const createValidation = z.object({
   body: z.object({
-    package: z.string({
-      required_error: 'Package is required',
-      invalid_type_error: 'Package must be a string',
+    bundle: z.object({
+      package: z.string({
+        required_error: 'Package is required',
+        invalid_type_error: 'Package must be a string',
+      }),
+      email: z.string({
+        required_error: 'Email is required',
+        invalid_type_error: 'Email must be a string',
+      }),
+      active: z.boolean({
+        required_error: 'Active is required',
+        invalid_type_error: 'Active must be a boolean',
+      }),
+      validity: z.string({
+        required_error: 'Validity is required',
+        invalid_type_error: 'Validity must be a valid date string',
+      }),
+      hours: z.number({
+        required_error: 'Hours is required',
+        invalid_type_error: 'Hours must be a number',
+      }),
+      piching_machine: z.boolean({
+        required_error: 'Piching machine is required',
+        invalid_type_error: 'Piching machine must be a boolean',
+      }),
+      attendance: z
+        .array(attendanceSchema, {
+          required_error: 'Attendance is required',
+          invalid_type_error:
+            'Attendance must be an array of attendance objects',
+        })
+        .optional(),
     }),
-    email: z.string({
-      required_error: 'Email is required',
-      invalid_type_error: 'Email must be a string',
+    payment_info: z.object({
+      transaction_id: z.string(),
+      user: z.string({
+        required_error: 'user is required',
+        invalid_type_error: 'user must be a string',
+      }),
+      email: z
+        .string({
+          required_error: 'email is required',
+          invalid_type_error: 'email must be a string',
+        })
+        .email('Invalid email address'),
+      amount: z.number({
+        required_error: 'amount is required',
+        invalid_type_error: 'amount must be a number',
+      }),
+      service: z.string({
+        required_error: 'service is required',
+        invalid_type_error: 'service must be a string',
+      }),
     }),
-    active: z.boolean({
-      required_error: 'Active is required',
-      invalid_type_error: 'Active must be a boolean',
-    }),
-    validity: z.string({
-      required_error: 'Validity is required',
-      invalid_type_error: 'Validity must be a valid date string',
-    }),
-    hours: z.number({
-      required_error: 'Hours is required',
-      invalid_type_error: 'Hours must be a number',
-    }),
-    piching_machine: z.boolean({
-      required_error: 'Piching machine is required',
-      invalid_type_error: 'Piching machine must be a boolean',
-    }),
-    attendance: z
-      .array(attendanceSchema, {
-        required_error: 'Attendance is required',
-        invalid_type_error: 'Attendance must be an array of attendance objects',
-      })
-      .optional(),
   }),
 });
 

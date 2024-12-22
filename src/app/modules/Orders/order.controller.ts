@@ -35,7 +35,7 @@ const deleteOrder = catchAsync(async (req, res) => {
 });
 
 const cancelOrder = catchAsync(async (req, res) => {
-  await OrderServices.cancelOrderFromDB(req.params.id);
+  await OrderServices.cancelOrderFromDB(req.params.id, req.body);
   sendResponse(res, httpStatus.OK, 'Order cancelled successfully');
 });
 

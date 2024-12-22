@@ -28,6 +28,7 @@ const getUserPurchasedBundleCreditPackages = catchAsync(async (req, res) => {
   const result =
     await BundleCreditPackageServices.getUserPurchasedBundleCreditPackagesFromDB(
       req.params.email,
+      req.query,
     );
   sendResponse(
     res,

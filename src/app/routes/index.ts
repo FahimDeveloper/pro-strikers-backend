@@ -27,6 +27,8 @@ import { AddonRoutes } from '../modules/Addon/addon.route';
 import { BrandRoutes } from '../modules/Brand/brand.route';
 import { MembershipCancellationRoutes } from '../modules/MembershipCancellation/membershipCancellation.route';
 import { BundleCreditPackageRoutes } from '../modules/BundleCreditPack/bundleCreditPack.route';
+import { SizeRoutes } from '../modules/Size/size.route';
+import { ColorRoutes } from '../modules/Color/color.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -141,6 +143,14 @@ const mainRoutes = [
   {
     path: '/bundle-credit-package',
     route: BundleCreditPackageRoutes,
+  },
+  {
+    path: '/sizes',
+    route: SizeRoutes,
+  },
+  {
+    path: '/colors',
+    route: ColorRoutes,
   },
 ];
 
