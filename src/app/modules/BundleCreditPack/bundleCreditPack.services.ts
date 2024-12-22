@@ -8,6 +8,7 @@ import WebPayment from '../WebPayment/webPayment.modal';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { sendBundleCreditPackPurchasedConfirmationEmail } from '../../utils/email';
 
 const purchaseBundleCreditPackageIntoDB = async (
   payload: IBundleCreditPackPurchase,
@@ -18,6 +19,11 @@ const purchaseBundleCreditPackageIntoDB = async (
     session.startTransaction();
     await BundleCreditPackage.create([bundle], { session });
     await WebPayment.create([payment_info], { session });
+    await sendBundleCreditPackPurchasedConfirmationEmail({
+      email: payment_info.email,
+      bundle: bundle,
+      amount: payment_info.amount,
+    });
     await session.commitTransaction();
     await session.endSession();
     return;

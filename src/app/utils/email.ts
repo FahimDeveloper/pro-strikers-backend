@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import config from '../config';
 import moment from 'moment';
+import { IBundleCreditPack } from '../modules/BundleCreditPack/bundleCreditPack.interface';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -22,7 +23,7 @@ export const sendRentalBookingConfirmationEmail = async ({
   amount: number;
 }) => {
   await transporter.sendMail({
-    from: 'ProStrikers <admin@prostrikers.com>',
+    from: `ProStrikers <${config.notify_email}>`,
     to: email,
     subject: 'ProStrikers - Booking Confirmation',
     html: `
@@ -103,8 +104,8 @@ export const sendRentalBookingConfirmationEmail = async ({
           `,
   });
   await transporter.sendMail({
-    from: 'ProStrikers <admin@prostrikers.com>',
-    to: 'admin@prostrikers.com',
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
     subject: 'New Booking Alert - ProStrikers',
     html: `
         <html>
@@ -197,7 +198,7 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
   };
 }) => {
   await transporter.sendMail({
-    from: 'ProStrikers <admin@prostrikers.com>',
+    from: `ProStrikers <${config.notify_email}>`,
     to: email,
     subject: 'ProStrikers - Membership Purchase Confirmation',
     html: `
@@ -253,8 +254,8 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
       `,
   });
   await transporter.sendMail({
-    from: 'ProStrikers <admin@prostrikers.com>',
-    to: 'admin@prostrikers.com',
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
     subject: 'New Membership Purchased - ProStrikers',
     html: `
           <html>
@@ -309,134 +310,127 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
   return;
 };
 
-// export const sendBundleCreditPackPurchasedConfirmationEmail = async ({
-//   email,
-//   amount,
-//   membership,
-// }: {
-//   email: string;
-//   amount: number;
-//   membership: {
-//     package_name: string;
-//     plan: string;
-//     status: boolean;
-//     membership: boolean;
-//     issue_date: string;
-//     expiry_date: string;
-//   };
-// }) => {
-//   await transporter.sendMail({
-//     from: 'ProStrikers <admin@prostrikers.com>',
-//     to: email,
-//     subject: 'ProStrikers - Membership Purchase Confirmation',
-//     html: `
-//         <html>
-//           <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-//             <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+export const sendBundleCreditPackPurchasedConfirmationEmail = async ({
+  email,
+  amount,
+  bundle,
+}: {
+  email: string;
+  amount: number;
+  bundle: IBundleCreditPack;
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: email,
+    subject: 'ProStrikers - Bundle Credit Pack Purchase Confirmation',
+    html: `
+        <html>
+          <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+            <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
 
-//               <!-- Logo Section -->
-//               <div style="text-align: center; margin-bottom: 20px;">
-//                   <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
-//               </div>
+              <!-- Logo Section -->
+              <div style="text-align: center; margin-bottom: 20px;">
+                  <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+              </div>
 
-//               <h2 style="color: #0ABAC3;">Membership Purchase Confirmation</h2>
-//               <p>Dear Customer,</p>
-//               <p>Thank you for purchasing a membership at ProStrikers! Below are your membership details:</p>
+              <h2 style="color: #0ABAC3;">Bundle Credit Pack Purchase Confirmation</h2>
+              <p>Dear Customer,</p>
+              <p>Thank you for purchasing a bundle credit pack at ProStrikers! Below are your purchase details:</p>
 
-//               <h3 style="color: #0ABAC3;">Membership Details</h3>
-//               <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-//                 <thead>
-//                   <tr style="background-color: #0ABAC3; color: white;">
-//                     <th style="text-align:center;">Package Name</th>
-//                     <th style="text-align:center;">Plan</th>
-//                     <th style="text-align:center;">Issue Date</th>
-//                     <th style="text-align:center;">Expiry Date</th>
-//                   </tr>
-//                 </thead>
-//                 <tbody>
-//                   <tr>
-//                     <td style="text-align:center;">${membership.package_name}</td>
-//                     <td style="text-align:center;">${membership.plan}</td>
-//                     <td style="text-align:center;">${moment(membership.issue_date).format('ddd, MMM Do YY')}</td>
-//                     <td style="text-align:center;">${moment(membership.expiry_date).format('ddd, MMM Do YY')}</td>
-//                   </tr>
-//                 </tbody>
-//               </table>
+              <h3 style="color: #0ABAC3;">Bundle Details</h3>
+              <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                  <tr style="background-color: #0ABAC3; color: white;">
+                    <th style="text-align:center;">Bundle Name</th>
+                    <th style="text-align:center;">Hours</th>
+                    <th style="text-align:center;">Piching Machine</th>
+                    <th style="text-align:center;">Purchase Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="text-align:center;">${bundle.package}</td>
+                    <td style="text-align:center;">${bundle.hours}</td>
+                    <td style="text-align:center;">${bundle.piching_machine ? 'Yes' : 'No'}</td>
+                    <td style="text-align:center;">${moment().format('ddd, MMM Do YYYY')}</td>
+                  </tr>
+                </tbody>
+              </table>
 
-//               <h3 style="color: #0ABAC3;">Payment Information</h3>
-//               <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+              <h3 style="color: #0ABAC3;">Payment Information</h3>
+              <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
 
-//               <hr style="border: 1px solid #ccc; margin: 20px 0;">
+              <hr style="border: 1px solid #ccc; margin: 20px 0;">
 
-//               <p>If you have any questions about your membership, please don't hesitate to contact us.</p>
+              <p>If you have any questions about your purchase, please don't hesitate to contact us.</p>
 
-//               <h3 style="color: #0ABAC3;">Contact Information</h3>
-//               <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
-//               <p>Phone: (916)-890-5834</p>
-//               <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
+              <h3 style="color: #0ABAC3;">Contact Information</h3>
+              <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
+              <p>Phone: (916)-890-5834</p>
+              <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
 
-//               <p>Thank you for choosing ProStrikers! We look forward to serving you.</p>
-//             </div>
-//           </body>
-//         </html>
-//       `,
-//   });
-//   await transporter.sendMail({
-//     from: 'ProStrikers <admin@prostrikers.com>',
-//     to: 'admin@prostrikers.com',
-//     subject: 'New Membership Purchased - ProStrikers',
-//     html: `
-//           <html>
-//             <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-//               <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+              <p>Thank you for choosing ProStrikers! We look forward to serving you.</p>
+            </div>
+          </body>
+        </html>
+      `,
+  });
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'New Bundle Credit Pack Purchased - ProStrikers',
+    html: `
+          <html>
+            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+              <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
 
-//                 <!-- Logo Section -->
-//                 <div style="text-align: center; margin-bottom: 20px;">
-//                     <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
-//                 </div>
+                <!-- Logo Section -->
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+                </div>
 
-//                 <h2 style="color: #0ABAC3;">New Membership Purchased</h2>
-//                 <p><strong>User Email:</strong> ${email}</p>
-//                 <p>A new membership has been purchased. Below are the details:</p>
+                <h2 style="color: #0ABAC3;">New Bundle Credit Pack Purchased</h2>
+                <p><strong>User Email:</strong> ${email}</p>
+                <p>A new bundle credit pack has been purchased. Below are the details:</p>
 
-//                 <h3 style="color: #0ABAC3;">Membership Details</h3>
-//                 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-//                   <thead>
-//                     <tr style="background-color: #0ABAC3; color: white;">
-//                       <th style="text-align:center;">Package Name</th>
-//                       <th style="text-align:center;">Plan</th>
-//                       <th style="text-align:center;">Issue Date</th>
-//                       <th style="text-align:center;">Expiry Date</th>
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     <tr>
-//                       <td style="text-align:center;">${membership.package_name}</td>
-//                       <td style="text-align:center;">${membership.plan}</td>
-//                       <td style="text-align:center;">${moment(membership.issue_date).format('ddd, MMM Do YY')}</td>
-//                       <td style="text-align:center;">${moment(membership.expiry_date).format('ddd, MMM Do YY')}</td>
-//                     </tr>
-//                   </tbody>
-//                 </table>
+                <h3 style="color: #0ABAC3;">Bundle Details</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                  <tr style="background-color: #0ABAC3; color: white;">
+                    <th style="text-align:center;">Bundle Name</th>
+                    <th style="text-align:center;">Hours</th>
+                    <th style="text-align:center;">Piching Machine</th>
+                    <th style="text-align:center;">Purchase Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="text-align:center;">${bundle.package}</td>
+                    <td style="text-align:center;">${bundle.hours}</td>
+                    <td style="text-align:center;">${bundle.piching_machine ? 'Yes' : 'No'}</td>
+                    <td style="text-align:center;">${moment().format('ddd, MMM Do YYYY')}</td>
+                  </tr>
+                </tbody>
+              </table>
 
-//                 <h3 style="color: #0ABAC3;">Payment Information</h3>
-//                 <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+                <h3 style="color: #0ABAC3;">Payment Information</h3>
+                <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
 
-//                 <hr style="border: 1px solid #ccc; margin: 20px 0;">
+                <hr style="border: 1px solid #ccc; margin: 20px 0;">
 
-//                 <p>Please verify this purchase in the system if necessary.</p>
+                <p>Please verify this purchase in the system if necessary.</p>
 
-//                 <h3 style="color: #0ABAC3;">Contact Information</h3>
-//                 <p>Email: <a href="mailto:${email}">${email}</a></p>
+                <h3 style="color: #0ABAC3;">Contact Information</h3>
+                <p>Email: <a href="mailto:${email}">${email}</a></p>
 
-//                 <p>Thank you for using ProStrikers Admin Services.</p>
-//               </div>
-//             </body>
-//           </html>
-//         `,
-//   });
-//   return;
-// };
+                <p>Thank you for using ProStrikers Admin Services.</p>
+              </div>
+            </body>
+          </html>
+        `,
+  });
+  return;
+};
 
 export const sendResetPasswordLinkEmail = async ({
   email,
