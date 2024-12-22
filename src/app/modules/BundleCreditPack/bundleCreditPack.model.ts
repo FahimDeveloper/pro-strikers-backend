@@ -12,7 +12,7 @@ const TimeSchema = new Schema<IAttendanceTime>(
     start_time: { type: String, required: true },
     end_time: { type: String, required: true },
   },
-  { _id: false },
+  { _id: false, versionKey: false },
 );
 
 const attendanceSchema = new Schema<IAttendance>(
@@ -23,36 +23,39 @@ const attendanceSchema = new Schema<IAttendance>(
     },
     times: [TimeSchema],
   },
-  { id: false },
+  { id: false, versionKey: false },
 );
 
-const bundleCreditPackageSchema = new Schema<IBundleCreditPack>({
-  package: {
-    type: String,
-    required: true,
+const bundleCreditPackageSchema = new Schema<IBundleCreditPack>(
+  {
+    package: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    active: {
+      type: Boolean,
+      required: true,
+    },
+    validity: {
+      type: String,
+      required: true,
+    },
+    hours: {
+      type: Number,
+      required: true,
+    },
+    piching_machine: {
+      type: Boolean,
+      required: true,
+    },
+    attendance: [attendanceSchema],
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  active: {
-    type: Boolean,
-    required: true,
-  },
-  validity: {
-    type: String,
-    required: true,
-  },
-  hours: {
-    type: Number,
-    required: true,
-  },
-  piching_machine: {
-    type: Boolean,
-    required: true,
-  },
-  attendance: [attendanceSchema],
-});
+  { versionKey: false },
+);
 
 export const BundleCreditPackage = model<IBundleCreditPack>(
   'BundleCreditPackage',

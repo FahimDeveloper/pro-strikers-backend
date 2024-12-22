@@ -7,6 +7,8 @@ import {
 } from './appointmentOneOnOneReservation.interface';
 import { AppointmentOneOnOneReservation } from './appointmentOneOnOneReservation.model';
 import WebPayment from '../WebPayment/webPayment.modal';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const createAppointmentOneOnOneReservationIntoDB = async (
   id: string,
@@ -22,14 +24,17 @@ const createAppointmentOneOnOneReservationIntoDB = async (
       },
       session,
     );
-    await AppointmentOneOnOneReservation.create(payload);
+    await AppointmentOneOnOneReservation.create([payload], { session });
     await session.commitTransaction();
     await session.endSession();
     return;
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new Error(error?.message || 'Failed to create reservation');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.message || 'Failed to create reservation',
+    );
   }
 };
 

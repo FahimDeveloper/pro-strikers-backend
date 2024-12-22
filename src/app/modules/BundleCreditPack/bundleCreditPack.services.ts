@@ -12,14 +12,15 @@ import QueryBuilder from '../../builder/QueryBuilder';
 const purchaseBundleCreditPackageIntoDB = async (
   payload: IBundleCreditPackPurchase,
 ) => {
-  const session = await mongoose.startSession();
   const { bundle, payment_info } = payload;
+  const session = await mongoose.startSession();
   try {
     session.startTransaction();
     await BundleCreditPackage.create([bundle], { session });
     await WebPayment.create([payment_info], { session });
-    session.commitTransaction();
-    session.endSession();
+    await session.commitTransaction();
+    await session.endSession();
+    return;
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
