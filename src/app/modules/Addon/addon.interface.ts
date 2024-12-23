@@ -9,6 +9,7 @@ export interface IAddonInfo {
 export interface IAddon {
   addon_title: string;
   addon_description: string;
+  // addon_manage: 'hourly' | 'half_hourly';
   addon_ini_price: number;
   addon_price: number;
   addon_image: string;

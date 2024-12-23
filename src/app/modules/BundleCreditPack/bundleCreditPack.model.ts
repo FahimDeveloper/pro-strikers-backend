@@ -54,7 +54,7 @@ const bundleCreditPackageSchema = new Schema<IBundleCreditPack>(
     },
     attendance: [attendanceSchema],
   },
-  { versionKey: false },
+  { versionKey: false, timestamps: true },
 );
 
 export const BundleCreditPackage = model<IBundleCreditPack>(

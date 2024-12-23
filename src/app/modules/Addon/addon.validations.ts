@@ -5,6 +5,10 @@ const createAddonValidation = z.object({
     invalid_type_error: 'Addon title must be a string',
     required_error: 'Addon title is required',
   }),
+  // addon_manage: z.enum(['hourly', 'half_hourly'], {
+  //   invalid_type_error: 'Addon Manage must be a valid enum value',
+  //   required_error: 'Addon Manage is required',
+  // }),
   addon_description: z.string({
     invalid_type_error: 'Addon Description must be a string',
     required_error: 'Addon Description is required',
@@ -30,6 +34,11 @@ const updateAddonValidation = z.object({
       invalid_type_error: 'Addon Description must be a string',
     })
     .optional(),
+  // addon_manage: z
+  //   .enum(['hourly', 'half_hourly'], {
+  //     invalid_type_error: 'Addon Manage must be a valid enum value',
+  //   })
+  //   .optional(),
   addon_price: z
     .number({
       invalid_type_error: 'Addon Price must be a number',

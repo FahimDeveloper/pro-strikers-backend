@@ -29,7 +29,7 @@ const updateUseCreditPackage = catchAsync(async (req, res) => {
 });
 
 const getUserPurchasedBundleCreditPackages = catchAsync(async (req, res) => {
-  const result =
+  const { result, count } =
     await BundleCreditPackageServices.getUserPurchasedBundleCreditPackagesFromDB(
       req.params.email,
       req.query,
@@ -39,6 +39,7 @@ const getUserPurchasedBundleCreditPackages = catchAsync(async (req, res) => {
     httpStatus.OK,
     'User purchased bundle credit packages',
     result,
+    count,
   );
 });
 
