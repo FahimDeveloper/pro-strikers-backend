@@ -4,26 +4,26 @@ import { IProduct, IVariation } from './product.interface';
 const variationSchema = new Schema<IVariation>(
   {
     color: {
-      type: String,
-      required: false,
+      color_code: {
+        type: String,
+      },
+      name: {
+        type: String,
+      },
     },
     size: {
       type: String,
-      required: false,
     },
     price: {
       type: Number,
-      required: true,
     },
     stock: {
       type: Number,
-      required: true,
     },
   },
   { _id: false, versionKey: false },
 );
 
-// Product Schema
 const productSchema = new Schema<IProduct>(
   {
     name: {
@@ -48,7 +48,36 @@ const productSchema = new Schema<IProduct>(
         required: true,
       },
     ],
-    price: {
+    regular_price: {
+      type: Number,
+      required: true,
+    },
+    offer_price: {
+      type: Number,
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+    color: {
+      color_code: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+    size: {
+      type: String,
+      required: true,
+    },
+    stock: {
       type: Number,
       required: true,
     },
@@ -71,7 +100,6 @@ const productSchema = new Schema<IProduct>(
     variations: [
       {
         type: variationSchema,
-        required: true,
       },
     ],
   },
@@ -81,4 +109,4 @@ const productSchema = new Schema<IProduct>(
   },
 );
 
-export const Product = model('Product', productSchema);
+export const Product = model<IProduct>('Product', productSchema);

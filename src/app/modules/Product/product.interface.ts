@@ -1,8 +1,11 @@
 export interface IVariation {
-  color?: string;
+  color?: {
+    name: string;
+    color_code: string;
+  };
   size?: string;
   price?: number;
-  stock: number;
+  stock?: number;
 }
 
 export interface IProduct {
@@ -10,8 +13,17 @@ export interface IProduct {
   short_description: string;
   details: string;
   thumbnail: string;
-  gallery: string[];
+  gallery: Array<string>;
+  regular_price: number;
+  offer_price: number;
+  rating: number;
   price: number;
+  color: {
+    name: string;
+    color_code: string;
+  };
+  size: string;
+  stock: number;
   category:
     | 'bats'
     | 'gloves'
@@ -20,5 +32,5 @@ export interface IProduct {
     | 'helmets'
     | 'sports bags';
   brand: string;
-  variations: IVariation[];
+  variations?: IVariation[];
 }

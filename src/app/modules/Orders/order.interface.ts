@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export interface IOrder {
-  user_email: string;
+  email: string;
   product: mongoose.Types.ObjectId;
   quantity: number;
   color: string;
@@ -9,12 +9,19 @@ export interface IOrder {
   total_price: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   timeline: Array<ITimeline>;
+  street_address: string;
+  city: string;
+  state: string;
+  phone: string;
+  zip_code: string;
+  country: string;
+  order_id: string;
 }
 
 export interface ITimeline {
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   note: string;
-  date: Date;
+  date: string;
 }
 
 export type IOrderRequest = {

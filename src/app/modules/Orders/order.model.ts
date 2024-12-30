@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
-import { IOrder } from './order.interface';
+import { IOrder, ITimeline } from './order.interface';
 
-const TimelineSchema: Schema = new Schema(
+const TimelineSchema: Schema = new Schema<ITimeline>(
   {
     status: {
       type: String,
@@ -13,7 +13,7 @@ const TimelineSchema: Schema = new Schema(
       required: true,
     },
     date: {
-      type: Date,
+      type: String,
       required: true,
     },
   },
@@ -22,12 +22,11 @@ const TimelineSchema: Schema = new Schema(
 
 const OrderSchema: Schema = new Schema<IOrder>(
   {
-    user_email: {
+    email: {
       type: String,
       required: true,
       trim: true,
     },
-
     product: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

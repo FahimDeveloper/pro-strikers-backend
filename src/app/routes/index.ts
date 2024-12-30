@@ -77,7 +77,7 @@ const mainRoutes = [
     route: PostRoutes,
   },
   {
-    path: '/products',
+    path: '/store',
     route: ProductRoutes,
   },
   {

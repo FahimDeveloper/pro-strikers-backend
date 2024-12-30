@@ -1,14 +1,16 @@
 import QueryBuilder from '../../builder/QueryBuilder';
+import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { uploadMultipleImageIntoCloduinary } from '../../utils/uploadMultipleImageToCloudinary';
 import { IProduct } from './product.interface';
 import { Product } from './product.model';
 
 const createProductIntoDB = async (payload: IProduct, files: any) => {
-  const imageUrls = await uploadMultipleImageIntoCloduinary(files);
+  const thumbnail = await uploadImageIntoCloduinary(files?.thumbnail[0]);
+  const gallery = await uploadMultipleImageIntoCloduinary(files?.gallery);
   const result = await Product.create({
     ...payload,
-    thumbnail: imageUrls[0],
-    gallery: imageUrls.slice(1),
+    thumbnail: thumbnail.url,
+    gallery: gallery,
   });
   return result;
 };
@@ -18,16 +20,17 @@ const updateProuctIntoDB = async (
   payload: Partial<IProduct>,
   files: any,
 ) => {
-  let result;
-  if (files?.length > 0) {
-    const imageUrls = await uploadMultipleImageIntoCloduinary(files);
-    result = await Product.findByIdAndUpdate(id, {
-      ...payload,
-      // images: [...payload.images!, ...imageUrls],
-    });
-  } else {
-    result = await Product.findByIdAndUpdate(id, payload);
+  if (files?.thumbnail) {
+    const thumbnail = await uploadImageIntoCloduinary(files?.thumbnail[0]);
+    payload.thumbnail = thumbnail.url;
   }
+  if (files?.gallery) {
+    const gallery = await uploadMultipleImageIntoCloduinary(files?.gallery);
+    if (payload.gallery) {
+      payload.gallery = [...payload?.gallery, ...gallery];
+    }
+  }
+  const result = await Product.findByIdAndUpdate(id, payload);
   return result;
 };
 

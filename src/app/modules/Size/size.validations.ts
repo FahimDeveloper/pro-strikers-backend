@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
 const sizeSchema = z.object({
-  name: z.string({
-    invalid_type_error: 'Name must be a string',
-    required_error: 'Name is required',
-  }),
   size: z.string({
     invalid_type_error: 'Size must be a string',
     required_error: 'Size is required',
