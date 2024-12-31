@@ -6,10 +6,11 @@ const createValidation = z.object({
       required_error: 'id is required.',
       invalid_type_error: 'id must be a string.',
     }),
-    training: z.string({
-      required_error: 'training is required.',
-      invalid_type_error: 'training must be a string.',
-    }),
+    training: z
+      .string({
+        invalid_type_error: 'training must be a string.',
+      })
+      .optional(),
     user: z.string({
       required_error: 'User is required.',
       invalid_type_error: 'User must be a valid string.',

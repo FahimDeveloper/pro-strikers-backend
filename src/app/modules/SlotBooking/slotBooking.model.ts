@@ -11,7 +11,6 @@ const slotBookingSchema = new Schema<ISlotBooking>(
     },
     training: {
       type: Schema.Types.ObjectId,
-      required: true,
     },
     user: {
       type: Schema.Types.ObjectId,
