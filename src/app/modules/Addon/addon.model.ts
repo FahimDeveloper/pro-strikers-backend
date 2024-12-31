@@ -11,11 +11,11 @@ const AddonSchema = new Schema<IAddon>(
       type: String,
       required: true,
     },
-    // addon_manage: {
-    //   type: String,
-    //   enum: ['hourly', 'half_hourly'],
-    //   required: true,
-    // },
+    addon_type: {
+      type: String,
+      enum: ['hourly', 'half_hourly'],
+      required: true,
+    },
     addon_price: {
       type: Number,
       required: true,

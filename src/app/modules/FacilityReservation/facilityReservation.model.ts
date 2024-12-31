@@ -17,6 +17,7 @@ const AddonBookingsSchema = new Schema<IAddon>(
     hours: { type: Number, required: true },
     image: { type: String, required: true },
     price: { type: Number, required: true },
+    type: { type: String, required: true },
     ini_price: { type: Number, required: true },
   },
   { versionKey: false, _id: false },
