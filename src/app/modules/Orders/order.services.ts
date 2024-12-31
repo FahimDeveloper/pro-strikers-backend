@@ -41,16 +41,16 @@ const updateOrderIntoDB = async (id: string, timeline: ITimeline) => {
     if (!product) {
       throw new Error('Product not found.');
     }
-    if (timeline?.status !== 'pending' && timeline?.status !== 'cancelled') {
-      const variation = product.variations.find(
-        v => v.color === order.color && v.size === order.size,
-      );
-      if (!variation) {
-        throw new Error('Product variation not found.');
-      }
-      variation.stock = Math.max(0, variation.stock - order.quantity);
-      await product.save({ session });
-    }
+    // if (timeline?.status !== 'pending' && timeline?.status !== 'cancelled') {
+    //   const variation = product?.variations.find(
+    //     v => v.color === order.color && v.size === order.size,
+    //   );
+    //   if (!variation) {
+    //     throw new Error('Product variation not found.');
+    //   }
+    //   variation.stock = Math.max(0, variation.stock - order.quantity);
+    //   await product.save({ session });
+    // }
     const result = await Order.findByIdAndUpdate(
       id,
       {
@@ -100,21 +100,21 @@ const cancelOrderFromDB = async (id: string, timeline: ITimeline) => {
     if (!order) {
       throw new Error('Order not found');
     }
-    const product = await Product.findById(order?.product);
-    if (!product) {
-      throw new Error('Product not found.');
-    }
+    // const product = await Product.findById(order?.product);
+    // if (!product) {
+    //   throw new Error('Product not found.');
+    // }
 
-    const variation = product.variations.find(
-      v => v.color === order.color && v.size === order.size,
-    );
+    // const variation = product.variations.find(
+    //   v => v.color === order.color && v.size === order.size,
+    // );
 
-    if (!variation) {
-      throw new Error('Product variation not found.');
-    }
+    // if (!variation) {
+    //   throw new Error('Product variation not found.');
+    // }
 
-    variation.stock = variation.stock + order.quantity;
-    await product.save();
+    // variation.stock = variation.stock + order.quantity;
+    // await product.save();
 
     const result = await Order.findByIdAndUpdate(
       id,
