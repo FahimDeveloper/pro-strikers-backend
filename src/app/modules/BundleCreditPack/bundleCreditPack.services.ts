@@ -8,7 +8,10 @@ import WebPayment from '../WebPayment/webPayment.modal';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { sendBundleCreditPackPurchasedConfirmationEmail } from '../../utils/email';
+import {
+  sendBundleCreditPackPurchasedConfirmationEmail,
+  sendBundleCreditPurchaseFailedNotifyEmail,
+} from '../../utils/email';
 
 const purchaseBundleCreditPackageIntoDB = async (
   payload: IBundleCreditPackPurchase,
@@ -30,9 +33,16 @@ const purchaseBundleCreditPackageIntoDB = async (
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
+    console.log(error?.message);
+    await sendBundleCreditPurchaseFailedNotifyEmail({
+      email: payment_info.email,
+      bundle: bundle,
+      amount: payment_info?.amount,
+      transactionId: payment_info?.transaction_id,
+    });
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      error?.message || 'Credit pack purchasing failed',
+      'Your Bundle Credit pack purchase was unsuccessful, but your payment went through. There was an issue with our processing. Please be patient; our customer support team will contact you as soon as possible to assist you further.',
     );
   }
 };

@@ -22,7 +22,7 @@ router.get(
 router.post(
   '/create',
   authMiddleware(ROLE.user),
-  validateRequest(BundleCreditPackageValidations.createValidation),
+  // validateRequest(BundleCreditPackageValidations.createValidation),
   BundleCreditPackageControllers.purchaseBundleCreditPackage,
 );
 

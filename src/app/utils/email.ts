@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import config from '../config';
-import moment from 'moment';
 import { IBundleCreditPack } from '../modules/BundleCreditPack/bundleCreditPack.interface';
+import moment from 'moment-timezone';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -55,8 +55,8 @@ export const sendRentalBookingConfirmationEmail = async ({
                         .map(
                           (booking: any) => `
                         <tr>
-                          <td style="text-align:center;">${moment(booking.date).format('ddd, MMM Do YY')}</td>
-                          <td style="text-align:center; text-transform:capitalize">${bookings.sport}</td>
+                          <td style="text-align:center;">${moment(booking.date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                          <td style="text-align:center; text-transform:capitalize;">${bookings.sport}</td>
                           <td style="text-align:center;">${booking.time_slot}</td>
                           <td style="text-align:center;">${booking.lane}</td>
                         </tr>
@@ -139,8 +139,8 @@ export const sendRentalBookingConfirmationEmail = async ({
                     .map(
                       (booking: any) => `
                       <tr>
-                        <td style="text-align:center;">${moment(booking.date).format('ddd, MMM Do YY')}</td>
-                        <td style="text-align:center;">${bookings.sport}</td>
+                        <td style="text-align:center;">${moment(booking.date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                        <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
                         <td style="text-align:center;">${booking.time_slot}</td>
                         <td style="text-align:center;">${booking.lane}</td>
                       </tr>
@@ -183,6 +183,95 @@ export const sendRentalBookingConfirmationEmail = async ({
       `,
   });
   return;
+};
+
+export const sendRentalBookingFailedNotifyEmail = async ({
+  transactionId,
+  amount,
+  bookings,
+}: {
+  transactionId: string;
+  amount: number;
+  bookings: any;
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'Rental Facility Booking Failed - ProStrikers',
+    html: `
+      <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+          <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+            
+            <!-- Logo Section -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+            </div>
+
+            <h2 style="color: #E74C3C;">Purchase Failure Notification - ProStrikers</h2>
+            <p><strong>Customer:</strong> ${bookings.first_name} ${bookings.last_name}</p>
+            <p><strong>Email:</strong> ${bookings.email}</p>
+            <p><strong>Phone:</strong> ${bookings.phone}</p>
+
+            <h3 style="color: #E74C3C;">Transaction Details</h3>
+            <p><strong>Transaction ID:</strong> ${transactionId}</p>
+            <p><strong>Attempted Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+
+            <h3 style="color: #E74C3C;">Booking Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+              <thead>
+                <tr style="background-color: #E74C3C; color: white;">
+                  <th style="text-align:center;">Date</th>
+                  <th style="text-align:center;">Sport</th>
+                  <th style="text-align:center;">Time Slot</th>
+                  <th style="text-align:center;">Lane</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${bookings.bookings
+                  .map(
+                    (booking: any) => `
+                    <tr>
+                      <td style="text-align:center;">${moment(booking.date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                      <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
+                      <td style="text-align:center;">${booking.time_slot}</td>
+                      <td style="text-align:center;">${booking.lane}</td>
+                    </tr>
+                  `,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+
+            <h3 style="color: #E74C3C;">Add-ons</h3>
+            ${
+              bookings.addons.length > 0
+                ? `
+                <ul>
+                  ${bookings.addons
+                    .map(
+                      (addon: any) => `
+                      <li>
+                        <strong>${addon.name}</strong> - ${addon.hours === 0.5 ? '30 minutes' : `${addon.hours} hours`}
+                        <br>
+                        <img src="${addon.image}" alt="${addon.name}" style="max-width: 100px; margin-top: 5px;">
+                      </li>
+                    `,
+                    )
+                    .join('')}
+                </ul>
+              `
+                : '<p>No add-ons selected.</p>'
+            }
+
+            <hr style="border: 1px solid #ccc; margin: 20px 0;">
+
+            <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system (Stripe dashboard) and contact with the user for further assistance.</p>
+          </div>
+        </body>
+      </html>
+    `,
+  });
 };
 
 export const sendMembershipPurchasedConfirmationEmail = async ({
@@ -233,8 +322,8 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
                   <tr>
                     <td style="text-align:center;">${membership.package_name}</td>
                     <td style="text-align:center;">${membership.plan}</td>
-                    <td style="text-align:center;">${moment(membership.issue_date).format('ddd, MMM Do YY')}</td>
-                    <td style="text-align:center;">${moment(membership.expiry_date).format('ddd, MMM Do YY')}</td>
+                    <td style="text-align:center;">${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                    <td style="text-align:center;">${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
                   </tr>
                 </tbody>
               </table>
@@ -289,8 +378,8 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
                     <tr>
                       <td style="text-align:center;">${membership.package_name}</td>
                       <td style="text-align:center;">${membership.plan}</td>
-                      <td style="text-align:center;">${moment(membership.issue_date).format('ddd, MMM Do YY')}</td>
-                      <td style="text-align:center;">${moment(membership.expiry_date).format('ddd, MMM Do YY')}</td>
+                      <td style="text-align:center;">${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                      <td style="text-align:center;">${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -312,6 +401,148 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
         `,
   });
   return;
+};
+
+export const sendMembershipPurchasedFailedNotifyEmail = async ({
+  email,
+  amount,
+  membership,
+  transactionId,
+}: {
+  transactionId: string;
+  email: string;
+  amount: number;
+  membership: {
+    package_name: string;
+    plan: string;
+    status: boolean;
+    membership: boolean;
+    issue_date: string;
+    expiry_date: string;
+  };
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'Membership Purchase Failed - ProStrikers',
+    html: `
+            <html>
+              <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+  
+                  <!-- Logo Section -->
+                  <div style="text-align: center; margin-bottom: 20px;">
+                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+                  </div>
+  
+                  <h2 style="color: #E74C3C;">Membership Purchase Failed</h2>
+                  <p><strong>User Email:</strong> ${email}</p>
+                  <p>The following membership purchase attempt failed. Please review the details below:</p>
+  
+                  <h3 style="color: #E74C3C;">Membership Details</h3>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                      <tr style="background-color: #E74C3C; color: white;">
+                        <th style="text-align:center;">Package Name</th>
+                        <th style="text-align:center;">Plan</th>
+                        <th style="text-align:center;">Attempt Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="text-align:center;">${membership.package_name}</td>
+                        <td style="text-align:center;">${membership.plan}</td>
+                        <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+  
+                  <h3 style="color: #E74C3C;">Payment Information</h3>
+                  <p><strong>Attempted Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+                  <p><strong>Transaction ID:</strong> ${transactionId || 'Not Available'}</p>
+  
+                  <hr style="border: 1px solid #ccc; margin: 20px 0;">
+  
+                  <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system (Stripe dashboard) and contact with the user for further assistance.</p>
+  
+                  <h3 style="color: #E74C3C;">Contact Information</h3>
+                  <p>Email: <a href="mailto:${email}">${email}</a></p>
+  
+                  <p>Thank you for using ProStrikers Admin Services.</p>
+                </div>
+              </body>
+            </html>
+          `,
+  });
+  return;
+};
+
+export const sendBundleCreditPurchaseFailedNotifyEmail = async ({
+  transactionId,
+  email,
+  amount,
+  bundle,
+}: {
+  transactionId: string;
+  email: string;
+  amount: number;
+  bundle: IBundleCreditPack;
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'Bundle Credit Pack Purchase Failed - ProStrikers',
+    html: `
+            <html>
+              <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+  
+                  <!-- Logo Section -->
+                  <div style="text-align: center; margin-bottom: 20px;">
+                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+                  </div>
+  
+                  <h2 style="color: #E74C3C;">Bundle Credit Pack Purchase Failed</h2>
+                  <p><strong>User Email:</strong> ${email}</p>
+                  <p>The following bundle credit pack purchase attempt failed. Please review the details below:</p>
+  
+                  <h3 style="color: #E74C3C;">Bundle Details</h3>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                  <thead>
+                    <tr style="background-color: #E74C3C; color: white;">
+                      <th style="text-align:center;">Bundle Name</th>
+                      <th style="text-align:center;">Hours</th>
+                      <th style="text-align:center;">Piching Machine</th>
+                      <th style="text-align:center;">Attempt Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="text-align:center;">${bundle.package}</td>
+                      <td style="text-align:center;">${bundle.hours}</td>
+                      <td style="text-align:center;">${bundle.piching_machine ? 'Yes' : 'No'}</td>
+                      <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YYYY')}</td>
+                    </tr>
+                  </tbody>
+                </table>
+  
+                  <h3 style="color: #E74C3C;">Payment Information</h3>
+                  <p><strong>Attempted Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+                  <p><strong>Transaction ID:</strong> ${transactionId || 'Not Available'}</p>
+  
+                  <hr style="border: 1px solid #ccc; margin: 20px 0;">
+  
+                  <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system (Stripe dashboard) and contact with the user for further assistance.</p>
+  
+                  <h3 style="color: #E74C3C;">Contact Information</h3>
+                  <p>Email: <a href="mailto:${email}">${email}</a></p>
+  
+                  <p>Thank you for using ProStrikers Admin Services.</p>
+                </div>
+              </body>
+            </html>
+          `,
+  });
 };
 
 export const sendBundleCreditPackPurchasedConfirmationEmail = async ({
@@ -356,7 +587,7 @@ export const sendBundleCreditPackPurchasedConfirmationEmail = async ({
                     <td style="text-align:center;">${bundle.package}</td>
                     <td style="text-align:center;">${bundle.hours}</td>
                     <td style="text-align:center;">${bundle.piching_machine ? 'Yes' : 'No'}</td>
-                    <td style="text-align:center;">${moment().format('ddd, MMM Do YYYY')}</td>
+                    <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YYYY')}</td>
                   </tr>
                 </tbody>
               </table>
@@ -412,7 +643,7 @@ export const sendBundleCreditPackPurchasedConfirmationEmail = async ({
                     <td style="text-align:center;">${bundle.package}</td>
                     <td style="text-align:center;">${bundle.hours}</td>
                     <td style="text-align:center;">${bundle.piching_machine ? 'Yes' : 'No'}</td>
-                    <td style="text-align:center;">${moment().format('ddd, MMM Do YYYY')}</td>
+                    <td style="text-align:center;">${moment().tz('').tz('America/Los_Angeles').format('ddd, MMM Do YYYY')}</td>
                   </tr>
                 </tbody>
               </table>

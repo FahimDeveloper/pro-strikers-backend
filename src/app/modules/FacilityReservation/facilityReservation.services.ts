@@ -11,7 +11,10 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../User/user.model';
 import WebPayment from '../WebPayment/webPayment.modal';
-import { sendRentalBookingConfirmationEmail } from '../../utils/email';
+import {
+  sendRentalBookingConfirmationEmail,
+  sendRentalBookingFailedNotifyEmail,
+} from '../../utils/email';
 
 const createFacilityReservationIntoDB = async (
   id: string,
@@ -52,7 +55,7 @@ const createFacilityReservationByUserIntoDB = async (
   payload: IFacilityReservationByUser,
 ) => {
   const session = await mongoose.startSession();
-  const { facility_data, membership_info, payment_info } = payload;
+  const { facility_data, payment_info } = payload;
   try {
     session.startTransaction();
     await SlotBooking.deleteMany(
@@ -62,13 +65,6 @@ const createFacilityReservationByUserIntoDB = async (
       },
       { session },
     );
-    if (membership_info) {
-      await User.findByIdAndUpdate(
-        membership_info.user_id,
-        membership_info.membership,
-        { session },
-      );
-    }
     await FacilityReservation.create([facility_data], { session });
     await WebPayment.create([payment_info], { session });
     await sendRentalBookingConfirmationEmail({
@@ -82,9 +78,14 @@ const createFacilityReservationByUserIntoDB = async (
   } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
+    await sendRentalBookingFailedNotifyEmail({
+      bookings: facility_data,
+      amount: payment_info?.amount,
+      transactionId: payment_info?.transaction_id,
+    });
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      err?.message || 'Failed your facility reservation',
+      'Your Rental Facility booking was unsuccessful, but your payment went through. There was an issue with our processing. Please be patient; our customer support team will contact you as soon as possible to assist you further.',
     );
   }
 };

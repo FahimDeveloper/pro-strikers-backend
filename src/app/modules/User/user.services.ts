@@ -10,6 +10,7 @@ import WebPayment from '../WebPayment/webPayment.modal';
 import {
   sendClientAccountConfirmationEmail,
   sendMembershipPurchasedConfirmationEmail,
+  sendMembershipPurchasedFailedNotifyEmail,
 } from '../../utils/email';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
@@ -75,9 +76,9 @@ const createMembershipByUserIntoDB = async (
   payload: IUserMembership,
 ) => {
   const session = await mongoose.startSession();
+  const { membership, payment_info } = payload;
   try {
     session.startTransaction();
-    const { membership, payment_info } = payload;
     const result = await User.findByIdAndUpdate(id, membership, { session });
     if (!result) {
       throw new Error('Failed to get membership');
@@ -94,9 +95,16 @@ const createMembershipByUserIntoDB = async (
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
+    await sendMembershipPurchasedFailedNotifyEmail({
+      transactionId: payment_info.transaction_id,
+      email: payment_info.email,
+      membership: membership,
+      amount: payment_info.amount,
+    });
+    console.log(error?.message);
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      error?.message || 'Failed to get membership',
+      'Your membership purchase was unsuccessful, but your payment went through. There was an issue with our processing. Please be patient; our customer support team will contact you as soon as possible to assist you further.',
     );
   }
 };

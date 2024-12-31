@@ -30,7 +30,7 @@ route.get(
 route.post(
   '/user/create/:id',
   authMiddleware(ROLE.user),
-  validateRequest(FacilityReservationValidations.createByUserValidation),
+  // validateRequest(FacilityReservationValidations.createByUserValidation),
   FacilityReservationController.createFacilityReservationByUser,
 );
 
