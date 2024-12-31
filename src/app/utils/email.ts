@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import config from '../config';
+import moment from 'moment';
 import { IBundleCreditPack } from '../modules/BundleCreditPack/bundleCreditPack.interface';
-import moment from 'moment-timezone';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -45,6 +45,7 @@ export const sendRentalBookingConfirmationEmail = async ({
                     <thead>
                       <tr style="background-color: #0ABAC3; color: white;">
                         <th style="text-align:center;">Date</th>
+                        <th style="text-align:center;>Sport</th>
                         <th style="text-align:center;">Time Slot</th>
                         <th style="text-align:center;">Lane</th>
                       </tr>
@@ -54,7 +55,8 @@ export const sendRentalBookingConfirmationEmail = async ({
                         .map(
                           (booking: any) => `
                         <tr>
-                          <td style="text-align:center;">${moment(booking.date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                          <td style="text-align:center;">${moment(booking.date).format('ddd, MMM Do YY')}</td>
+                          <td style="text-align:center; text-transform:capitalize">${bookings.sport}</td>
                           <td style="text-align:center;">${booking.time_slot}</td>
                           <td style="text-align:center;">${booking.lane}</td>
                         </tr>
@@ -127,6 +129,7 @@ export const sendRentalBookingConfirmationEmail = async ({
                 <thead>
                   <tr style="background-color: #0ABAC3; color: white;">
                     <th style="text-align:center;">Date</th>
+                    <th style="text-align:center;">Sport</th>
                     <th style="text-align:center;">Time Slot</th>
                     <th style="text-align:center;">Lane</th>
                   </tr>
@@ -136,7 +139,8 @@ export const sendRentalBookingConfirmationEmail = async ({
                     .map(
                       (booking: any) => `
                       <tr>
-                        <td style="text-align:center;">${moment(booking.date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                        <td style="text-align:center;">${moment(booking.date).format('ddd, MMM Do YY')}</td>
+                        <td style="text-align:center;">${bookings.sport}</td>
                         <td style="text-align:center;">${booking.time_slot}</td>
                         <td style="text-align:center;">${booking.lane}</td>
                       </tr>
@@ -229,8 +233,8 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
                   <tr>
                     <td style="text-align:center;">${membership.package_name}</td>
                     <td style="text-align:center;">${membership.plan}</td>
-                    <td style="text-align:center;">${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-                    <td style="text-align:center;">${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                    <td style="text-align:center;">${moment(membership.issue_date).format('ddd, MMM Do YY')}</td>
+                    <td style="text-align:center;">${moment(membership.expiry_date).format('ddd, MMM Do YY')}</td>
                   </tr>
                 </tbody>
               </table>
@@ -285,8 +289,8 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
                     <tr>
                       <td style="text-align:center;">${membership.package_name}</td>
                       <td style="text-align:center;">${membership.plan}</td>
-                      <td style="text-align:center;">${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-                      <td style="text-align:center;">${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                      <td style="text-align:center;">${moment(membership.issue_date).format('ddd, MMM Do YY')}</td>
+                      <td style="text-align:center;">${moment(membership.expiry_date).format('ddd, MMM Do YY')}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -352,7 +356,7 @@ export const sendBundleCreditPackPurchasedConfirmationEmail = async ({
                     <td style="text-align:center;">${bundle.package}</td>
                     <td style="text-align:center;">${bundle.hours}</td>
                     <td style="text-align:center;">${bundle.piching_machine ? 'Yes' : 'No'}</td>
-                    <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YYYY')}</td>
+                    <td style="text-align:center;">${moment().format('ddd, MMM Do YYYY')}</td>
                   </tr>
                 </tbody>
               </table>
@@ -408,7 +412,7 @@ export const sendBundleCreditPackPurchasedConfirmationEmail = async ({
                     <td style="text-align:center;">${bundle.package}</td>
                     <td style="text-align:center;">${bundle.hours}</td>
                     <td style="text-align:center;">${bundle.piching_machine ? 'Yes' : 'No'}</td>
-                    <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YYYY')}</td>
+                    <td style="text-align:center;">${moment().format('ddd, MMM Do YYYY')}</td>
                   </tr>
                 </tbody>
               </table>
