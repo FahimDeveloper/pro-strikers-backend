@@ -61,7 +61,6 @@ const createFacilityReservationByUserIntoDB = async (
     await SlotBooking.deleteMany(
       {
         user: new mongoose.Types.ObjectId(id),
-        training: new mongoose.Types.ObjectId(facility_data.facility),
       },
       { session },
     );

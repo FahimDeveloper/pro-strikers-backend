@@ -4,8 +4,11 @@ import { IBrand } from './brand.interface';
 import { Brand } from './brand.model';
 
 const createBrandIntoDB = async (payload: IBrand, file: any) => {
-  const { url } = await uploadImageIntoCloduinary(file);
-  const result = await Brand.create({ ...payload, brand_logo: url });
+  if (file) {
+    const { url } = await uploadImageIntoCloduinary(file);
+    payload.brand_logo = url;
+  }
+  const result = await Brand.create(payload);
   return result;
 };
 

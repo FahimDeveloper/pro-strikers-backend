@@ -10,7 +10,15 @@ export interface IFacilitySchedule {
   price: number;
   ini_price: number;
   lanes: Array<string>;
+  // open_area?: IOpenArea;
   schedules: Array<IFacilityDaySchedule>;
+}
+
+export interface IOpenArea {
+  active: boolean;
+  durations: number;
+  ini_price: number;
+  price: number;
 }
 
 export interface IFacilityDaySchedule {

@@ -9,6 +9,14 @@ const createProduct = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'Product created succesfully');
 });
 
+const getProducts = catchAsync(async (req, res) => {
+  const { count, result } = await ProductServices.getProductsFromDB(
+    req.params.category_slug,
+    req.query,
+  );
+  sendResponse(res, httpStatus.OK, 'Products fetch succesfully', result, count);
+});
+
 const getAllProducts = catchAsync(async (req, res) => {
   const { count, result } = await ProductServices.getAllProductsFromDB(
     req.query,
@@ -34,6 +42,7 @@ const deleteProduct = catchAsync(async (req, res) => {
 
 export const ProductControllers = {
   createProduct,
+  getProducts,
   getAllProducts,
   getSingleProduct,
   updateProduct,

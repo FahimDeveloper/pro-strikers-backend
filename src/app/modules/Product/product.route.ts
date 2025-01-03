@@ -9,19 +9,21 @@ import { ProductValidations } from './product.validation';
 const route = express.Router();
 
 route.get(
-  '/products',
+  '/',
   authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.user),
   ProductControllers.getAllProducts,
 );
 
+route.get('/:category_slug', ProductControllers.getProducts);
+
 route.get(
-  '/products/:id',
+  '/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.user),
   ProductControllers.getSingleProduct,
 );
 
 route.post(
-  '/products/create',
+  '/create',
   upload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'gallery', maxCount: 5 },
@@ -36,7 +38,7 @@ route.post(
 );
 
 route.patch(
-  '/products/update/:id',
+  '/update/:id',
   upload.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'gallery', maxCount: 5 },
@@ -53,7 +55,7 @@ route.patch(
 );
 
 route.delete(
-  '/products/delete/:id',
+  '/delete/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   ProductControllers.deleteProduct,
 );

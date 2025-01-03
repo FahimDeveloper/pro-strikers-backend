@@ -1,30 +1,14 @@
 import express, { NextFunction, Request, Response } from 'express';
 import authMiddleware from '../../middlewares/authMiddleware';
 import { ROLE } from '../../utils/role';
+import { CategoryControllers } from './category.controllers';
 import validateRequest from '../../middlewares/validateRequest';
-import { BrandValidations } from './brand.validation';
-import { BrandControllers } from './brand.controller';
+import { CategoryValidations } from './category.validations';
 import { upload } from '../../middlewares/multer.middleware';
 
 const route = express.Router();
 
-route.get(
-  '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  BrandControllers.getAllBrands,
-);
-
-route.get(
-  '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  BrandControllers.getSingleBrand,
-);
-
-route.get(
-  '/category/:category',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  BrandControllers.getBrandsByCategory,
-);
+route.get('/', CategoryControllers.getAllCategories);
 
 route.post(
   '/create',
@@ -36,8 +20,8 @@ route.post(
     }
     next();
   },
-  validateRequest(BrandValidations.createValidation),
-  BrandControllers.createBrand,
+  validateRequest(CategoryValidations.createValidation),
+  CategoryControllers.createCategory,
 );
 
 route.patch(
@@ -50,14 +34,14 @@ route.patch(
     }
     next();
   },
-  validateRequest(BrandValidations.updateValidation),
-  BrandControllers.updateBrand,
+  validateRequest(CategoryValidations.updateValidation),
+  CategoryControllers.updateCategory,
 );
 
 route.delete(
   '/delete/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  BrandControllers.deleteBrand,
+  CategoryControllers.deleteCategory,
 );
 
-export const BrandRoutes = route;
+export const CategoryRoutes = route;

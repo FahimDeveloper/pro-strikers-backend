@@ -1,6 +1,9 @@
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
+import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { uploadMultipleImageIntoCloduinary } from '../../utils/uploadMultipleImageToCloudinary';
+import { Category } from '../Category/category.model';
 import { IProduct } from './product.interface';
 import { Product } from './product.model';
 
@@ -34,6 +37,32 @@ const updateProuctIntoDB = async (
   return result;
 };
 
+const getProductsFromDB = async (
+  category_slug: string,
+  query: Record<string, unknown>,
+) => {
+  const category = await Category.findOne({ slug: category_slug });
+  if (!category) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Products not found');
+  }
+  const ProductQuery = new QueryBuilder(
+    Product.find({ category: category?.name.toLowerCase() }).select([
+      'name',
+      'rating',
+      'offer_price',
+      'regular_price',
+      'thumbnail',
+    ]),
+    query,
+  ).paginate();
+  const result = await ProductQuery?.modelQuery;
+  const count = await ProductQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
 const getAllProductsFromDB = async (query: Record<string, unknown>) => {
   const ProductQuery = new QueryBuilder(Product.find(), query)
     .search(['name'])
@@ -59,6 +88,7 @@ const deleteProductFromDB = async (id: string) => {
 
 export const ProductServices = {
   createProductIntoDB,
+  getProductsFromDB,
   updateProuctIntoDB,
   getAllProductsFromDB,
   getSingleProductFromDB,

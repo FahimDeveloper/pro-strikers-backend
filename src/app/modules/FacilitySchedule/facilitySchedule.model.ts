@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 import {
   IFacilityDaySchedule,
   IFacilitySchedule,
+  IOpenArea,
 } from './facilitySchedule.interface';
 
 const facilityScheduleDaySchema = new Schema<IFacilityDaySchedule>(
@@ -21,7 +22,25 @@ const facilityScheduleDaySchema = new Schema<IFacilityDaySchedule>(
       type: String,
     },
   },
-  { _id: false },
+  { _id: false, versionKey: false },
+);
+
+const openAreaSchema = new Schema<IOpenArea>(
+  {
+    active: {
+      type: Boolean,
+    },
+    durations: {
+      type: Number,
+    },
+    ini_price: {
+      type: Number,
+    },
+    price: {
+      type: Number,
+    },
+  },
+  { _id: false, versionKey: false },
 );
 
 const facilityScheduleSchema = new Schema<IFacilitySchedule>(
@@ -54,6 +73,7 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
       type: Number,
       required: true,
     },
+    // open_area: openAreaSchema,
     lanes: {
       type: [String],
       required: true,

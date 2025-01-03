@@ -29,6 +29,7 @@ import { MembershipCancellationRoutes } from '../modules/MembershipCancellation/
 import { BundleCreditPackageRoutes } from '../modules/BundleCreditPack/bundleCreditPack.route';
 import { SizeRoutes } from '../modules/Size/size.route';
 import { ColorRoutes } from '../modules/Color/color.route';
+import { CategoryRoutes } from '../modules/Category/category.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -77,7 +78,7 @@ const mainRoutes = [
     route: PostRoutes,
   },
   {
-    path: '/store',
+    path: '/products',
     route: ProductRoutes,
   },
   {
@@ -151,6 +152,10 @@ const mainRoutes = [
   {
     path: '/colors',
     route: ColorRoutes,
+  },
+  {
+    path: '/categories',
+    route: CategoryRoutes,
   },
 ];
 

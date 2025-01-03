@@ -41,6 +41,26 @@ const createValidation = z.object({
         required_error: 'lane is required',
       },
     ),
+    // open_area: z
+    //   .object({
+    //     active: z.boolean({
+    //       invalid_type_error: 'active must be boolean',
+    //       required_error: 'active is required',
+    //     }),
+    //     durations: z.number({
+    //       invalid_type_error: 'durations must be number',
+    //       required_error: 'durations is required',
+    //     }),
+    //     ini_price: z.number({
+    //       invalid_type_error: 'ini_price must be number',
+    //       required_error: 'ini_price is required',
+    //     }),
+    //     price: z.number({
+    //       invalid_type_error: 'price must be number',
+    //       required_error: 'price is required',
+    //     }),
+    //   })
+    //   .optional(),
     schedules: z.array(
       z.object({
         day: z.string({
@@ -112,6 +132,26 @@ const updateValidation = z.object({
         },
       )
       .optional(),
+    // open_area: z
+    //   .object({
+    //     active: z.boolean({
+    //       invalid_type_error: 'active must be boolean',
+    //       required_error: 'active is required',
+    //     }),
+    //     durations: z.number({
+    //       invalid_type_error: 'durations must be number',
+    //       required_error: 'durations is required',
+    //     }),
+    //     ini_price: z.number({
+    //       invalid_type_error: 'ini_price must be number',
+    //       required_error: 'ini_price is required',
+    //     }),
+    //     price: z.number({
+    //       invalid_type_error: 'price must be number',
+    //       required_error: 'price is required',
+    //     }),
+    //   })
+    //   .optional(),
     schedules: z
       .array(
         z.object({
