@@ -10,10 +10,11 @@ const createValidation = z.object({
       invalid_type_error: 'category must be a string',
       required_error: 'category is required',
     }),
-    description: z.string({
-      invalid_type_error: 'description must be a string',
-      required_error: 'description is required',
-    }),
+    description: z
+      .string({
+        invalid_type_error: 'description must be a string',
+      })
+      .optional(),
   }),
 });
 

@@ -8,6 +8,7 @@ export interface IFacilityReservation {
   age: number;
   voucher_applied: boolean;
   facility: mongoose.Types.ObjectId;
+  payment: mongoose.Types.ObjectId;
   street_address: string;
   city: string;
   state: string;

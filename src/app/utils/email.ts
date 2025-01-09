@@ -185,6 +185,137 @@ export const sendRentalBookingConfirmationEmail = async ({
   return;
 };
 
+export const sendShopPurchaseConfirmationEmail = async ({
+  email,
+  data,
+  amount,
+  transactionId,
+}: {
+  email: string;
+  data: any[];
+  amount: number;
+  transactionId: string;
+}) => {
+  // Email to the user
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: email,
+    subject: 'ProStrikers - Purchase Confirmation',
+    html: `
+            <html>
+              <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+                  
+                  <!-- Logo Section -->
+                  <div style="text-align: center; margin-bottom: 20px;">
+                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                  </div>
+        
+                  <h2 style="color: #0ABAC3;">Purchase Confirmation - ProStrikers</h2>
+                  <p>Dear Customer,</p>
+                  <p>Thank you for your purchase at ProStrikers! Below are your order details:</p>
+                  
+                  <h3 style="color: #0ABAC3;">Order Details</h3>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                      <tr style="background-color: #0ABAC3; color: white;">
+                        <th style="text-align:center;">Product Info</th>
+                        <th style="text-align:center;">Quantity</th>
+                        <th style="text-align:center;">Total Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${data
+                        .map(
+                          product => `
+                        <tr>
+                          <td style="text-align:center;">${product.product_name}</td>
+                          <td style="text-align:center;">${product.quantity}</td>
+                          <td style="text-align:center;">$${product.total_price}</td>
+                        </tr>
+                      `,
+                        )
+                        .join('')}
+                    </tbody>
+                  </table>
+        
+                  <h3 style="color: #0ABAC3; margin-top: 20px;">Transaction Details</h3>
+                  <p><strong>Transaction ID:</strong> ${transactionId}</p>
+                  <p><strong>Total Amount:</strong> $${amount}</p>
+        
+                  <hr style="border: 1px solid #ccc; margin: 20px 0;">
+        
+                  <p>If you have any questions or need assistance, please don't hesitate to contact us.</p>
+                  
+                  <h3 style="color: #0ABAC3;">Contact Information</h3>
+                  <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
+                  <p>Phone: (916)-890-5834</p>
+                  <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
+        
+                  <p>Thank you for choosing ProStrikers! We hope to serve you again soon.</p>
+                </div>
+              </body>
+            </html>
+          `,
+  });
+
+  // Email to the admin
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'New Purchase Alert - ProStrikers',
+    html: `
+        <html>
+          <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+            <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+              
+              <!-- Logo Section -->
+              <div style="text-align: center; margin-bottom: 20px;">
+                  <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+              </div>
+  
+              <h2 style="color: #0ABAC3;">New Purchase Notification - ProStrikers</h2>
+              <p><strong>Customer Email:</strong> ${email}</p>
+              <h3 style="color: #0ABAC3;">Order Details</h3>
+              <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                  <tr style="background-color: #0ABAC3; color: white;">
+                    <th style="text-align:center;">Product Info</th>
+                    <th style="text-align:center;">Quantity</th>
+                    <th style="text-align:center;">Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data
+                    .map(
+                      product => `
+                      <tr>
+                        <td style="text-align:center;">${product.product_name}</td>
+                        <td style="text-align:center;">${product.quantity}</td>
+                        <td style="text-align:center;">$${product.total_price}</td>
+                      </tr>
+                    `,
+                    )
+                    .join('')}
+                </tbody>
+              </table>
+  
+              <h3 style="color: #0ABAC3; margin-top: 20px;">Transaction Details</h3>
+              <p><strong>Transaction ID:</strong> ${transactionId}</p>
+              <p><strong>Total Amount:</strong> $${amount}</p>
+  
+              <hr style="border: 1px solid #ccc; margin: 20px 0;">
+  
+              <p>Please verify the order and take the necessary steps to fulfill it.</p>
+            </div>
+          </body>
+        </html>
+      `,
+  });
+
+  return;
+};
+
 export const sendRentalBookingFailedNotifyEmail = async ({
   transactionId,
   amount,
@@ -267,6 +398,265 @@ export const sendRentalBookingFailedNotifyEmail = async ({
             <hr style="border: 1px solid #ccc; margin: 20px 0;">
 
             <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system (Stripe dashboard) and contact with the user for further assistance.</p>
+          </div>
+        </body>
+      </html>
+    `,
+  });
+};
+
+export const sendShopPurchaseFailedNotifyEmail = async ({
+  email,
+  transactionId,
+  amount,
+  data,
+}: {
+  email: string;
+  transactionId: string;
+  amount: number;
+  data: any[];
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'Shop Purchase Failed - ProStrikers',
+    html: `
+      <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+          <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+            
+            <!-- Logo Section -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+            </div>
+
+            <h2 style="color: #E74C3C;">Shop Purchase Failure Notification - ProStrikers</h2>
+            <p><strong>Customer Email:</strong> ${email}</p>
+
+            <h3 style="color: #E74C3C;">Transaction Details</h3>
+            <p><strong>Transaction ID:</strong> ${transactionId}</p>
+            <p><strong>Attempted Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+
+            <h3 style="color: #E74C3C;">Order Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+              <thead>
+                <tr style="background-color: #E74C3C; color: white;">
+                  <th style="text-align:center;">Product Name</th>
+                  <th style="text-align:center;">Quantity</th>
+                  <th style="text-align:center;">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data
+                  .map(
+                    product => `
+                    <tr>
+                      <td style="text-align:center;">${product.product_name}</td>
+                      <td style="text-align:center;">${product.quantity}</td>
+                      <td style="text-align:center;">$${product.total_price}</td>
+                    </tr>
+                  `,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+
+            <hr style="border: 1px solid #ccc; margin: 20px 0;">
+
+            <p style="color: #E74C3C;">The purchase process failed due to an issue. Please verify the payment information from the Payment Management System (e.g., Stripe Dashboard) and contact the customer for further assistance.</p>
+          </div>
+        </body>
+      </html>
+    `,
+  });
+};
+
+export const sendOrderCanceledByAdminNotifyEmail = async ({
+  email,
+  data,
+  text,
+}: {
+  email: string;
+  data: any;
+  text: string;
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${email}`,
+    subject: 'Your Order Has Been Canceled - ProStrikers',
+    html: `
+      <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+          <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+            
+            <!-- Logo Section -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+            </div>
+
+            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikes</h2>
+            <p>Dear user,</p>
+
+            <p>We regret to inform you that your order has been canceled. Below are the details of your canceled order:</p>
+
+            <h3 style="color: #E74C3C;">Order Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+              <thead>
+                <tr style="background-color: #E74C3C; color: white;">
+                  <th style="text-align:center;">Product</th>
+                  <th style="text-align:center;">Color</th>
+                  <th style="text-align:center;">Size</th>
+                  <th style="text-align:center;">Quantity</th>
+                  <th style="text-align:center;">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                      <td style="text-align:center;">${data?.product?.name}</td>
+                      <td style="text-align:center;">${data?.color}</td>
+                      <td style="text-align:center;">${data?.size}</td>
+                      <td style="text-align:center;">${data?.quantity}</td>
+                      <td style="text-align:center;">$${data?.total_price}</td>
+                    </tr>
+              </tbody>
+            </table>
+
+            <h3 style="color: #E74C3C;">Cancel Reason</h3>
+            <p>${text}</p>
+
+            <h3 style="color: #E74C3C;">Refund Process</h3>
+            <p>We understand that this may cause some inconvenience, and we would like to assure you that we are processing your refund as quickly as possible. The amount will be credited back to your original payment method, and you should see the refund shortly.</p>
+
+            <p>If you have any questions or concerns, feel free to reach out to us.</p>
+
+            <p style="color: #E74C3C;">Thank you for your understanding.</p>
+
+            <hr style="border: 1px solid #ccc; margin: 20px 0;">
+            <p>Best Regards, <br> The ProStrikers Team</p>
+          </div>
+        </body>
+      </html>
+    `,
+  });
+};
+
+export const sendOrderCanceledByUserNotifyEmail = async ({
+  email,
+  data,
+  text,
+}: {
+  email: string;
+  data: any;
+  text: string;
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${email}`,
+    subject: 'Your Order Has Been Canceled - ProStrikers',
+    html: `
+      <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+          <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+            
+            <!-- Logo Section -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+            </div>
+
+            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikes</h2>
+            <p>Dear ${data.first_name} ${data.last_name},</p>
+
+            <p>We regret to inform you that your order has been canceled. Below are the details of your canceled order:</p>
+
+            <h3 style="color: #E74C3C;">Order Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+              <thead>
+                <tr style="background-color: #E74C3C; color: white;">
+                  <th style="text-align:center;">Product</th>
+                  <th style="text-align:center;">Color</th>
+                  <th style="text-align:center;">Size</th>
+                  <th style="text-align:center;">Quantity</th>
+                  <th style="text-align:center;">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                      <td style="text-align:center;">${data?.product?.name}</td>
+                      <td style="text-align:center;">${data?.color}</td>
+                      <td style="text-align:center;">${data?.size}</td>
+                      <td style="text-align:center;">${data?.quantity}</td>
+                      <td style="text-align:center;">$${data?.total_price}</td>
+                    </tr>
+              </tbody>
+            </table>
+
+            <h3 style="color: #E74C3C;">Cancel Reason</h3>
+            <p>${text}</p>
+
+            <h3 style="color: #E74C3C;">Refund Process</h3>
+            <p>We understand that this may cause some inconvenience, and we would like to assure you that we are processing your refund as quickly as possible. The amount will be credited back to your original payment method, and you should see the refund shortly.</p>
+
+            <p>If you have any questions or concerns, feel free to reach out to us.</p>
+
+            <p style="color: #E74C3C;">Thank you for your understanding.</p>
+
+            <hr style="border: 1px solid #ccc; margin: 20px 0;">
+            <p>Best Regards, <br> The ProStrikers Team</p>
+          </div>
+        </body>
+      </html>
+    `,
+  });
+
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'User Order Cancellation Notification - ProStrikes',
+    html: `
+      <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+          <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+            
+            <!-- Logo Section -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+            </div>
+  
+            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikes</h2>
+            <p>Dear Admin,</p>
+  
+            <p>The following order has been canceled by the user. Please review the details below:</p>
+  
+            <h3 style="color: #E74C3C;">Order Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+              <thead>
+                <tr style="background-color: #E74C3C; color: white;">
+                  <th style="text-align:center;">Product</th>
+                  <th style="text-align:center;">Color</th>
+                  <th style="text-align:center;">Size</th>
+                  <th style="text-align:center;">Quantity</th>
+                  <th style="text-align:center;">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="text-align:center;">${data?.product?.name}</td>
+                  <td style="text-align:center;">${data?.color}</td>
+                  <td style="text-align:center;">${data?.size}</td>
+                  <td style="text-align:center;">${data?.quantity}</td>
+                  <td style="text-align:center;">$${data?.total_price}</td>
+                </tr>
+              </tbody>
+            </table>
+  
+            <h3 style="color: #E74C3C;">Cancel Reason</h3>
+            <p>${text}</p>
+  
+            <h3 style="color: #E74C3C;">Refund Process</h3>
+            <p>Please process the refund for this order as soon as possible. The amount should be credited back to the user's original payment method promptly to ensure customer satisfaction. Kindly prioritize this action to avoid any delays or inconvenience.</p>
+  
+            <hr style="border: 1px solid #ccc; margin: 20px 0;">
+            <p>Best Regards, <br> The ProStrikers Team</p>
           </div>
         </body>
       </html>

@@ -6,11 +6,13 @@ const sendResponse = <T>(
   message: string,
   result?: T | T[],
   count?: number,
+  summary?: any,
 ) => {
   return res.status(statusCode).json({
     message: message,
     count: count,
     results: result,
+    summary: summary,
   });
 };
 

@@ -14,13 +14,9 @@ route.get(
   ProductControllers.getAllProducts,
 );
 
-route.get('/:category_slug', ProductControllers.getProducts);
+route.get('/web', ProductControllers.getProducts);
 
-route.get(
-  '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.user),
-  ProductControllers.getSingleProduct,
-);
+route.get('/:id', ProductControllers.getSingleProduct);
 
 route.post(
   '/create',

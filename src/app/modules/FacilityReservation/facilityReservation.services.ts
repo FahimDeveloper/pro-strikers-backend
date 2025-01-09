@@ -64,8 +64,9 @@ const createFacilityReservationByUserIntoDB = async (
       },
       { session },
     );
+    const payment = await WebPayment.create([payment_info], { session });
+    facility_data.payment = payment[0]._id;
     await FacilityReservation.create([facility_data], { session });
-    await WebPayment.create([payment_info], { session });
     await sendRentalBookingConfirmationEmail({
       email: payment_info?.email,
       bookings: facility_data,
@@ -174,6 +175,121 @@ const deleteFacilityReservationFromDB = async (id: string) => {
   return result;
 };
 
+const getReservationFrequencyByMonthFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const { date } = query;
+  const [year, month] = (date as string)?.split('/').map(Number);
+  const daysInMonth = new Date(year, month, 0).getDate();
+
+  const allDays = Array.from({ length: daysInMonth }, (_, i) => ({
+    date: i + 1,
+    booking: 0,
+  }));
+
+  const bookings = await FacilityReservation.aggregate([
+    { $unwind: '$bookings' },
+    {
+      $addFields: {
+        bookingDate: {
+          $dateFromString: {
+            dateString: '$bookings.date',
+            format: '%Y-%m-%d',
+          },
+        },
+      },
+    },
+    {
+      $match: {
+        bookingDate: {
+          $gte: new Date(`${year}-${month}-01`),
+          $lt: new Date(`${year}-${month + 1}-01`),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $dayOfMonth: '$bookingDate' },
+        booking: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        date: '$_id',
+        booking: 1,
+        _id: 0,
+      },
+    },
+    { $sort: { date: 1 } },
+  ]);
+  const result = allDays.map(day => {
+    const found = bookings.find(b => b.date === day.date);
+    return found ? found : day;
+  });
+  return result;
+};
+
+const getReservationRevenueByMonthFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const { date } = query;
+  const [year, month] = (date as string)?.split('/').map(Number);
+
+  const analytics = await FacilityReservation.aggregate([
+    { $unwind: '$bookings' },
+    {
+      $addFields: {
+        bookingDate: {
+          $dateFromString: {
+            dateString: '$bookings.date',
+            format: '%Y-%m-%d',
+          },
+        },
+      },
+    },
+    {
+      $match: {
+        bookingDate: {
+          $gte: new Date(`${year}-${month}-01`),
+          $lt: new Date(`${year}-${month + 1}-01`),
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'webpayments',
+        localField: 'payment',
+        foreignField: '_id',
+        as: 'paymentInfo',
+      },
+    },
+    { $unwind: '$paymentInfo' },
+    {
+      $group: {
+        _id: { sport: '$sport', paymentId: '$paymentInfo._id' },
+        sport: { $first: '$sport' },
+        amount: { $first: '$paymentInfo.amount' },
+      },
+    },
+    {
+      $group: {
+        _id: '$sport',
+        totalRevenue: { $sum: '$amount' },
+      },
+    },
+    {
+      $project: {
+        type: '$_id',
+        value: '$totalRevenue',
+        _id: 0,
+      },
+    },
+    { $sort: { value: -1 } },
+  ]);
+
+  return analytics;
+};
+
 export const FacilityReservationServices = {
   createFacilityReservationIntoDB,
   updateFacilityReservationIntoDB,
@@ -183,4 +299,6 @@ export const FacilityReservationServices = {
   getFacilityReservationSlotsFromDB,
   createFacilityReservationByUserIntoDB,
   getUserFacilitiesReservationsFromDB,
+  getReservationFrequencyByMonthFromDB,
+  getReservationRevenueByMonthFromDB,
 };

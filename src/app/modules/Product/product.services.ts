@@ -1,9 +1,7 @@
-import httpStatus from 'http-status';
+import ProductQueryBuilder from '../../builder/ProductQueryBuilder';
 import QueryBuilder from '../../builder/QueryBuilder';
-import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { uploadMultipleImageIntoCloduinary } from '../../utils/uploadMultipleImageToCloudinary';
-import { Category } from '../Category/category.model';
 import { IProduct } from './product.interface';
 import { Product } from './product.model';
 
@@ -37,29 +35,18 @@ const updateProuctIntoDB = async (
   return result;
 };
 
-const getProductsFromDB = async (
-  category_slug: string,
-  query: Record<string, unknown>,
-) => {
-  const category = await Category.findOne({ slug: category_slug });
-  if (!category) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Products not found');
-  }
-  const ProductQuery = new QueryBuilder(
-    Product.find({ category: category?.name.toLowerCase() }).select([
-      'name',
-      'rating',
-      'offer_price',
-      'regular_price',
-      'thumbnail',
-    ]),
-    query,
-  ).paginate();
+const getProductsFromDB = async (query: Record<string, unknown>) => {
+  const ProductQuery = new ProductQueryBuilder(Product.find(), query)
+    .search(['name'])
+    .filter()
+    .paginate();
   const result = await ProductQuery?.modelQuery;
   const count = await ProductQuery?.countTotal();
+  const summary = await ProductQuery?.getSummary();
   return {
     count,
     result,
+    summary,
   };
 };
 

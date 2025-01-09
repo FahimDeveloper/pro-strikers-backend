@@ -19,6 +19,20 @@ const getAllOrders = catchAsync(async (req, res) => {
   );
 });
 
+const getUserOrders = catchAsync(async (req, res) => {
+  const { result, count } = await OrderServices.getUserOrdersFromDB(
+    req.params.email,
+    req.query,
+  );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Orders fetched successfully',
+    result,
+    count,
+  );
+});
+
 const getSingleOrder = catchAsync(async (req, res) => {
   const result = await OrderServices.getSingleOrderFromDB(req.params.id);
   sendResponse(res, httpStatus.OK, 'Order fetched successfully', result);
@@ -34,9 +48,14 @@ const deleteOrder = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Order deleted successfully');
 });
 
-const cancelOrder = catchAsync(async (req, res) => {
-  await OrderServices.cancelOrderFromDB(req.params.id, req.body);
-  sendResponse(res, httpStatus.OK, 'Order cancelled successfully');
+const cancelOrderByAdmin = catchAsync(async (req, res) => {
+  await OrderServices.cancelOrderByAdminFromDB(req.params.id, req.body);
+  sendResponse(res, httpStatus.OK, 'Order canceled successfully');
+});
+
+const cancelOrderByUser = catchAsync(async (req, res) => {
+  await OrderServices.cancelOrderByUserFromDB(req.params.id, req.body);
+  sendResponse(res, httpStatus.OK, 'Order canceled successfully');
 });
 
 export const OrderControllers = {
@@ -45,5 +64,7 @@ export const OrderControllers = {
   getSingleOrder,
   updateOrder,
   deleteOrder,
-  cancelOrder,
+  cancelOrderByAdmin,
+  cancelOrderByUser,
+  getUserOrders,
 };

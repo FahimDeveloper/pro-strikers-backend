@@ -5,7 +5,7 @@ const TimelineSchema: Schema = new Schema<ITimeline>(
   {
     status: {
       type: String,
-      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+      enum: ['pending', 'processing', 'shipped', 'delivered', 'canceled'],
       required: true,
     },
     note: {
@@ -22,6 +22,10 @@ const TimelineSchema: Schema = new Schema<ITimeline>(
 
 const OrderSchema: Schema = new Schema<IOrder>(
   {
+    order_id: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: true,
@@ -30,7 +34,7 @@ const OrderSchema: Schema = new Schema<IOrder>(
     product: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Store',
+      ref: 'Product',
     },
     quantity: {
       type: Number,
@@ -50,8 +54,36 @@ const OrderSchema: Schema = new Schema<IOrder>(
     },
     status: {
       type: String,
-      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+      enum: ['pending', 'processing', 'shipped', 'delivered', 'canceled'],
       default: 'pending',
+      required: true,
+    },
+    pickup_point: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    street_address: {
+      type: String,
+      required: true,
+    },
+    zip_code: {
+      type: String,
       required: true,
     },
     timeline: [TimelineSchema],

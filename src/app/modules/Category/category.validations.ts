@@ -2,14 +2,13 @@ import { z } from 'zod';
 
 const createValidation = z.object({
   body: z.object({
-    name: z.string({
-      invalid_type_error: 'name must be a string',
-      required_error: 'name is required',
-    }),
-    slug: z.string({
-      invalid_type_error: 'slug must be a string',
-      required_error: 'slug is required',
-    }),
+    name: z
+      .string({
+        invalid_type_error: 'name must be a string',
+        required_error: 'name is required',
+      })
+      .trim()
+      .toLowerCase(),
     description: z
       .string({
         invalid_type_error: 'description must be a string',
@@ -24,11 +23,8 @@ const updateValidation = z.object({
       .string({
         invalid_type_error: 'name must be a string',
       })
-      .optional(),
-    slug: z
-      .string({
-        invalid_type_error: 'slug must be a string',
-      })
+      .trim()
+      .toLowerCase()
       .optional(),
     description: z
       .string({

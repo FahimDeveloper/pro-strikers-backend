@@ -6,7 +6,7 @@ const brandSchema = new Schema<IBrand>(
     brand_name: { type: String, required: true },
     brand_logo: { type: String, required: true },
     category: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String },
   },
   { timestamps: true, versionKey: false },
 );

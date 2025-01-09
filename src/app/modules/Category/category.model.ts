@@ -7,11 +7,8 @@ const categorySchema = new Schema<ICategory>(
       type: String,
       required: true,
       unique: true,
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
+      lowercase: true,
+      trim: true,
     },
     image: {
       type: String,

@@ -24,13 +24,7 @@ export interface IProduct {
   };
   size: string;
   stock: number;
-  category:
-    | 'bats'
-    | 'gloves'
-    | 'soccer items'
-    | 'wearables'
-    | 'helmets'
-    | 'sports bags';
+  category: string;
   brand: string;
   variations?: IVariation[];
 }

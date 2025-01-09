@@ -84,14 +84,6 @@ const productSchema = new Schema<IProduct>(
     category: {
       type: String,
       required: true,
-      enum: [
-        'bats',
-        'gloves',
-        'soccer items',
-        'wearables',
-        'helmets',
-        'sports bags',
-      ],
     },
     brand: {
       type: String,

@@ -35,6 +35,11 @@ const FacilityReservationSchema = new Schema<IFacilityReservation>(
       ref: 'FacilitySchedules',
       required: true,
     },
+    payment: {
+      type: Schema.Types.ObjectId,
+      ref: 'WebPayment',
+      required: true,
+    },
     street_address: { type: String, required: true },
     voucher_applied: { type: Boolean, required: true, default: false },
     city: { type: String, required: true },

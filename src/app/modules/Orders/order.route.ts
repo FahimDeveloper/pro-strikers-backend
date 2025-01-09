@@ -7,10 +7,22 @@ import { OrderValidations } from './order.validation';
 
 const route = express.Router();
 
-route.get('/', OrderControllers.getAllOrders);
-route.get('/:id', OrderControllers.getSingleOrder);
+route.get(
+  '/',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  OrderControllers.getAllOrders,
+);
+
+route.get('/:email', authMiddleware(ROLE.user), OrderControllers.getUserOrders);
+
+route.get(
+  '/:id',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  OrderControllers.getSingleOrder,
+);
 route.post(
   '/create',
+  authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
   validateRequest(OrderValidations.createValidation),
   OrderControllers.createOrder,
 );
@@ -27,9 +39,15 @@ route.delete(
 );
 
 route.patch(
-  '/:id/cancel',
+  '/:id/admin/cancel',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
-  OrderControllers.cancelOrder,
+  OrderControllers.cancelOrderByAdmin,
+);
+
+route.patch(
+  '/:id/cancel',
+  authMiddleware(ROLE.user),
+  OrderControllers.cancelOrderByUser,
 );
 
 export const OrderRoutes = route;

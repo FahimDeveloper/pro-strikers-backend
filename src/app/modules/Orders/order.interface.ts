@@ -7,7 +7,7 @@ export interface IOrder {
   color: string;
   size: string;
   total_price: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';
   timeline: Array<ITimeline>;
   street_address: string;
   city: string;
@@ -16,10 +16,11 @@ export interface IOrder {
   zip_code: string;
   country: string;
   order_id: string;
+  pickup_point: string;
 }
 
 export interface ITimeline {
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';
   note: string;
   date: string;
 }
