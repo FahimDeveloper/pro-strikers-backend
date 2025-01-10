@@ -49,16 +49,16 @@ const createOrderIntoDB = async (payload: IOrderRequest) => {
 };
 
 const updateOrderIntoDB = async (id: string, timeline: ITimeline) => {
-  // const session = await mongoose.startSession();
-  // session.startTransaction();
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    const order = await Order.findById(id);
+    const order = await Order.findById(id).session(session);
     if (!order) {
       throw new Error('Order not found.');
     }
+    const product = await Product.findById(order.product).session(session);
 
-    const product = await Product.findById(order.product);
     if (!product) {
       throw new Error('Product not found.');
     }
@@ -80,28 +80,27 @@ const updateOrderIntoDB = async (id: string, timeline: ITimeline) => {
           throw new Error('Product variation or size/color mismatch.');
         }
       } else {
-        variation.stock = Math.max(0, variation?.stock! - order.quantity);
-        await product.save();
+        variation.stock = Math.max(0, variation.stock! - order.quantity);
       }
 
-      if (!variation) {
-        await product.save();
-      }
+      await product.save({ session });
     }
+
     const result = await Order.findByIdAndUpdate(
       id,
       {
         status: timeline.status,
         $push: { timeline: timeline },
       },
-      { new: true },
+      { new: true, session },
     );
 
+    await session.commitTransaction();
+    await session.endSession();
     return result;
   } catch (error: any) {
-    // await session.abortTransaction();
-    // await session.endSession();
-
+    await session.abortTransaction();
+    await session.endSession();
     throw new AppError(
       httpStatus.BAD_REQUEST,
       error?.message || 'Failed to update order status',
@@ -151,30 +150,74 @@ const cancelOrderByAdminFromDB = async (id: string, timeline: ITimeline) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const order = await Order.findById(id).populate({
-      path: 'product',
-      select: 'name',
-    });
+
+    // Find the order
+    const order = await Order.findById(id)
+      .populate({
+        path: 'product',
+        select: 'name',
+      })
+      .session(session);
+
+    if (!order) {
+      throw new Error('Order not found.');
+    }
+
+    // Find the product
+    const product = await Product.findById(order.product?._id).session(session);
+
+    if (!product) {
+      throw new Error('Product not found.');
+    }
+
+    // Update product stock if necessary
+    if (order.status !== 'pending') {
+      let variation = null;
+
+      if (product.variations) {
+        variation = product.variations.find(
+          (v: IVariation) =>
+            v?.color?.name === order.color && v.size === order.size,
+        );
+      }
+
+      if (!variation) {
+        if (product.color.name === order.color && product.size === order.size) {
+          product.stock = Math.max(0, product.stock + order.quantity);
+        } else {
+          throw new Error('Product variation or size/color mismatch.');
+        }
+      } else {
+        variation.stock = Math.max(0, variation?.stock! + order.quantity);
+      }
+
+      await product.save({ session });
+    }
+
+    // Update the order status and timeline
     const result = await Order.findByIdAndUpdate(
       id,
       {
         status: timeline.status,
-        $push: {
-          timeline: timeline,
-        },
+        $push: { timeline: timeline },
       },
-      { new: true, session: session },
+      { new: true, session },
     );
+
+    if (!result) {
+      throw new Error('Failed order cancellation, Try again');
+    }
+
+    // Send email notification (outside transaction)
     await sendOrderCanceledByAdminNotifyEmail({
       data: order,
       email: order?.email!,
       text: timeline?.note,
     });
-    if (!result) {
-      throw new Error('Failed order cancellation, Try again');
-    }
+    // Commit transaction
     await session.commitTransaction();
     await session.endSession();
+
     return result;
   } catch (error: any) {
     await session.abortTransaction();

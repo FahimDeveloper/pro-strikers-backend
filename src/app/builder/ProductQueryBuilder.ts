@@ -26,11 +26,13 @@ class ProductQueryBuilder<T extends IProduct> {
   // Search functionality
   search(searchableFields: any) {
     const search = this.query?.search;
+    const category = this.query?.category;
     if (search) {
       this.modelQuery = this.modelQuery.find({
         $or: searchableFields.map(
           (field: string) =>
             ({
+              category: category,
               [field]: { $regex: search, $options: 'i' },
             }) as FilterQuery<T>,
         ),
@@ -162,9 +164,29 @@ class ProductQueryBuilder<T extends IProduct> {
     return total;
   }
 
-  async getSummary() {
+  async getSummary(searchableFields: string[]) {
+    const { search, category } = this.query; // Add other filters as needed
+    const matchFilter: FilterQuery<T> = {};
+
+    // If search is provided, create a search filter
+    if (search) {
+      matchFilter.$or = searchableFields.map(
+        field =>
+          ({
+            [field]: { $regex: search, $options: 'i' },
+          }) as FilterQuery<T>,
+      );
+    }
+
+    // If category filter is provided, add it to the matchFilter
+    if (category) {
+      matchFilter.category = category as FilterQuery<T>['category']; // Adjust field name if needed
+    }
+
+    // Add other filters as needed, e.g., brand, price range, etc.
+
     const summary = await this.modelQuery.model.aggregate([
-      { $match: { category: this.query?.category } },
+      { $match: matchFilter }, // Match based on provided filters
       {
         $unwind: {
           path: '$variations',
@@ -220,18 +242,11 @@ class ProductQueryBuilder<T extends IProduct> {
           },
         },
       },
-      // Sorting the arrays to preserve order for each field like 'brands', 'colors', and 'sizes'
       {
         $project: {
           colors: { $setUnion: ['$colors', '$variation_colors'] },
           sizes: { $setUnion: ['$sizes', '$variation_sizes'] },
           brands: 1,
-          min_price: {
-            $min: [
-              { $ifNull: ['$main_offer_price', Infinity] },
-              { $min: '$variation_prices' },
-            ],
-          },
           max_price: {
             $max: [
               { $ifNull: ['$main_offer_price', -Infinity] },
@@ -240,7 +255,6 @@ class ProductQueryBuilder<T extends IProduct> {
           },
         },
       },
-      // Sort brands, colors, and sizes arrays explicitly to preserve order
       {
         $addFields: {
           sortedBrands: { $sortArray: { input: '$brands', sortBy: 1 } },
@@ -250,10 +264,10 @@ class ProductQueryBuilder<T extends IProduct> {
       },
       {
         $project: {
+          _id: 0,
           brands: '$sortedBrands',
           colors: '$sortedColors',
           sizes: '$sortedSizes',
-          min_price: 1,
           max_price: 1,
         },
       },

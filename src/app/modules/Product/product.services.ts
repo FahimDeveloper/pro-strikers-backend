@@ -42,7 +42,7 @@ const getProductsFromDB = async (query: Record<string, unknown>) => {
     .paginate();
   const result = await ProductQuery?.modelQuery;
   const count = await ProductQuery?.countTotal();
-  const summary = await ProductQuery?.getSummary();
+  const summary = await ProductQuery?.getSummary(['name']);
   return {
     count,
     result,
