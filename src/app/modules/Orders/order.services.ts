@@ -5,7 +5,6 @@ import { Order } from './order.model';
 import AppError from '../../errors/AppError';
 import mongoose from 'mongoose';
 import { Product } from '../Product/product.model';
-import WebPayment from '../WebPayment/webPayment.modal';
 import { IVariation } from '../Product/product.interface';
 import {
   sendOrderCanceledByAdminNotifyEmail,
@@ -13,6 +12,7 @@ import {
   sendShopPurchaseConfirmationEmail,
   sendShopPurchaseFailedNotifyEmail,
 } from '../../utils/email';
+import ShopPayment from '../ShopPayment/shopPayment.model';
 
 const createOrderIntoDB = async (payload: IOrderRequest) => {
   const session = await mongoose.startSession();
@@ -22,7 +22,7 @@ const createOrderIntoDB = async (payload: IOrderRequest) => {
     for (const order of orders) {
       await Order.create([order], { session });
     }
-    await WebPayment.create([payment_info], { session });
+    await ShopPayment.create([payment_info], { session });
     await sendShopPurchaseConfirmationEmail({
       email: payment_info.email,
       data: orders,

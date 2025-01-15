@@ -37,6 +37,10 @@ const attendanceSchema = z.object({
 const createValidation = z.object({
   body: z.object({
     bundle: z.object({
+      user: z.string({
+        required_error: 'User is required',
+        invalid_type_error: 'User must be a string',
+      }),
       package: z.string({
         required_error: 'Package is required',
         invalid_type_error: 'Package must be a string',
@@ -71,10 +75,6 @@ const createValidation = z.object({
     }),
     payment_info: z.object({
       transaction_id: z.string(),
-      user: z.string({
-        required_error: 'user is required',
-        invalid_type_error: 'user must be a string',
-      }),
       email: z
         .string({
           required_error: 'email is required',
@@ -84,10 +84,6 @@ const createValidation = z.object({
       amount: z.number({
         required_error: 'amount is required',
         invalid_type_error: 'amount must be a number',
-      }),
-      service: z.string({
-        required_error: 'service is required',
-        invalid_type_error: 'service must be a string',
       }),
     }),
   }),

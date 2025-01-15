@@ -11,6 +11,7 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import WebPayment from '../WebPayment/webPayment.modal';
 import moment from 'moment';
+import TournamentPayment from '../TournamentPayment/tournamentPayment.model';
 
 const createEventIndividualReservationIntoDB = async (
   payload: IEventIndividualReservation,
@@ -79,10 +80,16 @@ const createEventIndividualReservationByUserIntoDB = async (
         { $inc: { registration: 1 } },
         { new: true, runValidators: true, session },
       );
-      await EventIndividualReservation.create([event_data], {
+      const payment = await TournamentPayment.create([payment_info], {
         session,
       });
-      await WebPayment.create([payment_info], { session });
+      const createPayload = {
+        ...event_data,
+        payment: payment[0]._id,
+      };
+      await EventIndividualReservation.create([createPayload], {
+        session,
+      });
       await session.commitTransaction();
       await session.endSession();
       return;
@@ -112,10 +119,17 @@ const getAllEventIndividualReservationsFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const EventIndividualReservationQuery = new QueryBuilder(
-    EventIndividualReservation.find().populate('event'),
+    EventIndividualReservation.find().populate([
+      {
+        path: 'event',
+      },
+      {
+        path: 'user',
+      },
+    ]),
     query,
   )
-    .search(['player_name', 'email'])
+    .search(['email'])
     .filter()
     .paginate();
   const result = await EventIndividualReservationQuery.modelQuery;

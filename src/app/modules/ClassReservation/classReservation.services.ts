@@ -4,11 +4,11 @@ import AppError from '../../errors/AppError';
 import { ClassSchedule } from '../ClassSchedule/classSchedule.model';
 import {
   IClassReservation,
-  IClassReservationByUser,
+  IClassReservationRequest,
 } from './classReservation.interface';
 import { ClassReservation } from './classReservation.model';
 import mongoose from 'mongoose';
-import WebPayment from '../WebPayment/webPayment.modal';
+import ClassPayment from '../ClassPayment/classPayment.model';
 
 const createClassReservationIntoDB = async (payload: IClassReservation) => {
   const date = new Date(payload.class_date);
@@ -28,7 +28,7 @@ const createClassReservationIntoDB = async (payload: IClassReservation) => {
 };
 
 const createClassReservationByUserIntoDB = async (
-  payload: IClassReservationByUser,
+  payload: IClassReservationRequest,
 ) => {
   const session = await mongoose.startSession();
   const { class_data, payment_info } = payload;
@@ -37,17 +37,21 @@ const createClassReservationByUserIntoDB = async (
     const date = new Date(class_data.class_date);
     const kidsClass = await ClassSchedule.findById(class_data.class);
     if (!kidsClass) {
-      throw new Error('Class not found');
+      throw new Error('Training not found');
     }
     const count = await ClassReservation.find({
       _id: kidsClass._id,
       day: date,
     }).countDocuments();
     if (count >= kidsClass.capacity) {
-      throw new Error('Class capacity exceeded');
+      throw new Error('Training capacity exceeded');
     }
-    await ClassReservation.create([class_data], { session });
-    await WebPayment.create([payment_info], { session });
+    const payment = await ClassPayment.create([payment_info], { session });
+    const createPayload = {
+      ...class_data,
+      payment: payment[0]._id,
+    };
+    await ClassReservation.create([createPayload], { session });
     await session.commitTransaction();
     await session.endSession();
     return;
@@ -78,13 +82,16 @@ const getAllClassesReservationsFromDB = async (
         path: 'class',
       },
       {
+        path: 'user',
+      },
+      {
         path: 'trainer',
         select: 'first_name last_name',
       },
     ]),
     query,
   )
-    .search(['email', 'phone'])
+    .search(['email'])
     .filter()
     .paginate();
   const result = await classReservationQuery?.modelQuery;

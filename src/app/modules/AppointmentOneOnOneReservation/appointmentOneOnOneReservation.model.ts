@@ -14,11 +14,12 @@ const AppointmentBookingsSchema = new Schema(
 const appointmentOneOnOneReservationSchema =
   new Schema<IAppointmentOneOnOneReservation>(
     {
-      first_name: { type: String, required: true },
-      last_name: { type: String, required: true },
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
       email: { type: String, required: true },
-      phone: { type: String, required: true },
-      age: { type: Number, required: true },
       appointment: {
         type: Schema.Types.ObjectId,
         ref: 'OneAppointmentSchedule',
@@ -29,12 +30,13 @@ const appointmentOneOnOneReservationSchema =
         ref: 'Admin',
         required: true,
       },
+      payment: {
+        type: Schema.Types.ObjectId,
+        ref: 'AppointmentPayment',
+        required: true,
+      },
       voucher_applied: { type: Boolean, required: true, default: false },
-      street_address: { type: String, required: true },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
       sport: { type: String, required: true },
-      zip_code: { type: String, required: true },
       bookings: { type: [AppointmentBookingsSchema], required: true },
     },
     { versionKey: false, timestamps: true },

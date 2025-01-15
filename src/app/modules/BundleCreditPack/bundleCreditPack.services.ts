@@ -12,6 +12,7 @@ import {
   sendBundleCreditPackPurchasedConfirmationEmail,
   sendBundleCreditPurchaseFailedNotifyEmail,
 } from '../../utils/email';
+import FacilityPayment from '../FacilityPayment/facilityPayment.model';
 
 const purchaseBundleCreditPackageIntoDB = async (
   payload: IBundleCreditPackPurchase,
@@ -20,8 +21,12 @@ const purchaseBundleCreditPackageIntoDB = async (
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    await BundleCreditPackage.create([bundle], { session });
-    await WebPayment.create([payment_info], { session });
+    const payment = await FacilityPayment.create([payment_info], { session });
+    const createPayload = {
+      ...bundle,
+      payment_id: payment[0]._id,
+    };
+    await BundleCreditPackage.create([createPayload], { session });
     await sendBundleCreditPackPurchasedConfirmationEmail({
       email: payment_info.email,
       bundle: bundle,
@@ -51,7 +56,11 @@ const getAllPurchsaedBundleCreditPackageFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const bundleCreditPackQuery = new QueryBuilder(
-    BundleCreditPackage.find(),
+    BundleCreditPackage.find().populate([
+      {
+        path: 'user',
+      },
+    ]),
     query,
   )
     .search(['email'])

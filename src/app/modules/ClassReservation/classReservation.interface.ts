@@ -1,29 +1,23 @@
 import mongoose from 'mongoose';
 
 export interface IClassReservation {
-  first_name: string;
-  last_name: string;
+  user: mongoose.Types.ObjectId;
   email: string;
-  phone: string;
-  age: number;
   class: mongoose.Types.ObjectId;
   street_address: string;
   voucher_applied: boolean;
-  city: string;
-  state: string;
+  payment: mongoose.Types.ObjectId;
   sport: string;
   class_date: string;
-  zip_code: string;
   trainer: mongoose.Types.ObjectId;
 }
 
-export interface IClassReservationByUser {
+export interface IClassReservationRequest {
   class_data: IClassReservation;
   payment_info: {
     transaction_id: string;
-    user: mongoose.Types.ObjectId;
+    trainer: mongoose.Types.ObjectId;
     amount: number;
     email: string;
-    service: string;
   };
 }

@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 import {
   IAttendance,
   IAttendanceTime,
@@ -31,6 +31,16 @@ const bundleCreditPackageSchema = new Schema<IBundleCreditPack>(
     package: {
       type: String,
       required: true,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
+    payment: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'FacilityPayment',
     },
     email: {
       type: String,

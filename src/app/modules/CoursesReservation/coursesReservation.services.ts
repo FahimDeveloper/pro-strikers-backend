@@ -4,15 +4,15 @@ import AppError from '../../errors/AppError';
 import { CourseSchedule } from '../CourseSchedule/courseSchedule.model';
 import {
   ICourseReservation,
-  ICourseReservationByUser,
+  ICourseReservationRequest,
 } from './coursesReservation.interface';
 import { CourseReservation } from './coursesReservation.model';
 import mongoose from 'mongoose';
 import WebPayment from '../WebPayment/webPayment.modal';
 import moment from 'moment';
+import BootcampPayment from '../BootcampPayment/bootcampPayment.model';
 
 const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
-  console.log(payload);
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
@@ -52,7 +52,7 @@ const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
 };
 
 const createCourseReservationByUserIntoDB = async (
-  payload: ICourseReservationByUser,
+  payload: ICourseReservationRequest,
 ) => {
   const session = await mongoose.startSession();
   const { course_data, payment_info } = payload;
@@ -60,9 +60,7 @@ const createCourseReservationByUserIntoDB = async (
     session.startTransaction();
     const checkCourse = await CourseSchedule.findById(course_data.course);
     if (!checkCourse) {
-      throw new Error('Bootcamp not found, Please enter a valid Bootcamp ID');
-    } else if (checkCourse?.sport !== course_data.sport) {
-      throw new Error('Reservation sport and bootcamp sport not match');
+      throw new Error('Bootcamp not found');
     } else if (checkCourse.capacity === checkCourse.enrolled) {
       throw new Error('Course is fully booked, please choose another course');
     } else {
@@ -71,8 +69,12 @@ const createCourseReservationByUserIntoDB = async (
         { $inc: { enrolled: 1 } },
         { new: true, runValidators: true, session },
       );
-      await CourseReservation.create([course_data], { session });
-      await WebPayment.create([payment_info], { session });
+      const payment = await BootcampPayment.create([payment_info], { session });
+      const createPayload = {
+        ...course_data,
+        payment: payment[0]._id,
+      };
+      await CourseReservation.create([createPayload], { session });
       await session.commitTransaction();
       await session.endSession();
       return;
@@ -102,6 +104,9 @@ const getAllCoursesReservationsFromDB = async (
     CourseReservation.find().populate([
       {
         path: 'course',
+      },
+      {
+        path: 'user',
       },
       {
         path: 'trainer',

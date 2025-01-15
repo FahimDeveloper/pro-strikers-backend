@@ -1,28 +1,21 @@
 import mongoose from 'mongoose';
 
 export interface ICourseReservation {
-  first_name: string;
-  last_name: string;
+  user: mongoose.Types.ObjectId;
   email: string;
-  phone: string;
-  age: number;
   course: mongoose.Types.ObjectId;
-  street_address: string;
   voucher_applied: boolean;
-  city: string;
-  state: string;
+  payment: mongoose.Types.ObjectId;
   sport: string;
   trainer: mongoose.Types.ObjectId;
-  zip_code: string;
 }
 
-export interface ICourseReservationByUser {
+export interface ICourseReservationRequest {
   course_data: ICourseReservation;
   payment_info: {
     transaction_id: string;
-    user: mongoose.Types.ObjectId;
+    trainer: mongoose.Types.ObjectId;
     amount: number;
     email: string;
-    service: string;
   };
 }

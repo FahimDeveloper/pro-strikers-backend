@@ -30,6 +30,13 @@ import { BundleCreditPackageRoutes } from '../modules/BundleCreditPack/bundleCre
 import { SizeRoutes } from '../modules/Size/size.route';
 import { ColorRoutes } from '../modules/Color/color.route';
 import { CategoryRoutes } from '../modules/Category/category.route';
+import { AppointmentPaymentRoutes } from '../modules/AppointmentPayment/appointmentPayment.route';
+import { MembershipPaymentRoutes } from '../modules/MembershipPayment/membershipPayment.route';
+import { ClassPaymentRoutes } from '../modules/ClassPayment/classPayment.route';
+import { ShopPaymentRoutes } from '../modules/ShopPayment/shopPayment.route';
+import { BootcampPaymentRoutes } from '../modules/BootcampPayment/bootcampPayment.route';
+import { FacilityPaymentRoutes } from '../modules/FacilityPayment/facilityPayment.route';
+import { TournamentPaymentRoutes } from '../modules/TournamentPayment/tournamentPayment.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -128,6 +135,34 @@ const mainRoutes = [
   {
     path: '/reservations/events/group',
     route: EventGroupReservationRoutes,
+  },
+  {
+    path: '/appointment/payments',
+    route: AppointmentPaymentRoutes,
+  },
+  {
+    path: '/membership/payments',
+    route: MembershipPaymentRoutes,
+  },
+  {
+    path: '/class/payments',
+    route: ClassPaymentRoutes,
+  },
+  {
+    path: '/shop/payments',
+    route: ShopPaymentRoutes,
+  },
+  {
+    path: '/bootcamp/payments',
+    route: BootcampPaymentRoutes,
+  },
+  {
+    path: '/facility/payments',
+    route: FacilityPaymentRoutes,
+  },
+  {
+    path: '/tournament/payments',
+    route: TournamentPaymentRoutes,
   },
   {
     path: '/payments',

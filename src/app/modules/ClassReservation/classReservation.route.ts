@@ -9,7 +9,7 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   ClassReservationController.getAllClassesReservation,
 );
 
@@ -21,7 +21,7 @@ route.get(
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   ClassReservationController.getSingleClassReservation,
 );
 
@@ -34,21 +34,21 @@ route.post(
 
 route.post(
   '/admin/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   validateRequest(ClassReservationValidations.createByAdminValidation),
   ClassReservationController.createClassReservation,
 );
 
 route.patch(
   '/admin/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   validateRequest(ClassReservationValidations.updateByAdminValidation),
   ClassReservationController.updateClassReservation,
 );
 
 route.delete(
   '/admin/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   ClassReservationController.deleteClassReservation,
 );
 

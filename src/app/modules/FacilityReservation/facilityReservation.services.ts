@@ -9,12 +9,12 @@ import { FacilityReservation } from './facilityReservation.model';
 import { SlotBooking } from '../SlotBooking/slotBooking.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
-import { User } from '../User/user.model';
 import WebPayment from '../WebPayment/webPayment.modal';
 import {
   sendRentalBookingConfirmationEmail,
   sendRentalBookingFailedNotifyEmail,
 } from '../../utils/email';
+import FacilityPayment from '../FacilityPayment/facilityPayment.model';
 
 const createFacilityReservationIntoDB = async (
   id: string,
@@ -64,9 +64,12 @@ const createFacilityReservationByUserIntoDB = async (
       },
       { session },
     );
-    const payment = await WebPayment.create([payment_info], { session });
-    facility_data.payment = payment[0]._id;
-    await FacilityReservation.create([facility_data], { session });
+    const payment = await FacilityPayment.create([payment_info], { session });
+    const createPayload = {
+      ...facility_data,
+      payment: payment[0]._id,
+    };
+    await FacilityReservation.create([createPayload], { session });
     await sendRentalBookingConfirmationEmail({
       email: payment_info?.email,
       bookings: facility_data,
@@ -76,6 +79,7 @@ const createFacilityReservationByUserIntoDB = async (
     await session.endSession();
     return;
   } catch (err: any) {
+    console.log(err?.message);
     await session.abortTransaction();
     await session.endSession();
     await sendRentalBookingFailedNotifyEmail({
@@ -106,10 +110,13 @@ const getAllFacilitiesReservationsFromDB = async (
       {
         path: 'facility',
       },
+      {
+        path: 'user',
+      },
     ]),
     query,
   )
-    .search(['user_email'])
+    .search(['email'])
     .filter()
     .paginate();
   const result = await facilityReservationQuery?.modelQuery;

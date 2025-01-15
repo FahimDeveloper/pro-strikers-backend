@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 
 export interface IBundleCreditPack {
+  user: mongoose.Types.ObjectId;
   package: string;
   email: string;
   hours: number;
   validity: string;
   attendance: Array<IAttendance>;
   piching_machine: boolean;
+  payment: mongoose.Types.ObjectId;
   active: boolean;
 }
 
@@ -14,10 +16,8 @@ export interface IBundleCreditPackPurchase {
   bundle: IBundleCreditPack;
   payment_info: {
     transaction_id: string;
-    user: mongoose.Types.ObjectId;
     amount: number;
     email: string;
-    service: string;
   };
 }
 

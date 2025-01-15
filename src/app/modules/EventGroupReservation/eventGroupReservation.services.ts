@@ -8,8 +8,8 @@ import {
 import { EventGroupReservation } from './eventGroupReservation.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
-import WebPayment from '../WebPayment/webPayment.modal';
 import moment from 'moment';
+import TournamentPayment from '../TournamentPayment/tournamentPayment.model';
 
 const createEventGroupReservationIntoDB = async (
   payload: IEventGroupReservation,
@@ -78,10 +78,16 @@ const createEventGroupReservationByUserIntoDB = async (
         { $inc: { registration: 1 } },
         { new: true, runValidators: true, session },
       );
-      await EventGroupReservation.create([event_data], {
+      const payment = await TournamentPayment.create([payment_info], {
         session,
       });
-      await WebPayment.create([payment_info], { session });
+      const createPayload = {
+        ...event_data,
+        payment: payment[0]._id,
+      };
+      await EventGroupReservation.create([createPayload], {
+        session,
+      });
       await session.commitTransaction();
       await session.endSession();
       return;
@@ -108,7 +114,14 @@ const getAllEventGroupReservationsFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const EventGroupReservationQuery = new QueryBuilder(
-    EventGroupReservation.find().populate('event'),
+    EventGroupReservation.find().populate([
+      {
+        path: 'event',
+      },
+      {
+        path: 'user',
+      },
+    ]),
     query,
   )
     .search(['team_name', 'email'])

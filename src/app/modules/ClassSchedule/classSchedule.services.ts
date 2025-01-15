@@ -41,134 +41,120 @@ const getSingleClassFromDB = async (id: string) => {
 
 const getClassByQueryDataFromDB = async (query: Record<string, unknown>) => {
   const queryDate = new Date(query.date as string);
-  const date = new Date();
-  if (
-    queryDate.getDate() < date.getDate() &&
-    queryDate.getMonth() <= date.getMonth()
-  ) {
-    return [];
-  } else {
-    const daysOfWeek = [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-    ];
+  const daysOfWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  const dayOfWeek = daysOfWeek[queryDate.getUTCDay()];
 
-    const dayOfWeek = daysOfWeek[queryDate.getDay()];
+  const matchConditions: Record<string, any> = {
+    sport: query.sport,
+    schedules: {
+      $elemMatch: {
+        day: dayOfWeek,
+        active: true,
+      },
+    },
+  };
 
-    const matchConditions: Record<string, any> = {
-      sport: query.sport,
-      schedules: {
-        $elemMatch: {
-          day: dayOfWeek,
-          active: true,
-        },
-      },
-    };
+  if (query.trainer) {
+    matchConditions.trainer = new mongoose.Types.ObjectId(
+      query.trainer as string,
+    );
+  }
 
-    if (query.trainer) {
-      matchConditions.trainer = new mongoose.Types.ObjectId(
-        query.trainer as string,
-      );
-    }
+  const results = await ClassSchedule.aggregate([
+    { $match: matchConditions },
 
-    const results = await ClassSchedule.aggregate([
-      {
-        $match: matchConditions,
+    { $unwind: '$schedules' },
+
+    {
+      $match: {
+        'schedules.day': dayOfWeek,
+        'schedules.active': true,
       },
-      {
-        $unwind: '$schedules',
-      },
-      {
-        $match: {
-          'schedules.day': dayOfWeek,
-          'schedules.active': true,
-        },
-      },
-      {
-        $lookup: {
-          from: 'classesreservations',
-          let: { classId: '$_id', reservationDate: query.date },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ['$class', '$$classId'] },
-                    {
-                      $gte: [
-                        '$date',
-                        new Date(queryDate.setUTCHours(0, 0, 0, 0)),
-                      ],
-                    },
-                    {
-                      $lt: [
-                        '$date',
-                        new Date(queryDate.setUTCHours(23, 59, 59, 999)),
-                      ],
-                    },
-                  ],
-                },
+    },
+    {
+      $lookup: {
+        from: 'classreservations',
+        let: { classId: '$_id', classScheduleDay: dayOfWeek },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$class', '$$classId'] },
+                  {
+                    $gte: [
+                      { $toDate: '$class_date' },
+                      new Date(queryDate.setHours(0, 0, 0, 0)),
+                    ],
+                  },
+                  {
+                    $lt: [
+                      { $toDate: '$class_date' },
+                      new Date(queryDate.setHours(23, 59, 59, 999)),
+                    ],
+                  },
+                ],
               },
             },
-            {
-              $count: 'enrolledCount',
-            },
-          ],
-          as: 'enrollmentData',
-        },
-      },
-      {
-        $addFields: {
-          enrolled: {
-            $ifNull: [
-              { $arrayElemAt: ['$enrollmentData.enrolledCount', 0] },
-              0,
-            ],
           },
-        },
+          { $count: 'enrolledCount' },
+        ],
+        as: 'enrollmentData',
       },
-      {
-        $lookup: {
-          from: 'admins',
-          localField: 'trainer',
-          foreignField: '_id',
-          as: 'trainer',
-        },
-      },
-      {
-        $unwind: {
-          path: '$trainer',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          class_name: 1,
-          sport: 1,
-          price: 1,
-          description: 1,
-          enrolled: 1,
-          schedules: 1,
-          createdAt: 1,
-          updatedAt: 1,
-          capacity: 1,
-          trainer: {
-            _id: '$trainer._id',
-            first_name: '$trainer.first_name',
-            last_name: '$trainer.last_name',
-          },
-        },
-      },
-    ]).exec();
+    },
 
-    return results;
-  }
+    {
+      $addFields: {
+        enrolled: {
+          $ifNull: [{ $arrayElemAt: ['$enrollmentData.enrolledCount', 0] }, 0],
+        },
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'admins',
+        localField: 'trainer',
+        foreignField: '_id',
+        as: 'trainer',
+      },
+    },
+
+    {
+      $unwind: {
+        path: '$trainer',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $project: {
+        _id: 1,
+        class_name: 1,
+        sport: 1,
+        price: 1,
+        description: 1,
+        enrolled: 1,
+        schedules: 1,
+        capacity: 1,
+        trainer: {
+          _id: '$trainer._id',
+          first_name: '$trainer.first_name',
+          last_name: '$trainer.last_name',
+        },
+      },
+    },
+  ]);
+
+  return results;
 };
 
 const getClassByIdDateFromDB = async ({

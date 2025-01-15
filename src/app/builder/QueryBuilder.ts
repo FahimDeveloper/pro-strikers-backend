@@ -25,7 +25,7 @@ class QueryBuilder<T> {
 
   filter() {
     const queryObj = { ...this.query };
-    const excludeFields = ['search', 'limit', 'page', 'fields'];
+    const excludeFields = ['search', 'limit', 'page', 'fields', 'month'];
     excludeFields.forEach(el => delete queryObj[el]);
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
     return this;
@@ -37,6 +37,24 @@ class QueryBuilder<T> {
       this.modelQuery = this.modelQuery.find({
         $gte: start_date,
         $lte: end_date,
+      });
+    }
+    return this;
+  }
+
+  monthFilter() {
+    const { month } = this?.query;
+    if (month) {
+      const date = new Date(month as string);
+      const year = date.getUTCFullYear();
+      const monthIndex = date.getUTCMonth() + 1;
+      this.modelQuery = this.modelQuery.find({
+        $expr: {
+          $and: [
+            { $eq: [{ $year: '$createdAt' }, year] },
+            { $eq: [{ $month: '$createdAt' }, monthIndex] },
+          ],
+        } as FilterQuery<T>['createdAt'],
       });
     }
     return this;
@@ -56,6 +74,7 @@ class QueryBuilder<T> {
   //     this.modelQuery = this.modelQuery.select(fields);
   //     return this;
   //   }
+
   async countTotal() {
     const totalQueries = this.modelQuery.getFilter();
     const total = await this.modelQuery.model.countDocuments(totalQueries);

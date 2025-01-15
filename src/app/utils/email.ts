@@ -340,9 +340,7 @@ export const sendRentalBookingFailedNotifyEmail = async ({
             </div>
 
             <h2 style="color: #E74C3C;">Purchase Failure Notification - ProStrikers</h2>
-            <p><strong>Customer:</strong> ${bookings.first_name} ${bookings.last_name}</p>
-            <p><strong>Email:</strong> ${bookings.email}</p>
-            <p><strong>Phone:</strong> ${bookings.phone}</p>
+            <p><strong>Customer:</strong> ${bookings.email}</p>
 
             <h3 style="color: #E74C3C;">Transaction Details</h3>
             <p><strong>Transaction ID:</strong> ${transactionId}</p>

@@ -6,9 +6,9 @@ import {
   IAppointmentOneOnOneReservationByUser,
 } from './appointmentOneOnOneReservation.interface';
 import { AppointmentOneOnOneReservation } from './appointmentOneOnOneReservation.model';
-import WebPayment from '../WebPayment/webPayment.modal';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import AppointmentPayment from '../AppointmentPayment/appointmentPayment.model';
 
 const createAppointmentOneOnOneReservationIntoDB = async (
   id: string,
@@ -53,10 +53,16 @@ const createAppointmentOneOnOneReservationByUserIntoDB = async (
       },
       session,
     );
-    await AppointmentOneOnOneReservation.create([appointment_data], {
+    const payment = await AppointmentPayment.create([payment_info], {
       session,
     });
-    await WebPayment.create([payment_info], { session });
+    const createPayload = {
+      ...appointment_data,
+      payment: payment[0]._id,
+    };
+    await AppointmentOneOnOneReservation.create([createPayload], {
+      session,
+    });
     await session.commitTransaction();
     await session.endSession();
     return;
@@ -108,6 +114,9 @@ const getAllAppointmentOneOnOneReservationsFromDB = async (
   const appointmentOneOnOneReservationQuery = new QueryBuilder(
     AppointmentOneOnOneReservation.find().populate([
       {
+        path: 'user',
+      },
+      {
         path: 'trainer',
         select: 'first_name last_name',
       },
@@ -118,7 +127,7 @@ const getAllAppointmentOneOnOneReservationsFromDB = async (
     ]),
     query,
   )
-    .search(['email', 'phone'])
+    .search(['email'])
     .filter()
     .paginate();
   const result = await appointmentOneOnOneReservationQuery?.modelQuery;

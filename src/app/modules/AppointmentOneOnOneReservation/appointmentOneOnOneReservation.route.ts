@@ -9,7 +9,7 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   AppointmentOneOnOneReservationController.getAllAppointmentOneOnOneReservations,
 );
 
@@ -26,13 +26,13 @@ route.get(
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   AppointmentOneOnOneReservationController.getSingleAppointmentOneOnOneReservation,
 );
 
 route.post(
   '/admin/create/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   validateRequest(
     AppointmentOneOnOneReservationValidations.createByAdminValidation,
   ),
@@ -50,7 +50,7 @@ route.post(
 
 route.patch(
   '/admin/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   validateRequest(
     AppointmentOneOnOneReservationValidations.updateByAdminValidation,
   ),
@@ -59,7 +59,7 @@ route.patch(
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
   AppointmentOneOnOneReservationController.deleteAppointmentOneOnOneReservation,
 );
 
