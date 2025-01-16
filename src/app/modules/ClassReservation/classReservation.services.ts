@@ -9,22 +9,49 @@ import {
 import { ClassReservation } from './classReservation.model';
 import mongoose from 'mongoose';
 import ClassPayment from '../ClassPayment/classPayment.model';
+import { User } from '../User/user.model';
 
-const createClassReservationIntoDB = async (payload: IClassReservation) => {
-  const date = new Date(payload.class_date);
-  const kidsClass = await ClassSchedule.findById(payload.class);
-  if (!kidsClass) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Class not found,');
+const createClassReservationByAdminIntoDB = async (
+  payload: IClassReservationRequest,
+) => {
+  const session = await mongoose.startSession();
+  const { class_data, payment_info } = payload;
+  try {
+    session.startTransaction();
+    const date = new Date(class_data.class_date);
+    const kidsClass = await ClassSchedule.findById(class_data.class);
+    if (!kidsClass) {
+      throw new Error('Training not found');
+    }
+    const count = await ClassReservation.find({
+      _id: kidsClass._id,
+      day: date,
+    }).countDocuments();
+    if (count >= kidsClass.capacity) {
+      throw new Error('Training capacity exceeded');
+    }
+    const user = await User.findOne({ email: class_data?.email });
+    if (!user) {
+      throw new Error('User not found, Please check the email is valid or not');
+    }
+    class_data.user = user?._id as any;
+    const payment = await ClassPayment.create([payment_info], { session });
+    const createPayload = {
+      ...class_data,
+      payment: payment[0]._id,
+    };
+    await ClassReservation.create([createPayload], { session });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.message || 'Failed class reservation',
+    );
   }
-  const count = await ClassReservation.find({
-    _id: kidsClass._id,
-    day: date,
-  }).countDocuments();
-  if (count >= kidsClass.capacity) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Class capacity exceeded');
-  }
-  const result = await ClassReservation.create(payload);
-  return result;
 };
 
 const createClassReservationByUserIntoDB = async (
@@ -63,14 +90,6 @@ const createClassReservationByUserIntoDB = async (
       error?.message || 'Failed class reservation',
     );
   }
-};
-
-const updateClassReservationIntoDB = async (
-  id: string,
-  payload: Partial<IClassReservation>,
-) => {
-  const result = await ClassReservation.findByIdAndUpdate(id, payload);
-  return result;
 };
 
 const getAllClassesReservationsFromDB = async (
@@ -138,10 +157,9 @@ const deleteClassReservationFromDB = async (id: string) => {
 };
 
 export const ClassReservationServices = {
-  createClassReservationIntoDB,
+  createClassReservationByAdminIntoDB,
   createClassReservationByUserIntoDB,
   getUserClassReservationListFromDB,
-  updateClassReservationIntoDB,
   getAllClassesReservationsFromDB,
   getSingleClassReservationFromDB,
   deleteClassReservationFromDB,

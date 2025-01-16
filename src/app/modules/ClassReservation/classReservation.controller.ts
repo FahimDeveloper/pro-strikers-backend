@@ -3,8 +3,8 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { ClassReservationServices } from './classReservation.services';
 
-const createClassReservation = catchAsync(async (req, res) => {
-  await ClassReservationServices.createClassReservationIntoDB(req.body);
+const createClassReservationByAdmin = catchAsync(async (req, res) => {
+  await ClassReservationServices.createClassReservationByAdminIntoDB(req.body);
   sendResponse(res, httpStatus.CREATED, 'Resevation create success');
 });
 
@@ -49,25 +49,16 @@ const getSingleClassReservation = catchAsync(async (req, res) => {
   );
 });
 
-const updateClassReservation = catchAsync(async (req, res) => {
-  await ClassReservationServices.updateClassReservationIntoDB(
-    req.params.id,
-    req.body,
-  );
-  sendResponse(res, httpStatus.OK, 'Class reservation updated succesfully');
-});
-
 const deleteClassReservation = catchAsync(async (req, res) => {
   await ClassReservationServices.deleteClassReservationFromDB(req.params.id);
   sendResponse(res, httpStatus.OK, 'Class reservation deleted succesfully');
 });
 
 export const ClassReservationController = {
-  createClassReservation,
+  createClassReservationByAdmin,
   createClassReservationByUser,
   getUserClassReservationList,
   getAllClassesReservation,
   getSingleClassReservation,
-  updateClassReservation,
   deleteClassReservation,
 };

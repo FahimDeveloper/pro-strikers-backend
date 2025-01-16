@@ -1,62 +1,17 @@
 import mongoose from 'mongoose';
 import { z } from 'zod';
 
-const createByAdminValidation = z.object({
-  body: z.object({
-    user: z
-      .string({
-        required_error: 'User ID is required',
-        invalid_type_error: 'User must be a valid ObjectId',
-      })
-      .refine(val => mongoose.Types.ObjectId.isValid(val), {
-        message: 'Invalid ObjectId',
-      }),
-    email: z
-      .string({
-        required_error: 'Email is required',
-        invalid_type_error: 'Email must be a string',
-      })
-      .email({
-        message: 'Invalid email address',
-      }),
-    class: z
-      .string({
-        required_error: 'Class ID is required',
-        invalid_type_error: 'Class must be a valid ObjectId',
-      })
-      .refine(val => mongoose.Types.ObjectId.isValid(val), {
-        message: 'Invalid ObjectId',
-      }),
-    trainer: z
-      .string({
-        required_error: 'Trainer ID is required',
-        invalid_type_error: 'Trainer must be a valid ObjectId',
-      })
-      .refine(val => mongoose.Types.ObjectId.isValid(val), {
-        message: 'Invalid ObjectId',
-      }),
-    class_date: z.string({
-      required_error: 'Class date is required',
-      invalid_type_error: 'Class date must be a string',
-    }),
-    sport: z.string({
-      required_error: 'Sport is required',
-      invalid_type_error: 'Sport must be a string',
-    }),
-  }),
-});
-
-const createByUserValidation = z.object({
+const createValidation = z.object({
   body: z.object({
     class_data: z.object({
       user: z
         .string({
-          required_error: 'User ID is required',
           invalid_type_error: 'User must be a valid ObjectId',
         })
         .refine(val => mongoose.Types.ObjectId.isValid(val), {
           message: 'Invalid ObjectId',
-        }),
+        })
+        .optional(),
       email: z
         .string({
           required_error: 'Email is required',
@@ -67,7 +22,7 @@ const createByUserValidation = z.object({
         }),
       class: z
         .string({
-          required_error: 'Class ID is required',
+          required_error: 'Class is required',
           invalid_type_error: 'Class must be a valid ObjectId',
         })
         .refine(val => mongoose.Types.ObjectId.isValid(val), {
@@ -75,7 +30,7 @@ const createByUserValidation = z.object({
         }),
       trainer: z
         .string({
-          required_error: 'Trainer ID is required',
+          required_error: 'Trainer is required',
           invalid_type_error: 'Trainer must be a valid ObjectId',
         })
         .refine(val => mongoose.Types.ObjectId.isValid(val), {
@@ -117,54 +72,6 @@ const createByUserValidation = z.object({
   }),
 });
 
-const updateByAdminValidation = z.object({
-  body: z.object({
-    user: z
-      .string({
-        required_error: 'User ID is required',
-      })
-      .refine(val => mongoose.Types.ObjectId.isValid(val), {
-        message: 'Invalid ObjectId',
-      }),
-    email: z
-      .string({
-        invalid_type_error: 'Email must be a string',
-      })
-      .email({
-        message: 'Invalid email address',
-      })
-      .optional(),
-    class: z
-      .string({
-        invalid_type_error: 'Class must be a valid ObjectId',
-      })
-      .refine(val => mongoose.Types.ObjectId.isValid(val), {
-        message: 'Invalid ObjectId',
-      })
-      .optional(),
-    trainer: z
-      .string({
-        invalid_type_error: 'Trainer must be a valid ObjectId',
-      })
-      .refine(val => mongoose.Types.ObjectId.isValid(val), {
-        message: 'Invalid ObjectId',
-      })
-      .optional(),
-    class_date: z
-      .string({
-        invalid_type_error: 'class date must be a string',
-      })
-      .optional(),
-    sport: z
-      .string({
-        invalid_type_error: 'Sport must be a string',
-      })
-      .optional(),
-  }),
-});
-
 export const ClassReservationValidations = {
-  createByAdminValidation,
-  createByUserValidation,
-  updateByAdminValidation,
+  createValidation,
 };

@@ -2,8 +2,7 @@ import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import {
   IFacilityReservation,
-  IFacilityReservationByAdmin,
-  IFacilityReservationByUser,
+  IFacilityReservationRequest,
 } from './facilityReservation.interface';
 import { FacilityReservation } from './facilityReservation.model';
 import { SlotBooking } from '../SlotBooking/slotBooking.model';
@@ -15,27 +14,37 @@ import {
   sendRentalBookingFailedNotifyEmail,
 } from '../../utils/email';
 import FacilityPayment from '../FacilityPayment/facilityPayment.model';
+import { User } from '../User/user.model';
 
-const createFacilityReservationIntoDB = async (
+const createFacilityReservationByAdminIntoDB = async (
   id: string,
-  payload: IFacilityReservationByAdmin,
+  payload: IFacilityReservationRequest,
 ) => {
-  const { facility_data, amount } = payload;
   const session = await mongoose.startSession();
+  const { facility_data, payment_info } = payload;
   try {
     session.startTransaction();
+    const user = await User.findOne({ email: facility_data?.email });
+    if (!user) {
+      throw new Error('User not found, Please check the email is valid or not');
+    }
     await SlotBooking.deleteMany(
       {
         user: new mongoose.Types.ObjectId(id),
-        training: new mongoose.Types.ObjectId(facility_data.facility),
       },
       { session },
     );
-    await FacilityReservation.create([facility_data], { session });
+    const payment = await FacilityPayment.create([payment_info], { session });
+    const createPayload = {
+      ...facility_data,
+      user: user?._id,
+      payment: payment[0]._id,
+    };
+    await FacilityReservation.create([createPayload], { session });
     await sendRentalBookingConfirmationEmail({
-      email: facility_data?.email,
+      email: payment_info?.email,
       bookings: facility_data,
-      amount: amount,
+      amount: payment_info?.amount,
     });
     await session.commitTransaction();
     await session.endSession();
@@ -43,16 +52,18 @@ const createFacilityReservationIntoDB = async (
   } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      err?.message || 'Failed your facility reservation',
-    );
+    await sendRentalBookingFailedNotifyEmail({
+      bookings: facility_data,
+      amount: payment_info?.amount,
+      transactionId: payment_info?.transaction_id,
+    });
+    throw new AppError(httpStatus.BAD_REQUEST, err?.message);
   }
 };
 
 const createFacilityReservationByUserIntoDB = async (
   id: string,
-  payload: IFacilityReservationByUser,
+  payload: IFacilityReservationRequest,
 ) => {
   const session = await mongoose.startSession();
   const { facility_data, payment_info } = payload;
@@ -298,7 +309,7 @@ const getReservationRevenueByMonthFromDB = async (
 };
 
 export const FacilityReservationServices = {
-  createFacilityReservationIntoDB,
+  createFacilityReservationByAdminIntoDB,
   updateFacilityReservationIntoDB,
   getAllFacilitiesReservationsFromDB,
   getSingleFacilityReservationFromDB,

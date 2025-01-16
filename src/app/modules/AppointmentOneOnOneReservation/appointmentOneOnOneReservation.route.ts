@@ -33,28 +33,15 @@ route.get(
 route.post(
   '/admin/create/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
-  validateRequest(
-    AppointmentOneOnOneReservationValidations.createByAdminValidation,
-  ),
+  validateRequest(AppointmentOneOnOneReservationValidations.createValidation),
   AppointmentOneOnOneReservationController.createAppointmentOneOnOneReservation,
 );
 
 route.post(
   '/user/create/:id',
   authMiddleware(ROLE.user),
-  validateRequest(
-    AppointmentOneOnOneReservationValidations.createByUserValidation,
-  ),
+  validateRequest(AppointmentOneOnOneReservationValidations.createValidation),
   AppointmentOneOnOneReservationController.createAppointmentOneOnOneReservationByUser,
-);
-
-route.patch(
-  '/admin/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
-  validateRequest(
-    AppointmentOneOnOneReservationValidations.updateByAdminValidation,
-  ),
-  AppointmentOneOnOneReservationController.updateAppointmentOneOnOneReservation,
 );
 
 route.delete(

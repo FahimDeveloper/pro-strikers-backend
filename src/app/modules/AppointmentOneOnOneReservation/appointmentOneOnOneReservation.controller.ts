@@ -4,7 +4,7 @@ import sendResponse from '../../utils/sendResponse';
 import { AppointmentOneOnOneReservationServices } from './appointmentOneOnOneReservation.services';
 
 const createAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
-  await AppointmentOneOnOneReservationServices.createAppointmentOneOnOneReservationIntoDB(
+  await AppointmentOneOnOneReservationServices.createAppointmentOneOnOneReservationByAdminIntoDB(
     req.params.id,
     req.body,
   );
@@ -77,18 +77,6 @@ const getSingleAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
   );
 });
 
-const updateAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
-  await AppointmentOneOnOneReservationServices.updateAppointmentOneOnOneReservationIntoDB(
-    req.params.id,
-    req.body,
-  );
-  sendResponse(
-    res,
-    httpStatus.OK,
-    'Appointment One On One reservation updated succesfully',
-  );
-});
-
 const deleteAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
   await AppointmentOneOnOneReservationServices.deleteAppointmentOneOnOneReservationFromDB(
     req.params.id,
@@ -106,7 +94,6 @@ export const AppointmentOneOnOneReservationController = {
   getUserAppointmentOneOnOneReservationList,
   getAllAppointmentOneOnOneReservations,
   getSingleAppointmentOneOnOneReservation,
-  updateAppointmentOneOnOneReservation,
   deleteAppointmentOneOnOneReservation,
   getAppointmentOneOnOneReservationSlots,
 };

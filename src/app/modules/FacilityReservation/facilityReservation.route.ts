@@ -49,15 +49,8 @@ route.post(
 route.post(
   '/admin/create/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
-  validateRequest(FacilityReservationValidations.createByAdminValidation),
-  FacilityReservationController.createFacilityReservation,
-);
-
-route.patch(
-  '/admin/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
-  validateRequest(FacilityReservationValidations.updateByAdminValidation),
-  FacilityReservationController.updateFacilityReservation,
+  validateRequest(FacilityReservationValidations.createValidation),
+  FacilityReservationController.createFacilityReservationByAdmin,
 );
 
 route.delete(

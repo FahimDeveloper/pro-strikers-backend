@@ -31,7 +31,7 @@ export interface IFacilityReservationByAdmin {
   amount: number;
 }
 
-export interface IFacilityReservationByUser {
+export interface IFacilityReservationRequest {
   facility_data: IFacilityReservation;
   payment_info: {
     transaction_id: string;

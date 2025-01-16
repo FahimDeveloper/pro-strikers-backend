@@ -17,7 +17,7 @@ export interface IAppointmentBookings {
   training: mongoose.Types.ObjectId;
 }
 
-export interface IAppointmentOneOnOneReservationByUser {
+export interface IAppointmentOneOnOneReservationRequest {
   appointment_data: IAppointmentOneOnOneReservation;
   payment_info: {
     transaction_id: string;

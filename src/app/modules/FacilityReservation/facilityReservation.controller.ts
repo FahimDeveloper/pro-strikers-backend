@@ -3,8 +3,8 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { FacilityReservationServices } from './facilityReservation.services';
 
-const createFacilityReservation = catchAsync(async (req, res) => {
-  await FacilityReservationServices.createFacilityReservationIntoDB(
+const createFacilityReservationByAdmin = catchAsync(async (req, res) => {
+  await FacilityReservationServices.createFacilityReservationByAdminIntoDB(
     req.params.id,
     req.body,
   );
@@ -115,7 +115,7 @@ const getReservationRevenueByMonth = catchAsync(async (req, res) => {
 });
 
 export const FacilityReservationController = {
-  createFacilityReservation,
+  createFacilityReservationByAdmin,
   getAllFacilitiesReservation,
   getSingleFacilityReservation,
   updateFacilityReservation,

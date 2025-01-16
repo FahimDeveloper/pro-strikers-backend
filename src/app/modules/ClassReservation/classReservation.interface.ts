@@ -4,7 +4,6 @@ export interface IClassReservation {
   user: mongoose.Types.ObjectId;
   email: string;
   class: mongoose.Types.ObjectId;
-  street_address: string;
   voucher_applied: boolean;
   payment: mongoose.Types.ObjectId;
   sport: string;

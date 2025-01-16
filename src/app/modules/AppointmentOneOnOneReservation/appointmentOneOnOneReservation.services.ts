@@ -1,30 +1,43 @@
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { SlotBooking } from '../SlotBooking/slotBooking.model';
-import {
-  IAppointmentOneOnOneReservation,
-  IAppointmentOneOnOneReservationByUser,
-} from './appointmentOneOnOneReservation.interface';
+import { IAppointmentOneOnOneReservationRequest } from './appointmentOneOnOneReservation.interface';
 import { AppointmentOneOnOneReservation } from './appointmentOneOnOneReservation.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import AppointmentPayment from '../AppointmentPayment/appointmentPayment.model';
+import { User } from '../User/user.model';
 
-const createAppointmentOneOnOneReservationIntoDB = async (
+const createAppointmentOneOnOneReservationByAdminIntoDB = async (
   id: string,
-  payload: IAppointmentOneOnOneReservation,
+  payload: IAppointmentOneOnOneReservationRequest,
 ) => {
+  const { appointment_data, payment_info } = payload;
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
+    const user = await User.findOne({ email: appointment_data?.email });
+    if (!user) {
+      throw new Error('User not found, Please check the email is valid or not');
+    }
     await SlotBooking.deleteMany(
       {
         user: new mongoose.Types.ObjectId(id),
-        training: new mongoose.Types.ObjectId(payload.appointment),
+        training: new mongoose.Types.ObjectId(appointment_data.appointment),
       },
       session,
     );
-    await AppointmentOneOnOneReservation.create([payload], { session });
+    const payment = await AppointmentPayment.create([payment_info], {
+      session,
+    });
+    const createPayload = {
+      ...appointment_data,
+      user: user?._id,
+      payment: payment[0]._id,
+    };
+    await AppointmentOneOnOneReservation.create([createPayload], {
+      session,
+    });
     await session.commitTransaction();
     await session.endSession();
     return;
@@ -40,7 +53,7 @@ const createAppointmentOneOnOneReservationIntoDB = async (
 
 const createAppointmentOneOnOneReservationByUserIntoDB = async (
   id: string,
-  payload: IAppointmentOneOnOneReservationByUser,
+  payload: IAppointmentOneOnOneReservationRequest,
 ) => {
   const { appointment_data, payment_info } = payload;
   const session = await mongoose.startSession();
@@ -71,17 +84,6 @@ const createAppointmentOneOnOneReservationByUserIntoDB = async (
     await session.endSession();
     throw new Error(error?.message || 'Failed to create reservation');
   }
-};
-
-const updateAppointmentOneOnOneReservationIntoDB = async (
-  id: string,
-  payload: Partial<IAppointmentOneOnOneReservation>,
-) => {
-  const result = await AppointmentOneOnOneReservation.findByIdAndUpdate(
-    id,
-    payload,
-  );
-  return result;
 };
 
 const getAppointmentOneOnOneReservationSlotsFromDB = async (
@@ -150,6 +152,9 @@ const getUserAppointmentOneOnOneReservationListFromDB = async (
       {
         path: 'appointment',
       },
+      {
+        path: 'user',
+      },
     ]),
     query,
   )
@@ -174,9 +179,8 @@ const deleteAppointmentOneOnOneReservationFromDB = async (id: string) => {
 };
 
 export const AppointmentOneOnOneReservationServices = {
-  createAppointmentOneOnOneReservationIntoDB,
+  createAppointmentOneOnOneReservationByAdminIntoDB,
   createAppointmentOneOnOneReservationByUserIntoDB,
-  updateAppointmentOneOnOneReservationIntoDB,
   getAllAppointmentOneOnOneReservationsFromDB,
   getSingleAppointmentOneOnOneReservationFromDB,
   getUserAppointmentOneOnOneReservationListFromDB,
