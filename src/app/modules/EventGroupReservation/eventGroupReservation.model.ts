@@ -9,7 +9,6 @@ const eventGroupMemberSchema = new Schema<IEventGroupMembers>(
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
     email: { type: String, required: true },
-    age: { type: Number, required: true },
     contact: { type: String, required: true },
   },
   { _id: false, versionKey: false },

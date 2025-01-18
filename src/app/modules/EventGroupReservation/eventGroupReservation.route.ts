@@ -28,15 +28,15 @@ route.get(
 route.post(
   '/user/create',
   authMiddleware(ROLE.user),
-  validateRequest(EventGroupResrvationValidations.createByUserValidation),
+  validateRequest(EventGroupResrvationValidations.createValidation),
   EventGroupReservationController.createEventGroupReservationByuser,
 );
 
 route.post(
   '/admin/create',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
-  validateRequest(EventGroupResrvationValidations.createByAdminValidation),
-  EventGroupReservationController.createEventGroupReservation,
+  validateRequest(EventGroupResrvationValidations.createValidation),
+  EventGroupReservationController.createEventGroupReservationByAdmin,
 );
 
 route.patch(

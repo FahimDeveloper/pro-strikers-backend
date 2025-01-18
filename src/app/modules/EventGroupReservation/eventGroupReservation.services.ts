@@ -3,49 +3,62 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { Event } from '../Events/events.model';
 import {
   IEventGroupReservation,
-  IEventGroupReservationByUser,
+  IEventGroupReservationRequest,
 } from './eventGroupReservation.interface';
 import { EventGroupReservation } from './eventGroupReservation.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import moment from 'moment';
 import TournamentPayment from '../TournamentPayment/tournamentPayment.model';
+import { User } from '../User/user.model';
 
-const createEventGroupReservationIntoDB = async (
-  payload: IEventGroupReservation,
+const createEventGroupReservationByAdminIntoDB = async (
+  payload: IEventGroupReservationRequest,
 ) => {
+  const { event_data, payment_info } = payload;
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
+    const user = await User.findOne({ email: event_data?.email });
+    if (!user) {
+      throw new Error('User not found, Please check the email is valid or not');
+    }
     const checkEvent = await Event.findOne({
-      _id: payload.event,
-      sport: payload.sport,
+      _id: event_data.event,
+      sport: event_data.sport,
       event_type: 'group',
     });
     if (!checkEvent) {
       throw new Error('Event not found, Please check event Id and event sport');
-    } else {
-      const endDate = new Date(checkEvent?.registration_end);
-      if (new Date().getDate() > endDate.getDate()) {
-        throw new Error(
-          `This event registration period has been closed ${moment(endDate).format('dddd, MMMM Do YYYY')}`,
-        );
-      } else if (checkEvent.allowed_registrations <= checkEvent.registration) {
-        throw new Error(
-          'Event is fully registered, please choose another event',
-        );
-      } else {
-        await Event.findByIdAndUpdate(
-          payload.event,
-          { $inc: { registration: 1 } },
-          { new: true, runValidators: true, session },
-        );
-        await EventGroupReservation.create([payload], { session });
-        await session.commitTransaction();
-        await session.endSession();
-        return;
-      }
     }
+    const endDate = new Date(checkEvent?.registration_end);
+    if (new Date().getDate() > endDate.getDate()) {
+      throw new Error(
+        `This event registration period has been closed ${moment(endDate).format('dddd, MMMM Do YYYY')}`,
+      );
+    }
+    if (checkEvent.allowed_registrations === checkEvent.registration) {
+      throw new Error('Event is fully registered, please choose another event');
+    }
+    await Event.findByIdAndUpdate(
+      event_data.event,
+      { $inc: { registration: 1 } },
+      { new: true, runValidators: true, session },
+    );
+    const payment = await TournamentPayment.create([payment_info], {
+      session,
+    });
+    const createPayload = {
+      ...event_data,
+      user: user?._id,
+      payment: payment[0]._id,
+    };
+    await EventGroupReservation.create([createPayload], {
+      session,
+    });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
@@ -57,7 +70,7 @@ const createEventGroupReservationIntoDB = async (
 };
 
 const createEventGroupReservationByUserIntoDB = async (
-  payload: IEventGroupReservationByUser,
+  payload: IEventGroupReservationRequest,
 ) => {
   const { event_data, payment_info } = payload;
   const session = await mongoose.startSession();
@@ -70,28 +83,34 @@ const createEventGroupReservationByUserIntoDB = async (
     });
     if (!checkEvent) {
       throw new Error('Event not found, Please check event Id and event sport');
-    } else if (checkEvent.allowed_registrations === checkEvent.registration) {
-      throw new Error('Event is fully registered, please choose another event');
-    } else {
-      await Event.findByIdAndUpdate(
-        event_data.event,
-        { $inc: { registration: 1 } },
-        { new: true, runValidators: true, session },
-      );
-      const payment = await TournamentPayment.create([payment_info], {
-        session,
-      });
-      const createPayload = {
-        ...event_data,
-        payment: payment[0]._id,
-      };
-      await EventGroupReservation.create([createPayload], {
-        session,
-      });
-      await session.commitTransaction();
-      await session.endSession();
-      return;
     }
+    const endDate = new Date(checkEvent?.registration_end);
+    if (new Date().getDate() > endDate.getDate()) {
+      throw new Error(
+        `This event registration period has been closed ${moment(endDate).format('dddd, MMMM Do YYYY')}`,
+      );
+    }
+    if (checkEvent.allowed_registrations === checkEvent.registration) {
+      throw new Error('Event is fully registered, please choose another event');
+    }
+    await Event.findByIdAndUpdate(
+      event_data.event,
+      { $inc: { registration: 1 } },
+      { new: true, runValidators: true, session },
+    );
+    const payment = await TournamentPayment.create([payment_info], {
+      session,
+    });
+    const createPayload = {
+      ...event_data,
+      payment: payment[0]._id,
+    };
+    await EventGroupReservation.create([createPayload], {
+      session,
+    });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
@@ -163,7 +182,7 @@ const deleteEventGroupReservationFromDB = async (id: string) => {
 };
 
 export const EventGroupReservationServices = {
-  createEventGroupReservationIntoDB,
+  createEventGroupReservationByAdminIntoDB,
   updateEventGroupReservationIntoDB,
   getAllEventGroupReservationsFromDB,
   getSingleEventGroupReservationFromDB,

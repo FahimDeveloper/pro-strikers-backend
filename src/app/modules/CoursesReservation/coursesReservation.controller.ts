@@ -3,8 +3,10 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { CourseReservationServices } from './coursesReservation.services';
 
-const createCourseReservation = catchAsync(async (req, res) => {
-  await CourseReservationServices.createCourseReservationIntoDB(req.body);
+const createCourseReservationByAdmin = catchAsync(async (req, res) => {
+  await CourseReservationServices.createCourseReservationByAdminIntoDB(
+    req.body,
+  );
   sendResponse(res, httpStatus.CREATED, 'Reservation create success');
 });
 
@@ -66,7 +68,7 @@ const deleteCourseReservation = catchAsync(async (req, res) => {
 });
 
 export const CourseReservationController = {
-  createCourseReservation,
+  createCourseReservationByAdmin,
   createCourseReservationByUser,
   getUserCourseReservationList,
   getAllCoursesReservation,

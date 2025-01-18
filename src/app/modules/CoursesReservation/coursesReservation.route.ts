@@ -28,27 +28,20 @@ route.get(
 route.post(
   '/user/create',
   authMiddleware(ROLE.user),
-  validateRequest(courseReservationValidations.createByUserValidation),
+  validateRequest(courseReservationValidations.createValidation),
   CourseReservationController.createCourseReservationByUser,
 );
 
 route.post(
   '/admin/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
-  validateRequest(courseReservationValidations.createByAdminValidation),
-  CourseReservationController.createCourseReservation,
-);
-
-route.patch(
-  '/admin/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
-  validateRequest(courseReservationValidations.updateByAdminValidation),
-  CourseReservationController.updateCourseReservation,
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  validateRequest(courseReservationValidations.createValidation),
+  CourseReservationController.createCourseReservationByAdmin,
 );
 
 route.delete(
   '/admin/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
+  authMiddleware(ROLE.superAdmin, ROLE.admin),
   CourseReservationController.deleteCourseReservation,
 );
 

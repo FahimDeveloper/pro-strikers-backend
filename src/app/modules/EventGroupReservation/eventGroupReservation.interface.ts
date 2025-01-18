@@ -11,7 +11,7 @@ export interface IEventGroupReservation {
   payment: mongoose.Types.ObjectId;
 }
 
-export interface IEventGroupReservationByUser {
+export interface IEventGroupReservationRequest {
   event_data: IEventGroupReservation;
   payment_info: {
     transaction_id: string;
@@ -23,7 +23,6 @@ export interface IEventGroupReservationByUser {
 export interface IEventGroupMembers {
   first_name: string;
   last_name: string;
-  age: number;
   email: string;
   contact: string;
 }

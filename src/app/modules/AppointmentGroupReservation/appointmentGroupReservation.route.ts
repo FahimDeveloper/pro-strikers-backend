@@ -28,28 +28,15 @@ route.get(
 route.post(
   '/user/create',
   authMiddleware(ROLE.user),
-  validateRequest(
-    AppointmentGroupReservationValidations.createByUserValidation,
-  ),
+  validateRequest(AppointmentGroupReservationValidations.createValidation),
   AppointmentGroupReservationController.createAppointmentGroupReservationByUser,
 );
 
 route.post(
   '/admin/create',
   authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
-  validateRequest(
-    AppointmentGroupReservationValidations.createByAdminValidation,
-  ),
-  AppointmentGroupReservationController.createAppointmentGroupReservation,
-);
-
-route.patch(
-  '/admin/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
-  validateRequest(
-    AppointmentGroupReservationValidations.updateByAdminValidation,
-  ),
-  AppointmentGroupReservationController.updateAppointmentGroupReservation,
+  validateRequest(AppointmentGroupReservationValidations.createValidation),
+  AppointmentGroupReservationController.createAppointmentGroupReservationByAdmin,
 );
 
 route.delete(

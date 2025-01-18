@@ -9,7 +9,7 @@ export interface IEventIndividualReservation {
   sport: string;
 }
 
-export interface IEventIndividualReservationByUser {
+export interface IEventIndividualReservationRequest {
   event_data: IEventIndividualReservation;
   payment_info: {
     transaction_id: string;

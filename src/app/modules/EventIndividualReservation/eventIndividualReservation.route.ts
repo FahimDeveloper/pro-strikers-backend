@@ -28,22 +28,15 @@ route.get(
 route.post(
   '/user/create',
   authMiddleware(ROLE.user),
-  validateRequest(EventIndividualResrvationValidations.createByUserValidation),
+  validateRequest(EventIndividualResrvationValidations.createValidation),
   EventIndividualReservationController.createEventIndividualReservationByuser,
 );
 
 route.post(
   '/admin/create',
   authMiddleware(ROLE.admin, ROLE.superAdmin),
-  validateRequest(EventIndividualResrvationValidations.createByAdminValidation),
-  EventIndividualReservationController.createEventIndividualReservation,
-);
-
-route.patch(
-  '/admin/update/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
-  validateRequest(EventIndividualResrvationValidations.updateByAdminValidation),
-  EventIndividualReservationController.updateEventIndividualReservation,
+  validateRequest(EventIndividualResrvationValidations.createValidation),
+  EventIndividualReservationController.createEventIndividualReservationByAdmin,
 );
 
 route.delete(

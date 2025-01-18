@@ -9,26 +9,52 @@ import { GroupAppointmentSchedule } from '../GroupAppointmentSchedule/groupAppoi
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import AppointmentPayment from '../AppointmentPayment/appointmentPayment.model';
+import { User } from '../User/user.model';
 
-const createAppointmentGroupReservationIntoDB = async (
-  payload: IAppointmentGroupReservation,
+const createAppointmentGroupReservationByAdminIntoDB = async (
+  payload: IAppointmentGroupReservationByUser,
 ) => {
-  const date = new Date(payload.appointment_date);
-  const appointment = await GroupAppointmentSchedule.findById(
-    payload.appointment,
-  );
-  if (!appointment) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Appointment not found');
+  const session = await mongoose.startSession();
+  const { appointment_data, payment_info } = payload;
+  try {
+    session.startTransaction();
+    const user = await User.findOne({ email: appointment_data?.email });
+    if (!user) {
+      throw new Error('User not found, Please check the email is valid or not');
+    }
+    const appointment = await GroupAppointmentSchedule.findById(
+      appointment_data.appointment,
+    );
+    if (!appointment) {
+      throw new Error('Appointment not found');
+    }
+    const count = await AppointmentGroupReservation.find({
+      _id: appointment._id,
+      day: appointment_data.appointment_date,
+    }).countDocuments();
+    if (count >= appointment.capacity) {
+      throw new Error('Appointment capacity exceeded');
+    }
+    const payment = await AppointmentPayment.create([payment_info], {
+      session,
+    });
+    const careatePayload = {
+      ...appointment_data,
+      user: user?._id,
+      payment: payment[0]._id,
+    };
+    await AppointmentGroupReservation.create([careatePayload], { session });
+    await session.commitTransaction();
+    await session.endSession();
+    return;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.message || 'Appointment registration failed',
+    );
   }
-  const count = await AppointmentGroupReservation.find({
-    _id: appointment._id,
-    day: date,
-  }).countDocuments();
-  if (count >= appointment.capacity) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Appointment capacity exceeded');
-  }
-  const result = await AppointmentGroupReservation.create(payload);
-  return result;
 };
 
 const createAppointmentGroupReservationByUserIntoDB = async (
@@ -70,17 +96,6 @@ const createAppointmentGroupReservationByUserIntoDB = async (
       error?.message || 'Appointment registration failed',
     );
   }
-};
-
-const updateAppointmentGroupReservationIntoDB = async (
-  id: string,
-  payload: Partial<IAppointmentGroupReservation>,
-) => {
-  const result = await AppointmentGroupReservation.findByIdAndUpdate(
-    id,
-    payload,
-  );
-  return result;
 };
 
 const getAllAppointmentGroupReservationsFromDB = async (
@@ -148,8 +163,7 @@ const deleteAppointmentGroupReservationFromDB = async (id: string) => {
 };
 
 export const AppointmentGroupReservationServices = {
-  createAppointmentGroupReservationIntoDB,
-  updateAppointmentGroupReservationIntoDB,
+  createAppointmentGroupReservationByAdminIntoDB,
   getAllAppointmentGroupReservationsFromDB,
   createAppointmentGroupReservationByUserIntoDB,
   getUserAppointmentGroupReservationListFromDB,

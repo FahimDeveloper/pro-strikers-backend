@@ -1,40 +1,14 @@
 import mongoose from 'mongoose';
 import { z } from 'zod';
 
-const createByAdminValidation = z.object({
-  body: z.object({
-    user: z.string({
-      required_error: 'User ID is required',
-      invalid_type_error: 'User ID must be a string',
-    }),
-    email: z
-      .string({
-        required_error: 'Email is required',
-        invalid_type_error: 'Email must be a string',
-      })
-      .email('Invalid email'),
-    course: z.string({
-      required_error: 'Bootcamp ID is required',
-      invalid_type_error: 'Bootcamp ID must be a string',
-    }),
-    trainer: z.string({
-      required_error: 'Trainer is required',
-      invalid_type_error: 'Trainer must be a string',
-    }),
-    sport: z.string({
-      required_error: 'sport is required',
-      invalid_type_error: 'sport must be a string',
-    }),
-  }),
-});
-
-const createByUserValidation = z.object({
+const createValidation = z.object({
   body: z.object({
     course_data: z.object({
-      user: z.string({
-        required_error: 'User ID is required',
-        invalid_type_error: 'User ID must be a string',
-      }),
+      user: z
+        .string({
+          invalid_type_error: 'User ID must be a string',
+        })
+        .optional(),
       email: z
         .string({
           required_error: 'Email is required',
@@ -77,39 +51,6 @@ const createByUserValidation = z.object({
   }),
 });
 
-const updateByAdminValidation = z.object({
-  body: z.object({
-    user: z
-      .string({
-        invalid_type_error: 'Bootcamp ID must be a string',
-      })
-      .optional(),
-    email: z
-      .string({
-        invalid_type_error: 'Email must be a string',
-      })
-      .email('Invalid email')
-      .optional(),
-    course: z
-      .string({
-        invalid_type_error: 'Bootcamp ID must be a string',
-      })
-      .optional(),
-    trainer: z
-      .string({
-        invalid_type_error: 'Trainer must be a string',
-      })
-      .optional(),
-    sport: z
-      .string({
-        invalid_type_error: 'Sport must be a string',
-      })
-      .optional(),
-  }),
-});
-
 export const courseReservationValidations = {
-  createByAdminValidation,
-  createByUserValidation,
-  updateByAdminValidation,
+  createValidation,
 };

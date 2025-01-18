@@ -204,7 +204,13 @@ const getAppointmentByIdDateFromDB = async ({
           active: true,
         },
       },
-    });
+    }).populate([
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+    ]);
+
     if (!result) {
       throw new AppError(
         httpStatus.BAD_REQUEST,

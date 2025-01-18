@@ -54,7 +54,7 @@ const getEventsByIdFromDB = async (payload: any) => {
   } else if (result.event_type !== payload.event_type) {
     throw new AppError(
       httpStatus.FORBIDDEN,
-      'Event ID not match with event type, Please check the event ID and event type',
+      `Tournament Not Found, Make sure your tournament type is ${payload.event_type}`,
     );
   }
   return result;

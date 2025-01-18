@@ -3,8 +3,8 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { EventGroupReservationServices } from './eventGroupReservation.services';
 
-const createEventGroupReservation = catchAsync(async (req, res) => {
-  await EventGroupReservationServices.createEventGroupReservationIntoDB(
+const createEventGroupReservationByAdmin = catchAsync(async (req, res) => {
+  await EventGroupReservationServices.createEventGroupReservationByAdminIntoDB(
     req.body,
   );
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
@@ -82,7 +82,7 @@ const deleteEventGroupReservation = catchAsync(async (req, res) => {
 });
 
 export const EventGroupReservationController = {
-  createEventGroupReservation,
+  createEventGroupReservationByAdmin,
   updateEventGroupReservation,
   getAllEventGroupReservations,
   getSingleEventGroupReservation,

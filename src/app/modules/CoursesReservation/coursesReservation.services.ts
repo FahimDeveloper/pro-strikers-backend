@@ -8,38 +8,41 @@ import {
 } from './coursesReservation.interface';
 import { CourseReservation } from './coursesReservation.model';
 import mongoose from 'mongoose';
-import WebPayment from '../WebPayment/webPayment.modal';
-import moment from 'moment';
 import BootcampPayment from '../BootcampPayment/bootcampPayment.model';
+import { User } from '../User/user.model';
 
-const createCourseReservationIntoDB = async (payload: ICourseReservation) => {
+const createCourseReservationByAdminIntoDB = async (
+  payload: ICourseReservationRequest,
+) => {
   const session = await mongoose.startSession();
+  const { course_data, payment_info } = payload;
   try {
     session.startTransaction();
-    const checkCourse = await CourseSchedule.findById(payload.course);
+    const user = await User.findOne({ email: course_data?.email });
+    if (!user) {
+      throw new Error('User not found, Please check the email is valid or not');
+    }
+    const checkCourse = await CourseSchedule.findById(course_data.course);
     if (!checkCourse) {
-      throw new Error('Bootcamp not found, Please enter a valid Bootcamp ID');
+      throw new Error('Bootcamp not found');
+    } else if (checkCourse.capacity === checkCourse.enrolled) {
+      throw new Error('Course is fully booked, please choose another course');
     } else {
-      const endDate = new Date(checkCourse?.end_date);
-      if (new Date().getDate() > endDate.getDate()) {
-        throw new Error(
-          `This Bootcamp period has been closed ${moment(endDate).format('dddd, MMMM Do YYYY')}`,
-        );
-      } else if (checkCourse.capacity <= checkCourse.enrolled) {
-        throw new Error(
-          'Bootcamp is fully booked, please choose another bootcamp',
-        );
-      } else {
-        await CourseSchedule.findByIdAndUpdate(
-          payload.course,
-          { $inc: { enrolled: 1 } },
-          { new: true, runValidators: true, session },
-        );
-        await CourseReservation.create([payload], { session });
-        await session.commitTransaction();
-        await session.endSession();
-        return;
-      }
+      await CourseSchedule.findByIdAndUpdate(
+        course_data.course,
+        { $inc: { enrolled: 1 } },
+        { new: true, runValidators: true, session },
+      );
+      const payment = await BootcampPayment.create([payment_info], { session });
+      const createPayload = {
+        ...course_data,
+        user: user?._id,
+        payment: payment[0]._id,
+      };
+      await CourseReservation.create([createPayload], { session });
+      await session.commitTransaction();
+      await session.endSession();
+      return;
     }
   } catch (error: any) {
     await session.abortTransaction();
@@ -162,7 +165,7 @@ const deleteCourseReservationFromDB = async (id: string) => {
 };
 
 export const CourseReservationServices = {
-  createCourseReservationIntoDB,
+  createCourseReservationByAdminIntoDB,
   createCourseReservationByUserIntoDB,
   updateCourseReservationIntoDB,
   getUserCourseReservationListFromDB,

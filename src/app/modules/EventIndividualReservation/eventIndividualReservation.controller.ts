@@ -3,8 +3,8 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { EventIndividualReservationServices } from './eventIndividualReservation.services';
 
-const createEventIndividualReservation = catchAsync(async (req, res) => {
-  await EventIndividualReservationServices.createEventIndividualReservationIntoDB(
+const createEventIndividualReservationByAdmin = catchAsync(async (req, res) => {
+  await EventIndividualReservationServices.createEventIndividualReservationByAdminIntoDB(
     req.body,
   );
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
@@ -15,18 +15,6 @@ const createEventIndividualReservationByuser = catchAsync(async (req, res) => {
     req.body,
   );
   sendResponse(res, httpStatus.CREATED, 'Reservation success');
-});
-
-const updateEventIndividualReservation = catchAsync(async (req, res) => {
-  await EventIndividualReservationServices.updateEventIndividualReservationIntoDB(
-    req.params.id,
-    req.body,
-  );
-  sendResponse(
-    res,
-    httpStatus.OK,
-    'Event individual reservation was updated successfully',
-  );
 });
 
 const getAllEventIndividualReservations = catchAsync(async (req, res) => {
@@ -82,10 +70,9 @@ const deleteEventIndividualReservation = catchAsync(async (req, res) => {
 });
 
 export const EventIndividualReservationController = {
-  createEventIndividualReservation,
+  createEventIndividualReservationByAdmin,
   createEventIndividualReservationByuser,
   getUserEventIndividualReservationList,
-  updateEventIndividualReservation,
   getAllEventIndividualReservations,
   getSingleEventIndividualReservation,
   deleteEventIndividualReservation,

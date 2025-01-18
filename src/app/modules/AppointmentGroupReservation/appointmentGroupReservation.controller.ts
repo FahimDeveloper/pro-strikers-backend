@@ -3,12 +3,14 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { AppointmentGroupReservationServices } from './appointmentGroupReservation.services';
 
-const createAppointmentGroupReservation = catchAsync(async (req, res) => {
-  await AppointmentGroupReservationServices.createAppointmentGroupReservationIntoDB(
-    req.body,
-  );
-  sendResponse(res, httpStatus.CREATED, 'Reservation success');
-});
+const createAppointmentGroupReservationByAdmin = catchAsync(
+  async (req, res) => {
+    await AppointmentGroupReservationServices.createAppointmentGroupReservationByAdminIntoDB(
+      req.body,
+    );
+    sendResponse(res, httpStatus.CREATED, 'Reservation success');
+  },
+);
 
 const createAppointmentGroupReservationByUser = catchAsync(async (req, res) => {
   await AppointmentGroupReservationServices.createAppointmentGroupReservationByUserIntoDB(
@@ -58,18 +60,6 @@ const getUserAppointmentGroupReservationList = catchAsync(async (req, res) => {
   );
 });
 
-const updateAppointmentGroupReservation = catchAsync(async (req, res) => {
-  await AppointmentGroupReservationServices.updateAppointmentGroupReservationIntoDB(
-    req.params.id,
-    req.body,
-  );
-  sendResponse(
-    res,
-    httpStatus.OK,
-    'Appointment Group reservation updated succesfully',
-  );
-});
-
 const deleteAppointmentGroupReservation = catchAsync(async (req, res) => {
   await AppointmentGroupReservationServices.deleteAppointmentGroupReservationFromDB(
     req.params.id,
@@ -82,11 +72,10 @@ const deleteAppointmentGroupReservation = catchAsync(async (req, res) => {
 });
 
 export const AppointmentGroupReservationController = {
-  createAppointmentGroupReservation,
+  createAppointmentGroupReservationByAdmin,
   createAppointmentGroupReservationByUser,
   getUserAppointmentGroupReservationList,
   getAllAppointmentGroupReservation,
   getSingleAppointmentGroupReservation,
-  updateAppointmentGroupReservation,
   deleteAppointmentGroupReservation,
 };

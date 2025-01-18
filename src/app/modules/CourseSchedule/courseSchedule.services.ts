@@ -32,16 +32,21 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getCourseByIdFromDB = async (payload: any) => {
-  const result = await CourseSchedule.findById(payload.id).select(
-    'sport trainer',
-  );
-  if (!result) {
+  try {
+    const result = await CourseSchedule.findById(payload.id).populate([
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+    ]);
+    return result;
+  } catch (err: any) {
+    console.log(err?.message);
     throw new AppError(
       httpStatus.BAD_REQUEST,
       'Course not found, please provide a valid ID',
     );
   }
-  return result;
 };
 
 const getSingleCourseFromDB = async (id: string) => {
