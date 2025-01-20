@@ -126,6 +126,9 @@ const getAllAppointmentOneOnOneReservationsFromDB = async (
         path: 'appointment',
         select: 'appointment_name duration price description',
       },
+      {
+        path: 'payment',
+      },
     ]),
     query,
   )
@@ -154,6 +157,9 @@ const getUserAppointmentOneOnOneReservationListFromDB = async (
       },
       {
         path: 'user',
+      },
+      {
+        path: 'payment',
       },
     ]),
     query,

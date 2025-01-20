@@ -13,11 +13,58 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+export const sendFeedbackEmail = async ({
+  name,
+  email,
+  message,
+}: {
+  name: string;
+  email: string;
+  message: string;
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'New Feedback Notification',
+    html: `<html>
+  <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+      
+      <!-- Header Section -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-size: 1.875rem; line-height: 2.25rem;">ProStrikers</h1>
+      </div>
+
+      <h2 style="color: #0ABAC3;">New Contact Form Submission</h2>
+      <p>Dear Admin,</p>
+      <p>You have received a new message from a user via the contact form. Below are the details:</p>
+      
+      <!-- Contact Details Section -->
+      <div style="margin-top: 20px;">
+        <p><strong style="color: #0ABAC3;">Name:</strong> ${name}</p>
+        <p><strong style="color: #0ABAC3;">Email:</strong> ${email}</p>
+        <p><strong style="color: #0ABAC3;">Message:</strong></p>
+        <p>${message}</p>
+      </div>
+
+      <!-- Footer Section -->
+      <hr style="border: 1px solid #ccc; margin: 20px 0;">
+      <p>If you need to respond, you can reply to the user's email directly or take appropriate action.</p>
+    </div>
+  </body>
+</html>
+`,
+  });
+  return;
+};
+
 export const sendRentalBookingConfirmationEmail = async ({
+  user,
   email,
   bookings,
   amount,
 }: {
+  user: any;
   email: string;
   bookings: any;
   amount: number;
@@ -28,43 +75,82 @@ export const sendRentalBookingConfirmationEmail = async ({
     subject: 'ProStrikers - Booking Confirmation',
     html: `
             <html>
+             <head>
+              <style>
+              .booking-list {
+                display: none;
+              }
+              @media only screen and (max-width: 640px) {
+                .booking-table {
+                  display: none;
+                }
+                .booking-list {
+                  display: block;
+                }
+                .booking-list-part{
+                  border-width: 1px;
+                  border-color:#0ABAC3;
+                  border-style: solid;
+                  border-radius:5px;
+                  margin-bottom:10px;
+                  margin-top:10px;
+                  padding-left:10px;
+                  padding-right:10px;
+                }
+              }
+              </style>
+            </head>
               <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
                 <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
                   
                   <!-- Logo Section -->
                   <div style="text-align: center; margin-bottom: 20px;">
-                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1/>
+                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1/>
                   </div>
         
                   <h2 style="color: #0ABAC3;">Booking Confirmation - ProStrikers</h2>
-                  <p>Dear ${bookings.first_name} ${bookings.last_name},</p>
+                  <p>Dear ${user.first_name} ${user.last_name},</p>
                   <p>We are pleased to confirm your booking at ProStrikers! Below are your booking details:</p>
                   
                   <h3 style="color: #0ABAC3;">Booking Details</h3>
-                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                    <thead>
-                      <tr style="background-color: #0ABAC3; color: white;">
-                        <th style="text-align:center;">Date</th>
-                        <th style="text-align:center;>Sport</th>
-                        <th style="text-align:center;">Time Slot</th>
-                        <th style="text-align:center;">Lane</th>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;" class="booking-table">
+                <thead>
+                  <tr style="background-color: #0ABAC3; color: white;">
+                    <th style="text-align:center;">Date</th>
+                    <th style="text-align:center;">Sport</th>
+                    <th style="text-align:center;">Time Slot</th>
+                    <th style="text-align:center;">Area</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${bookings.bookings
+                    .map(
+                      (booking: any) => `
+                      <tr>
+                        <td style="text-align:center;">${moment(booking.date).format('dddd, MMM Do YYYY')}</td>
+                        <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
+                        <td style="text-align:center;">${booking.time_slot}</td>
+                        <td style="text-align:center;">${booking.lane}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      ${bookings.bookings
-                        .map(
-                          (booking: any) => `
-                        <tr>
-                          <td style="text-align:center;">${moment(booking.date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-                          <td style="text-align:center; text-transform:capitalize;">${bookings.sport}</td>
-                          <td style="text-align:center;">${booking.time_slot}</td>
-                          <td style="text-align:center;">${booking.lane}</td>
-                        </tr>
-                      `,
-                        )
-                        .join('')}
-                    </tbody>
-                  </table>
+                    `,
+                    )
+                    .join('')}
+                </tbody>
+              </table>
+              <div class="booking-list">
+               ${bookings.bookings
+                 .map(
+                   (booking: any) => `
+                      <div class="booking-list-part">
+                        <p> <span style="font-weight:600;">Booking Date</span> - ${moment(booking.date).format('dddd, MMM Do YYYY')}</p>
+                        <p> <span style="font-weight:600;">Booking Sport</span> - ${bookings.sport}</p>
+                        <p> <span style="font-weight:600;">Booking Time</span> - ${booking.time_slot}</p>
+                        <p> <span style="font-weight:600;">Booking Area</span> - ${booking.lane}</p>
+                      </div>
+                    `,
+                 )
+                 .join('')}
+              </div>
         
                   <h3 style="color: #0ABAC3; margin-top: 20px;">Add-ons</h3>
                   ${
@@ -111,27 +197,51 @@ export const sendRentalBookingConfirmationEmail = async ({
     subject: 'New Booking Alert - ProStrikers',
     html: `
         <html>
+        <head>
+          <style>
+              .booking-list {
+                display: none;
+              }
+              @media only screen and (max-width: 640px) {
+                .booking-table {
+                  display: none;
+                }
+                .booking-list {
+                  display: block;
+                }
+                .booking-list-part{
+                  border-width: 1px;
+                  border-color:#0ABAC3;
+                  border-style: solid;
+                  border-radius:5px;
+                  margin-bottom:10px;
+                  margin-top:10px;
+                  padding-left:10px;
+                  padding-right:10px;
+                }
+              }
+            </style>
+        </head>
           <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
             <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
               
               <!-- Logo Section -->
               <div style="text-align: center; margin-bottom: 20px;">
-                  <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                  <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
               </div>
   
               <h2 style="color: #0ABAC3;">New Booking Notification - ProStrikers</h2>
-              <p><strong>Customer:</strong> ${bookings.first_name} ${bookings.last_name}</p>
+              <p><strong>Customer:</strong> ${user.first_name} ${user.last_name}</p>
               <p><strong>Email:</strong> ${bookings.email}</p>
-              <p><strong>Phone:</strong> ${bookings.phone}</p>
   
               <h3 style="color: #0ABAC3;">Booking Details</h3>
-              <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+              <table class="booking-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
                 <thead>
                   <tr style="background-color: #0ABAC3; color: white;">
                     <th style="text-align:center;">Date</th>
                     <th style="text-align:center;">Sport</th>
                     <th style="text-align:center;">Time Slot</th>
-                    <th style="text-align:center;">Lane</th>
+                    <th style="text-align:center;">Area</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -139,7 +249,7 @@ export const sendRentalBookingConfirmationEmail = async ({
                     .map(
                       (booking: any) => `
                       <tr>
-                        <td style="text-align:center;">${moment(booking.date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                        <td style="text-align:center;">${moment(booking.date).format('dddd, MMM Do YYYY')}</td>
                         <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
                         <td style="text-align:center;">${booking.time_slot}</td>
                         <td style="text-align:center;">${booking.lane}</td>
@@ -149,6 +259,20 @@ export const sendRentalBookingConfirmationEmail = async ({
                     .join('')}
                 </tbody>
               </table>
+              <div class="booking-list">
+               ${bookings.bookings
+                 .map(
+                   (booking: any) => `
+                      <div class="booking-list-part">
+                        <p> <span style="font-weight:600;">Booking Date</span> - ${moment(booking.date).format('dddd, MMM Do YYYY')}</p>
+                        <p> <span style="font-weight:600;">Booking Sport</span> - ${bookings.sport}</p>
+                        <p> <span style="font-weight:600;">Booking Time</span> - ${booking.time_slot}</p>
+                        <p> <span style="font-weight:600;">Booking Area</span> - ${booking.lane}</p>
+                      </div>
+                    `,
+                 )
+                 .join('')}
+              </div>
   
               <h3 style="color: #0ABAC3; margin-top: 20px;">Add-ons</h3>
               ${
@@ -208,7 +332,7 @@ export const sendShopPurchaseConfirmationEmail = async ({
                   
                   <!-- Logo Section -->
                   <div style="text-align: center; margin-bottom: 20px;">
-                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
                   </div>
         
                   <h2 style="color: #0ABAC3;">Purchase Confirmation - ProStrikers</h2>
@@ -271,7 +395,7 @@ export const sendShopPurchaseConfirmationEmail = async ({
               
               <!-- Logo Section -->
               <div style="text-align: center; margin-bottom: 20px;">
-                  <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                  <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
               </div>
   
               <h2 style="color: #0ABAC3;">New Purchase Notification - ProStrikers</h2>
@@ -336,7 +460,7 @@ export const sendRentalBookingFailedNotifyEmail = async ({
             
             <!-- Logo Section -->
             <div style="text-align: center; margin-bottom: 20px;">
-                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
             </div>
 
             <h2 style="color: #E74C3C;">Purchase Failure Notification - ProStrikers</h2>
@@ -353,7 +477,7 @@ export const sendRentalBookingFailedNotifyEmail = async ({
                   <th style="text-align:center;">Date</th>
                   <th style="text-align:center;">Sport</th>
                   <th style="text-align:center;">Time Slot</th>
-                  <th style="text-align:center;">Lane</th>
+                  <th style="text-align:center;">Area</th>
                 </tr>
               </thead>
               <tbody>
@@ -361,7 +485,7 @@ export const sendRentalBookingFailedNotifyEmail = async ({
                   .map(
                     (booking: any) => `
                     <tr>
-                      <td style="text-align:center;">${moment(booking.date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                      <td style="text-align:center;">${moment(booking.date).format('ddd, MMM Do YY')}</td>
                       <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
                       <td style="text-align:center;">${booking.time_slot}</td>
                       <td style="text-align:center;">${booking.lane}</td>
@@ -425,7 +549,7 @@ export const sendShopPurchaseFailedNotifyEmail = async ({
             
             <!-- Logo Section -->
             <div style="text-align: center; margin-bottom: 20px;">
-                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
             </div>
 
             <h2 style="color: #E74C3C;">Shop Purchase Failure Notification - ProStrikers</h2>
@@ -489,10 +613,10 @@ export const sendOrderCanceledByAdminNotifyEmail = async ({
             
             <!-- Logo Section -->
             <div style="text-align: center; margin-bottom: 20px;">
-                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
             </div>
 
-            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikes</h2>
+            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikers</h2>
             <p>Dear user,</p>
 
             <p>We regret to inform you that your order has been canceled. Below are the details of your canceled order:</p>
@@ -558,10 +682,10 @@ export const sendOrderCanceledByUserNotifyEmail = async ({
             
             <!-- Logo Section -->
             <div style="text-align: center; margin-bottom: 20px;">
-                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
             </div>
 
-            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikes</h2>
+            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikers</h2>
             <p>Dear ${data.first_name} ${data.last_name},</p>
 
             <p>We regret to inform you that your order has been canceled. Below are the details of your canceled order:</p>
@@ -609,7 +733,7 @@ export const sendOrderCanceledByUserNotifyEmail = async ({
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: `${config.notify_email}`,
-    subject: 'User Order Cancellation Notification - ProStrikes',
+    subject: 'User Order Cancellation Notification - ProStrikers',
     html: `
       <html>
         <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -617,10 +741,10 @@ export const sendOrderCanceledByUserNotifyEmail = async ({
             
             <!-- Logo Section -->
             <div style="text-align: center; margin-bottom: 20px;">
-                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikes</h1>
+                <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
             </div>
   
-            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikes</h2>
+            <h2 style="color: #E74C3C;">Order Cancellation Notification - ProStrikers</h2>
             <p>Dear Admin,</p>
   
             <p>The following order has been canceled by the user. Please review the details below:</p>
@@ -1031,7 +1155,7 @@ export const sendBundleCreditPackPurchasedConfirmationEmail = async ({
                     <td style="text-align:center;">${bundle.package}</td>
                     <td style="text-align:center;">${bundle.hours}</td>
                     <td style="text-align:center;">${bundle.piching_machine ? 'Yes' : 'No'}</td>
-                    <td style="text-align:center;">${moment().tz('').tz('America/Los_Angeles').format('ddd, MMM Do YYYY')}</td>
+                    <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YYYY')}</td>
                   </tr>
                 </tbody>
               </table>
@@ -1082,7 +1206,7 @@ export const sendResetPasswordVerifyCodeEmail = async ({
     from: 'ProStrikers <admin@prostrikers.com>',
     to: email,
     subject: 'Reset Code',
-    html: `<p>Use this code <span style="font-size:18px; font-weight:500">${code}</span> to reset your password</p>`,
+    html: `<p>Use this code <span style="font-size:18px; font-weight:600">${code}</span> to reset your password</p>`,
   });
   return;
 };

@@ -132,6 +132,9 @@ const getAllEventIndividualReservationsFromDB = async (
       {
         path: 'user',
       },
+      {
+        path: 'payment',
+      },
     ]),
     query,
   )
@@ -155,7 +158,14 @@ const getUserEventIndividualReservationListFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const EventIndividualReservationQuery = new QueryBuilder(
-    EventIndividualReservation.find().populate('event'),
+    EventIndividualReservation.find().populate([
+      {
+        path: 'event',
+      },
+      {
+        path: 'payment',
+      },
+    ]),
     query,
   )
     .filter()

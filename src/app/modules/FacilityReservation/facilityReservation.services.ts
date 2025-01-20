@@ -8,7 +8,6 @@ import { FacilityReservation } from './facilityReservation.model';
 import { SlotBooking } from '../SlotBooking/slotBooking.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
-import WebPayment from '../WebPayment/webPayment.modal';
 import {
   sendRentalBookingConfirmationEmail,
   sendRentalBookingFailedNotifyEmail,
@@ -42,6 +41,7 @@ const createFacilityReservationByAdminIntoDB = async (
     };
     await FacilityReservation.create([createPayload], { session });
     await sendRentalBookingConfirmationEmail({
+      user: user,
       email: payment_info?.email,
       bookings: facility_data,
       amount: payment_info?.amount,
@@ -67,6 +67,7 @@ const createFacilityReservationByUserIntoDB = async (
 ) => {
   const session = await mongoose.startSession();
   const { facility_data, payment_info } = payload;
+  const user = await User.findById(id);
   try {
     session.startTransaction();
     await SlotBooking.deleteMany(
@@ -82,6 +83,7 @@ const createFacilityReservationByUserIntoDB = async (
     };
     await FacilityReservation.create([createPayload], { session });
     await sendRentalBookingConfirmationEmail({
+      user: user,
       email: payment_info?.email,
       bookings: facility_data,
       amount: payment_info?.amount,
@@ -124,6 +126,9 @@ const getAllFacilitiesReservationsFromDB = async (
       {
         path: 'user',
       },
+      {
+        path: 'payment',
+      },
     ]),
     query,
   )
@@ -145,6 +150,9 @@ const getUserFacilitiesReservationsFromDB = async (
     FacilityReservation.find().populate([
       {
         path: 'facility',
+      },
+      {
+        path: 'payment',
       },
     ]),
     query,

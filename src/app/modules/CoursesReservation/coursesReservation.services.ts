@@ -115,6 +115,9 @@ const getAllCoursesReservationsFromDB = async (
         path: 'trainer',
         select: 'first_name last_name',
       },
+      {
+        path: 'payment',
+      },
     ]),
     query,
   )
@@ -145,6 +148,9 @@ const getUserCourseReservationListFromDB = async (
       {
         path: 'trainer',
         select: 'first_name last_name',
+      },
+      {
+        path: 'payment',
       },
     ]),
     query,

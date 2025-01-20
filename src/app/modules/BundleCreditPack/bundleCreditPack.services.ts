@@ -24,7 +24,7 @@ const purchaseBundleCreditPackageIntoDB = async (
     const payment = await FacilityPayment.create([payment_info], { session });
     const createPayload = {
       ...bundle,
-      payment_id: payment[0]._id,
+      payment: payment[0]._id,
     };
     await BundleCreditPackage.create([createPayload], { session });
     await sendBundleCreditPackPurchasedConfirmationEmail({
@@ -60,6 +60,9 @@ const getAllPurchsaedBundleCreditPackageFromDB = async (
       {
         path: 'user',
       },
+      {
+        path: 'payment',
+      },
     ]),
     query,
   )
@@ -76,7 +79,11 @@ const getUserPurchasedBundleCreditPackagesFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const bundleCreditPackQuery = new QueryBuilder(
-    BundleCreditPackage.find({ email: email }),
+    BundleCreditPackage.find({ email: email }).populate([
+      {
+        path: 'payment',
+      },
+    ]),
     query,
   )
     .filter()

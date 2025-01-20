@@ -113,6 +113,9 @@ const getAllAppointmentGroupReservationsFromDB = async (
       {
         path: 'appointment',
       },
+      {
+        path: 'payment',
+      },
     ]),
     query,
   )
@@ -138,6 +141,9 @@ const getUserAppointmentGroupReservationListFromDB = async (
       },
       {
         path: 'appointment',
+      },
+      {
+        path: 'payment',
       },
     ]),
     query,

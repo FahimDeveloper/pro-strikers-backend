@@ -4,6 +4,10 @@ import cookieParser from 'cookie-parser';
 import router from './app/routes';
 import globalErrorHandler from './app/middlewares/globalErrorhandler';
 import notFound from './app/middlewares/notFound';
+import { sendFeedbackEmail } from './app/utils/email';
+import sendResponse from './app/utils/sendResponse';
+import httpStatus from 'http-status';
+import { limiter } from './app/utils/RequestLimit';
 
 export const app: Application = express();
 
@@ -32,6 +36,20 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1', router);
+app.post('/feedback', limiter, async (req: Request, res: Response) => {
+  try {
+    const payload = req.body;
+    await sendFeedbackEmail(payload);
+    sendResponse(res, httpStatus.OK, 'Feedback email sent');
+  } catch (err: any) {
+    console.log(err?.message);
+    sendResponse(
+      res,
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Failed to send feedback email',
+    );
+  }
+});
 app.get('/', (req: Request, res: Response) => {
   try {
     res.send('server is running');
