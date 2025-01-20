@@ -7,7 +7,7 @@ import notFound from './app/middlewares/notFound';
 import { sendFeedbackEmail } from './app/utils/email';
 import sendResponse from './app/utils/sendResponse';
 import httpStatus from 'http-status';
-import { limiter } from './app/utils/RequestLimit';
+import { limiter } from './app/utils/limiter';
 
 export const app: Application = express();
 
