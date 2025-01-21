@@ -4,7 +4,6 @@ import {
   IBundleCreditPackPurchase,
 } from './bundleCreditPack.interface';
 import { BundleCreditPackage } from './bundleCreditPack.model';
-import WebPayment from '../WebPayment/webPayment.modal';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
