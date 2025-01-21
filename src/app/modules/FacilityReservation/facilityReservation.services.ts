@@ -41,6 +41,7 @@ const createFacilityReservationByAdminIntoDB = async (
     };
     await FacilityReservation.create([createPayload], { session });
     await sendRentalBookingConfirmationEmail({
+      transactionId: payment_info?.transaction_id,
       user: user,
       email: payment_info?.email,
       bookings: facility_data,
@@ -85,6 +86,7 @@ const createFacilityReservationByUserIntoDB = async (
     await sendRentalBookingConfirmationEmail({
       user: user,
       email: payment_info?.email,
+      transactionId: payment_info?.transaction_id,
       bookings: facility_data,
       amount: payment_info?.amount,
     });

@@ -59,6 +59,7 @@ export const sendFeedbackEmail = async ({
 };
 
 export const sendRentalBookingConfirmationEmail = async ({
+  transactionId,
   user,
   email,
   bookings,
@@ -68,6 +69,7 @@ export const sendRentalBookingConfirmationEmail = async ({
   email: string;
   bookings: any;
   amount: number;
+  transactionId: string;
 }) => {
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
@@ -75,120 +77,149 @@ export const sendRentalBookingConfirmationEmail = async ({
     subject: 'ProStrikers - Booking Confirmation',
     html: `
             <html>
-             <head>
-              <style>
-              .booking-list {
-                display: none;
-              }
-              @media only screen and (max-width: 640px) {
-                .booking-table {
-                  display: none;
-                }
-                .booking-list {
-                  display: block;
-                }
-                .booking-list-part{
-                  border-width: 1px;
-                  border-color:#0ABAC3;
-                  border-style: solid;
-                  border-radius:5px;
-                  margin-bottom:10px;
-                  margin-top:10px;
-                  padding-left:10px;
-                  padding-right:10px;
-                }
-              }
-              </style>
-            </head>
-              <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-                <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
-                  
-                  <!-- Logo Section -->
-                  <div style="text-align: center; margin-bottom: 20px;">
-                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1/>
-                  </div>
-        
-                  <h2 style="color: #0ABAC3;">Booking Confirmation - ProStrikers</h2>
-                  <p>Dear ${user.first_name} ${user.last_name},</p>
-                  <p>We are pleased to confirm your booking at ProStrikers! Below are your booking details:</p>
-                  
-                  <h3 style="color: #0ABAC3;">Booking Details</h3>
-                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;" class="booking-table">
-                <thead>
-                  <tr style="background-color: #0ABAC3; color: white;">
-                    <th style="text-align:center;">Date</th>
-                    <th style="text-align:center;">Sport</th>
-                    <th style="text-align:center;">Time Slot</th>
-                    <th style="text-align:center;">Area</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${bookings.bookings
-                    .map(
-                      (booking: any) => `
-                      <tr>
-                        <td style="text-align:center;">${moment(booking.date).format('dddd, MMM Do YYYY')}</td>
-                        <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
-                        <td style="text-align:center;">${booking.time_slot}</td>
-                        <td style="text-align:center;">${booking.lane}</td>
-                      </tr>
-                    `,
-                    )
-                    .join('')}
-                </tbody>
-              </table>
-              <div class="booking-list">
-               ${bookings.bookings
-                 .map(
-                   (booking: any) => `
-                      <div class="booking-list-part">
-                        <p> <span style="font-weight:600;">Booking Date</span> - ${moment(booking.date).format('dddd, MMM Do YYYY')}</p>
-                        <p> <span style="font-weight:600;">Booking Sport</span> - ${bookings.sport}</p>
-                        <p> <span style="font-weight:600;">Booking Time</span> - ${booking.time_slot}</p>
-                        <p> <span style="font-weight:600;">Booking Area</span> - ${booking.lane}</p>
-                      </div>
-                    `,
-                 )
-                 .join('')}
-              </div>
-        
-                  <h3 style="color: #0ABAC3; margin-top: 20px;">Add-ons</h3>
-                  ${
-                    bookings.addons.length > 0
-                      ? `
-                    <ul>
-                      ${bookings.addons
-                        .map(
-                          (addon: any) => `
-                        <li>
-                          <strong>${addon.name}</strong> - ${addon.hours === 0.5 ? '30 minutes' : `${addon.hours} hour(s)`}
-                          <br>
-                          <img src="${addon.image}" alt="${addon.name}" style="max-width: 100px; margin-top: 5px;">
-                        </li>
-                      `,
-                        )
-                        .join('')}
-                    </ul>
-                  `
-                      : '<p>No add-ons were selected for this booking.</p>'
-                  }
-        
-                  <h3 style="color: #0ABAC3;">Payment Information</h3>
-                  <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
-        
-                  <hr style="border: 1px solid #ccc; margin: 20px 0;">
-        
-                  <p>If you have any questions or need to make changes, please don't hesitate to contact us.</p>
-                  
-                  <h3 style="color: #0ABAC3;">Contact Information</h3>
-                  <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
-                  <p>Phone: (916)-890-5834</p>
-                  <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
-        
-                  <p>Thank you for choosing ProStrikers! We look forward to your visit.</p>
-                </div>
-              </body>
-            </html>
+  <head>
+    <style>
+      /* Default styles */
+      .table-container {
+        display: block;
+      }
+
+      .mobile-container {
+        display: none;
+      }
+
+      /* Styles for screens smaller than 640px */
+      @media (max-width: 640px) {
+        .table-container {
+          display: none;
+        }
+
+        .mobile-container {
+          display: block;
+        }
+      }
+
+      .addon-item {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+
+      .addon-item img {
+        max-width: 100px;
+        display: block;
+        margin-top: 5px;
+      }
+
+      .mobile-item {
+        background-color: #f4f4f4;
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .mobile-item h4 {
+        margin: 0 0 5px 0;
+        color: #0ABAC3;
+      }
+    </style>
+  </head>
+  <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+      
+      <!-- Logo Section -->
+      <div style="text-align: center; margin-bottom: 20px;">
+          <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+      </div>
+
+      <h2 style="color: #0ABAC3;">Booking Confirmation - ProStrikers</h2>
+      <p>Dear ${user.first_name} ${user.last_name},</p>
+      <p>We are pleased to confirm your booking at ProStrikers! Below are your booking details:</p>
+      
+      <!-- Table for larger screens -->
+      <div class="table-container">
+        <h3 style="color: #0ABAC3;">Booking Details</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #0ABAC3; color: white;">
+              <th style="text-align:center;">Date</th>
+              <th style="text-align:center;">Sport</th>
+              <th style="text-align:center;">Time Slot</th>
+              <th style="text-align:center;">Area</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${bookings.bookings
+              .map(
+                (booking: any) => `
+                <tr>
+                  <td style="text-align:center;">${moment(booking.date).format('dddd, MMM Do YYYY')}</td>
+                  <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
+                  <td style="text-align:center;">${booking.time_slot}</td>
+                  <td style="text-align:center;">${booking.lane}</td>
+                </tr>`,
+              )
+              .join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile-friendly details for smaller screens -->
+<div class="mobile-container">
+  ${bookings.bookings
+    .map(
+      (booking: any) => `
+      <div class="mobile-card">
+        <div class="mobile-card-header">
+          <h3 style="margin: 0; color: #0ABAC3;">Booking For ${moment(booking.date).format('dddd, MMM Do YYYY')}</h3>
+        </div>
+        <div class="mobile-card-body">
+          <p><strong>Sport:</strong> ${bookings.sport}</p>
+          <p><strong>Time Slot:</strong> ${booking.time_slot}</p>
+          <p><strong>Area:</strong> ${booking.lane}</p>
+        </div>
+      </div>`,
+    )
+    .join('')}
+</div>
+
+
+      <h3 style="color: #0ABAC3; margin-top: 20px;">Add-ons</h3>
+      ${
+        bookings.addons.length > 0
+          ? bookings.addons
+              .map(
+                (addon: any) => `
+                <div class="addon-item">
+                  <strong>${addon.name}</strong> - ${addon.hours === 0.5 ? '30 minutes' : `${addon.hours} hours`}
+                  <img src="${addon.image}" alt="${addon.name}">
+                </div>`,
+              )
+              .join('')
+          : '<p>No add-ons selected.</p>'
+      }
+
+      <h3 style="color: #0ABAC3; margin-top: 20px;">Payment Information</h3>
+      <p><strong>Transaction ID:</strong> ${transactionId}</p>
+      <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+
+      <hr style="border: 1px solid #ccc; margin: 20px 0;">
+
+      <p>If you have any questions or need to make changes, please don't hesitate to contact us.</p>
+      
+      <h3 style="color: #0ABAC3;">Contact Information</h3>
+      <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
+      <p>Phone: (916)-890-5834</p>
+      <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
+
+      <p>Thank you for choosing ProStrikers! We look forward to your visit.</p>
+    </div>
+  </body>
+</html>
+
           `,
   });
   await transporter.sendMail({
@@ -197,113 +228,144 @@ export const sendRentalBookingConfirmationEmail = async ({
     subject: 'New Booking Alert - ProStrikers',
     html: `
         <html>
-        <head>
-          <style>
-              .booking-list {
-                display: none;
-              }
-              @media only screen and (max-width: 640px) {
-                .booking-table {
-                  display: none;
-                }
-                .booking-list {
-                  display: block;
-                }
-                .booking-list-part{
-                  border-width: 1px;
-                  border-color:#0ABAC3;
-                  border-style: solid;
-                  border-radius:5px;
-                  margin-bottom:10px;
-                  margin-top:10px;
-                  padding-left:10px;
-                  padding-right:10px;
-                }
-              }
-            </style>
-        </head>
-          <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-            <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
-              
-              <!-- Logo Section -->
-              <div style="text-align: center; margin-bottom: 20px;">
-                  <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
-              </div>
-  
-              <h2 style="color: #0ABAC3;">New Booking Notification - ProStrikers</h2>
-              <p><strong>Customer:</strong> ${user.first_name} ${user.last_name}</p>
-              <p><strong>Email:</strong> ${bookings.email}</p>
-  
-              <h3 style="color: #0ABAC3;">Booking Details</h3>
-              <table class="booking-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                <thead>
-                  <tr style="background-color: #0ABAC3; color: white;">
-                    <th style="text-align:center;">Date</th>
-                    <th style="text-align:center;">Sport</th>
-                    <th style="text-align:center;">Time Slot</th>
-                    <th style="text-align:center;">Area</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${bookings.bookings
-                    .map(
-                      (booking: any) => `
-                      <tr>
-                        <td style="text-align:center;">${moment(booking.date).format('dddd, MMM Do YYYY')}</td>
-                        <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
-                        <td style="text-align:center;">${booking.time_slot}</td>
-                        <td style="text-align:center;">${booking.lane}</td>
-                      </tr>
-                    `,
-                    )
-                    .join('')}
-                </tbody>
-              </table>
-              <div class="booking-list">
-               ${bookings.bookings
-                 .map(
-                   (booking: any) => `
-                      <div class="booking-list-part">
-                        <p> <span style="font-weight:600;">Booking Date</span> - ${moment(booking.date).format('dddd, MMM Do YYYY')}</p>
-                        <p> <span style="font-weight:600;">Booking Sport</span> - ${bookings.sport}</p>
-                        <p> <span style="font-weight:600;">Booking Time</span> - ${booking.time_slot}</p>
-                        <p> <span style="font-weight:600;">Booking Area</span> - ${booking.lane}</p>
-                      </div>
-                    `,
-                 )
-                 .join('')}
-              </div>
-  
-              <h3 style="color: #0ABAC3; margin-top: 20px;">Add-ons</h3>
-              ${
-                bookings.addons.length > 0
-                  ? `
-                  <ul>
-                    ${bookings.addons
-                      .map(
-                        (addon: any) => `
-                        <li>
-                          <strong>${addon.name}</strong> - ${addon.hours === 0.5 ? '30 minutes' : `${addon.hours} hours`}
-                          <br>
-                          <img src="${addon.image}" alt="${addon.name}" style="max-width: 100px; margin-top: 5px;">
-                        </li>
-                      `,
-                      )
-                      .join('')}
-                  </ul>
-                `
-                  : '<p>No add-ons selected.</p>'
-              }
-  
-              <h3 style="color: #0ABAC3;">Payment Information</h3>
-              <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
-  
-              <hr style="border: 1px solid #ccc; margin: 20px 0;">
-  
-              <p>If you have any questions or need assistance with this booking, please reach out to the team.</p>
-            </div>
-          </body>
-        </html>
+  <head>
+    <style>
+      /* Default styles */
+      .table-container {
+        display: block;
+      }
+
+      .mobile-container {
+        display: none;
+      }
+
+      /* Media query for screens smaller than 640px */
+      @media (max-width: 640px) {
+        .table-container {
+          display: none;
+        }
+
+        .mobile-container {
+          display: block;
+        }
+      }
+
+      .mobile-item {
+        background-color: #f4f4f4;
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .mobile-item h4 {
+        margin: 0 0 5px 0;
+        color: #0ABAC3;
+      }
+
+      .addon-item {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+
+      .addon-item img {
+        max-width: 100px;
+        display: block;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+      <!-- Logo Section -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+      </div>
+
+      <h2 style="color: #0ABAC3;">New Booking Notification - ProStrikers</h2>
+      <p><strong>Customer:</strong> ${user.first_name} ${user.last_name}</p>
+      <p><strong>Email:</strong> ${bookings.email}</p>
+
+      
+      <!-- Table for larger screens -->
+      <div class="table-container">
+      <h3 style="color: #0ABAC3;">Booking Details</h3>
+        <div style="overflow-x: auto; margin-top: 10px;">
+          <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+            <thead>
+              <tr style="background-color: #0ABAC3; color: white;">
+                <th style="text-align:center;">Date</th>
+                <th style="text-align:center;">Sport</th>
+                <th style="text-align:center;">Time Slot</th>
+                <th style="text-align:center;">Area</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${bookings.bookings
+                .map(
+                  (booking: any) => `
+                  <tr>
+                    <td style="text-align:center;">${moment(booking.date).format('dddd, MMM Do YYYY')}</td>
+                    <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
+                    <td style="text-align:center;">${booking.time_slot}</td>
+                    <td style="text-align:center;">${booking.lane}</td>
+                  </tr>`,
+                )
+                .join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile-friendly details for smaller screens -->
+<div class="mobile-container">
+  ${bookings.bookings
+    .map(
+      (booking: any) => `
+      <div class="mobile-card">
+       <div class="mobile-card-header">
+          <h3 style="margin: 0; color: #0ABAC3;">Booking For ${moment(booking.date).format('dddd, MMM Do YYYY')}</h3>
+        </div>
+        <div class="mobile-card-body">
+          <p><strong>Sport:</strong> ${bookings.sport}</p>
+          <p><strong>Time Slot:</strong> ${booking.time_slot}</p>
+          <p><strong>Area:</strong> ${booking.lane}</p>
+        </div>
+      </div>`,
+    )
+    .join('')}
+</div>
+
+
+      <h3 style="color: #0ABAC3; margin-top: 20px;">Add-ons</h3>
+      ${
+        bookings.addons.length > 0
+          ? bookings.addons
+              .map(
+                (addon: any) => `
+                <div class="addon-item">
+                  <strong>${addon.name}</strong> - ${addon.hours === 0.5 ? '30 minutes' : `${addon.hours} hours`}
+                  <img src="${addon.image}" alt="${addon.name}">
+                </div>`,
+              )
+              .join('')
+          : '<p>No add-ons selected.</p>'
+      }
+
+      <h3 style="color: #0ABAC3;">Payment Information</h3>
+      <p><strong>Transaction ID:</strong> ${transactionId}</p>
+      <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+
+      <hr style="border: 1px solid #ccc; margin: 20px 0;">
+
+      <p>If you have any questions or need assistance with this booking, please reach out to the team.</p>
+    </div>
+  </body>
+</html>
+
       `,
   });
   return;
@@ -787,10 +849,12 @@ export const sendOrderCanceledByUserNotifyEmail = async ({
 };
 
 export const sendMembershipPurchasedConfirmationEmail = async ({
+  transactionId,
   email,
   amount,
   membership,
 }: {
+  transactionId: string;
   email: string;
   amount: number;
   membership: {
@@ -808,54 +872,161 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
     subject: 'ProStrikers - Membership Purchase Confirmation',
     html: `
         <html>
-          <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-            <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+        border-radius: 8px;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+        margin: 0;
+      }
+      h2, h3 {
+        color: #0ABAC3;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th, td {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      th {
+        background-color: #0ABAC3;
+        color: white;
+      }
+      .contact-info {
+        margin-top: 20px;
+      }
+      a {
+        color: #0ABAC3;
+        text-decoration: none;
+      }
+      hr {
+        border: 1px solid #ccc;
+        margin: 20px 0;
+      }
+      /* Responsive Design */
+      @media screen and (max-width: 640px) {
+        .container {
+          padding: 15px;
+        }
+        table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        .responsive-details {
+          display: none;
+        }
+        .mobile-details {
+          display: block;
+        }
+      }
+      @media screen and (min-width: 641px) {
+        .mobile-details {
+          display: none;
+        }
+      }
+      .mobile-card {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .mobile-card h4 {
+        margin: 0;
+        color: #0ABAC3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Logo Section -->
+      <div class="logo">
+        <h1>ProStrikers</h1>
+      </div>
 
-              <!-- Logo Section -->
-              <div style="text-align: center; margin-bottom: 20px;">
-                  <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
-              </div>
+      <h2>Membership Purchase Confirmation</h2>
+      <p>Dear Customer,</p>
+      <p>Thank you for purchasing a membership at ProStrikers! Below are your membership details:</p>
 
-              <h2 style="color: #0ABAC3;">Membership Purchase Confirmation</h2>
-              <p>Dear Customer,</p>
-              <p>Thank you for purchasing a membership at ProStrikers! Below are your membership details:</p>
+      <h3>Membership Details</h3>
+      <!-- Responsive Details -->
+      <div class="responsive-details">
+        <table>
+          <thead>
+            <tr>
+              <th>Package Name</th>
+              <th>Plan</th>
+              <th>Issue Date</th>
+              <th>Expiry Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${membership.package_name}</td>
+              <td>${membership.plan}</td>
+              <td>${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+              <td>${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-              <h3 style="color: #0ABAC3;">Membership Details</h3>
-              <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                <thead>
-                  <tr style="background-color: #0ABAC3; color: white;">
-                    <th style="text-align:center;">Package Name</th>
-                    <th style="text-align:center;">Plan</th>
-                    <th style="text-align:center;">Issue Date</th>
-                    <th style="text-align:center;">Expiry Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td style="text-align:center;">${membership.package_name}</td>
-                    <td style="text-align:center;">${membership.plan}</td>
-                    <td style="text-align:center;">${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-                    <td style="text-align:center;">${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-                  </tr>
-                </tbody>
-              </table>
+      <!-- Mobile-Friendly Details -->
+      <div class="mobile-details">
+        <div class="mobile-card">
+          <h4>Package Name:</h4>
+          <p>${membership.package_name}</p>
+          <h4>Plan:</h4>
+          <p>${membership.plan}</p>
+          <h4>Issue Date:</h4>
+          <p>${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+          <h4>Expiry Date:</h4>
+          <p>${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+        </div>
+      </div>
 
-              <h3 style="color: #0ABAC3;">Payment Information</h3>
-              <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+      <h3>Payment Information</h3>
+      <p><strong>Transaction ID:</strong> ${transactionId}</p>
+      <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
 
-              <hr style="border: 1px solid #ccc; margin: 20px 0;">
+      <hr>
 
-              <p>If you have any questions about your membership, please don't hesitate to contact us.</p>
+      <p>If you have any questions about your membership, please don't hesitate to contact us.</p>
 
-              <h3 style="color: #0ABAC3;">Contact Information</h3>
-              <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
-              <p>Phone: (916)-890-5834</p>
-              <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
+      <h3>Contact Information</h3>
+      <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
+      <p>Phone: (916)-890-5834</p>
+      <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
 
-              <p>Thank you for choosing ProStrikers! We look forward to serving you.</p>
-            </div>
-          </body>
-        </html>
+      <p>Thank you for choosing ProStrikers! We look forward to serving you.</p>
+    </div>
+  </body>
+</html>
+
       `,
   });
   await transporter.sendMail({
@@ -864,39 +1035,146 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
     subject: 'New Membership Purchased - ProStrikers',
     html: `
           <html>
+          <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+        border-radius: 8px;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+        margin: 0;
+      }
+      h2, h3 {
+        color: #0ABAC3;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th, td {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      th {
+        background-color: #0ABAC3;
+        color: white;
+      }
+      .contact-info {
+        margin-top: 20px;
+      }
+      a {
+        color: #0ABAC3;
+        text-decoration: none;
+      }
+      hr {
+        border: 1px solid #ccc;
+        margin: 20px 0;
+      }
+      /* Responsive Design */
+      @media screen and (max-width: 640px) {
+        .container {
+          padding: 15px;
+        }
+        table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        .responsive-details {
+          display: none;
+        }
+        .mobile-details {
+          display: block;
+        }
+      }
+      @media screen and (min-width: 641px) {
+        .mobile-details {
+          display: none;
+        }
+      }
+      .mobile-card {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .mobile-card h4 {
+        margin: 0;
+        color: #0ABAC3;
+      }
+    </style>
+  </head>
             <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
               <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
 
-                <!-- Logo Section -->
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
-                </div>
+                  <!-- Logo Section -->
+      <div class="logo">
+        <h1>ProStrikers</h1>
+      </div>
 
                 <h2 style="color: #0ABAC3;">New Membership Purchased</h2>
                 <p><strong>User Email:</strong> ${email}</p>
                 <p>A new membership has been purchased. Below are the details:</p>
 
-                <h3 style="color: #0ABAC3;">Membership Details</h3>
-                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                  <thead>
-                    <tr style="background-color: #0ABAC3; color: white;">
-                      <th style="text-align:center;">Package Name</th>
-                      <th style="text-align:center;">Plan</th>
-                      <th style="text-align:center;">Issue Date</th>
-                      <th style="text-align:center;">Expiry Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style="text-align:center;">${membership.package_name}</td>
-                      <td style="text-align:center;">${membership.plan}</td>
-                      <td style="text-align:center;">${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-                      <td style="text-align:center;">${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <h3>Membership Details</h3>
+      <!-- Responsive Details -->
+      <div class="responsive-details">
+        <table>
+          <thead>
+            <tr>
+              <th>Package Name</th>
+              <th>Plan</th>
+              <th>Issue Date</th>
+              <th>Expiry Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${membership.package_name}</td>
+              <td>${membership.plan}</td>
+              <td>${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+              <td>${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile-Friendly Details -->
+      <div class="mobile-details">
+        <div class="mobile-card">
+          <h4>Package Name:</h4>
+          <p>${membership.package_name}</p>
+          <h4>Plan:</h4>
+          <p>${membership.plan}</p>
+          <h4>Issue Date:</h4>
+          <p>${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+          <h4>Expiry Date:</h4>
+          <p>${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+        </div>
+      </div>
 
                 <h3 style="color: #0ABAC3;">Payment Information</h3>
+                <p><strong>Transaction ID:</strong> ${transactionId}</p>
                 <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
 
                 <hr style="border: 1px solid #ccc; margin: 20px 0;">

@@ -22,7 +22,6 @@ import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
 import { AuthenticationRoutes } from '../modules/Authentication/Authentication.route';
 import { StripePaymentRoutes } from '../modules/StripePayment/stripePayment.route';
-import { WebPaymentRoutes } from '../modules/WebPayment/webPayment.route';
 import { AddonRoutes } from '../modules/Addon/addon.route';
 import { BrandRoutes } from '../modules/Brand/brand.route';
 import { MembershipCancellationRoutes } from '../modules/MembershipCancellation/membershipCancellation.route';
@@ -163,10 +162,6 @@ const mainRoutes = [
   {
     path: '/tournament/payments',
     route: TournamentPaymentRoutes,
-  },
-  {
-    path: '/payments',
-    route: WebPaymentRoutes,
   },
   {
     path: '/stripe-payment',

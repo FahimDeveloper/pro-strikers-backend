@@ -85,6 +85,7 @@ const createMembershipByUserIntoDB = async (
     }
     await MembershipPayment.create([payment_info], { session });
     await sendMembershipPurchasedConfirmationEmail({
+      transactionId: payment_info.transaction_id,
       email: payment_info.email,
       membership: membership,
       amount: payment_info.amount,
