@@ -6,12 +6,12 @@ import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
 import mongoose from 'mongoose';
-import WebPayment from '../WebPayment/webPayment.modal';
 import {
   sendClientAccountConfirmationEmail,
   sendMembershipPurchasedConfirmationEmail,
   sendMembershipPurchasedFailedNotifyEmail,
 } from '../../utils/email';
+import MembershipPayment from '../MembershipPayment/membershipPayment.model';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);
@@ -83,7 +83,7 @@ const createMembershipByUserIntoDB = async (
     if (!result) {
       throw new Error('Failed to get membership');
     }
-    await WebPayment.create([payment_info], { session });
+    await MembershipPayment.create([payment_info], { session });
     await sendMembershipPurchasedConfirmationEmail({
       email: payment_info.email,
       membership: membership,
