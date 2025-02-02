@@ -10,6 +10,8 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import AppointmentPayment from '../AppointmentPayment/appointmentPayment.model';
 import { User } from '../User/user.model';
+import Notification from '../Notification/notification.modal';
+import { io } from '../../../server';
 
 const createAppointmentGroupReservationByAdminIntoDB = async (
   payload: IAppointmentGroupReservationByUser,
@@ -85,8 +87,19 @@ const createAppointmentGroupReservationByUserIntoDB = async (
       payment: payment[0]._id,
     };
     await AppointmentGroupReservation.create([careatePayload], { session });
+    await Notification.create(
+      [
+        {
+          title: 'New Group Appointment Reservation',
+          message: `A new group appointment reservation booked`,
+          type: 'group-appointment',
+        },
+      ],
+      { session },
+    );
     await session.commitTransaction();
     await session.endSession();
+    io.emit('notification', 'new-notification');
     return;
   } catch (error: any) {
     await session.abortTransaction();

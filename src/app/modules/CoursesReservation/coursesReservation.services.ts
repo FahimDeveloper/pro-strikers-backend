@@ -10,6 +10,8 @@ import { CourseReservation } from './coursesReservation.model';
 import mongoose from 'mongoose';
 import BootcampPayment from '../BootcampPayment/bootcampPayment.model';
 import { User } from '../User/user.model';
+import Notification from '../Notification/notification.modal';
+import { io } from '../../../server';
 
 const createCourseReservationByAdminIntoDB = async (
   payload: ICourseReservationRequest,
@@ -78,8 +80,19 @@ const createCourseReservationByUserIntoDB = async (
         payment: payment[0]._id,
       };
       await CourseReservation.create([createPayload], { session });
+      await Notification.create(
+        [
+          {
+            title: 'Bootcamp Reservation',
+            message: `A new reservation for Bootcamp`,
+            type: 'one-appointment',
+          },
+        ],
+        { session },
+      );
       await session.commitTransaction();
       await session.endSession();
+      io.emit('notification', 'new-notification');
       return;
     }
   } catch (error: any) {

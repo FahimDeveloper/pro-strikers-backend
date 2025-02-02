@@ -14,6 +14,8 @@ import {
 } from '../../utils/email';
 import FacilityPayment from '../FacilityPayment/facilityPayment.model';
 import { User } from '../User/user.model';
+import Notification from '../Notification/notification.modal';
+import { io } from '../../../server';
 
 const createFacilityReservationByAdminIntoDB = async (
   id: string,
@@ -83,15 +85,26 @@ const createFacilityReservationByUserIntoDB = async (
       payment: payment[0]._id,
     };
     await FacilityReservation.create([createPayload], { session });
-    await sendRentalBookingConfirmationEmail({
+    await Notification.create(
+      [
+        {
+          title: 'Facility Reservation',
+          message: `A new facility reservation booked`,
+          type: 'facility',
+        },
+      ],
+      { session },
+    );
+    await session.commitTransaction();
+    await session.endSession();
+    sendRentalBookingConfirmationEmail({
       user: user,
       email: payment_info?.email,
       transactionId: payment_info?.transaction_id,
       bookings: facility_data,
       amount: payment_info?.amount,
     });
-    await session.commitTransaction();
-    await session.endSession();
+    io.emit('notification', 'new-notification');
     return;
   } catch (err: any) {
     console.log(err?.message);

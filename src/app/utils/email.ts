@@ -58,7 +58,7 @@ export const sendFeedbackEmail = async ({
   return;
 };
 
-export const sendRentalBookingConfirmationEmail = async ({
+export const sendRentalBookingConfirmationEmail = ({
   transactionId,
   user,
   email,
@@ -71,7 +71,7 @@ export const sendRentalBookingConfirmationEmail = async ({
   amount: number;
   transactionId: string;
 }) => {
-  await transporter.sendMail({
+  transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: email,
     subject: 'ProStrikers - Booking Confirmation',
@@ -222,7 +222,7 @@ export const sendRentalBookingConfirmationEmail = async ({
 
           `,
   });
-  await transporter.sendMail({
+  transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: `${config.notify_email}`,
     subject: 'New Booking Alert - ProStrikers',
@@ -368,7 +368,6 @@ export const sendRentalBookingConfirmationEmail = async ({
 
       `,
   });
-  return;
 };
 
 export const sendShopPurchaseConfirmationEmail = async ({

@@ -36,6 +36,8 @@ import { ShopPaymentRoutes } from '../modules/ShopPayment/shopPayment.route';
 import { BootcampPaymentRoutes } from '../modules/BootcampPayment/bootcampPayment.route';
 import { FacilityPaymentRoutes } from '../modules/FacilityPayment/facilityPayment.route';
 import { TournamentPaymentRoutes } from '../modules/TournamentPayment/tournamentPayment.route';
+import { TrainerReportRoutes } from '../modules/TrainerReport/trainerReport.route';
+import { NotificationRoute } from '../modules/Notification/notification.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -186,6 +188,14 @@ const mainRoutes = [
   {
     path: '/categories',
     route: CategoryRoutes,
+  },
+  {
+    path: '/reports',
+    route: TrainerReportRoutes,
+  },
+  {
+    path: '/notifications',
+    route: NotificationRoute,
   },
 ];
 

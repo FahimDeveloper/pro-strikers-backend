@@ -10,6 +10,8 @@ import { ClassReservation } from './classReservation.model';
 import mongoose from 'mongoose';
 import ClassPayment from '../ClassPayment/classPayment.model';
 import { User } from '../User/user.model';
+import Notification from '../Notification/notification.modal';
+import { io } from '../../../server';
 
 const createClassReservationByAdminIntoDB = async (
   payload: IClassReservationRequest,
@@ -79,8 +81,19 @@ const createClassReservationByUserIntoDB = async (
       payment: payment[0]._id,
     };
     await ClassReservation.create([createPayload], { session });
+    await Notification.create(
+      [
+        {
+          title: 'Class Reservation',
+          message: `A new reservation for Kid's training`,
+          type: 'bootcamp',
+        },
+      ],
+      { session },
+    );
     await session.commitTransaction();
     await session.endSession();
+    io.emit('notification', 'new-notification');
     return;
   } catch (error: any) {
     await session.abortTransaction();

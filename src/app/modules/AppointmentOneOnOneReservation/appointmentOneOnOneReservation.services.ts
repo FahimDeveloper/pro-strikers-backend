@@ -7,6 +7,8 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import AppointmentPayment from '../AppointmentPayment/appointmentPayment.model';
 import { User } from '../User/user.model';
+import Notification from '../Notification/notification.modal';
+import { io } from '../../../server';
 
 const createAppointmentOneOnOneReservationByAdminIntoDB = async (
   id: string,
@@ -76,8 +78,19 @@ const createAppointmentOneOnOneReservationByUserIntoDB = async (
     await AppointmentOneOnOneReservation.create([createPayload], {
       session,
     });
+    await Notification.create(
+      [
+        {
+          title: 'Appointment Reservation',
+          message: `A new one on one appointment reservation booked`,
+          type: 'one-appointment',
+        },
+      ],
+      { session },
+    );
     await session.commitTransaction();
     await session.endSession();
+    io.emit('notification', 'new-notification');
     return;
   } catch (error: any) {
     await session.abortTransaction();

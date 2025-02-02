@@ -1,27 +1,55 @@
 import mongoose from 'mongoose';
-import { app } from './app';
 import config from './app/config';
-import { Server } from 'http';
+import { app } from './app'; // Import the Express app
+import http from 'http';
+import { Server as SocketIOServer } from 'socket.io';
+import { NotificationServices } from './app/modules/Notification/notification.services';
 
 const port = process.env.PORT || config.port;
 
-let server: Server;
+// Create the HTTP server with your existing Express app
+const server = http.createServer(app);
 
+// Initialize Socket.IO and attach it to the server
+const io = new SocketIOServer(server, {
+  connectionStateRecovery: {},
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
+});
+
+// Database connection
 async function dbConnection() {
   const url = config.database_url;
   try {
     await mongoose.connect(url as string);
-    server = app.listen(port, () => {
-      console.log(`app server listening on ${port}`);
+
+    server.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+
+    io.on('connection', socket => {
+      console.log(`New client connected: ${socket.id}`);
+
+      socket.on('up-notification', msg => {
+        if (msg == 'update-notifications') {
+          NotificationServices.notificationUpdate();
+        }
+      });
+
+      socket.on('disconnect', () => {
+        console.log(`Client disconnected: ${socket.id}`);
+      });
     });
   } catch (err) {
-    console.log(err);
+    console.error('Error connecting to the database:', err);
   }
 }
 dbConnection();
 
-process.on('uncaughtException', () => {
-  console.log('uncaughtException detected, server closed');
+process.on('uncaughtException', err => {
+  console.error('Uncaught exception detected:', err);
   if (server) {
     server.close(() => {
       process.exit(1);
@@ -31,8 +59,8 @@ process.on('uncaughtException', () => {
   }
 });
 
-process.on('unhandledRejection', () => {
-  console.log('unhandledRejection detected, server closed');
+process.on('unhandledRejection', reason => {
+  console.error('Unhandled rejection detected:', reason);
   if (server) {
     server.close(() => {
       process.exit(1);
@@ -41,3 +69,5 @@ process.on('unhandledRejection', () => {
     process.exit(1);
   }
 });
+
+export { io };
