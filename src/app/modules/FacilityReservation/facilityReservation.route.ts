@@ -19,18 +19,6 @@ route.get(
   FacilityReservationController.getUserFacilitiesReservation,
 );
 
-route.get(
-  '/frequency',
-  // authMiddleware(ROLE.superAdmin, ROLE.admin),
-  FacilityReservationController.getReservationFrequencyByMonth,
-);
-
-route.get(
-  '/revenue',
-  // authMiddleware(ROLE.superAdmin, ROLE.admin),
-  FacilityReservationController.getReservationRevenueByMonth,
-);
-
 route.get('/slots', FacilityReservationController.getFacilityReservationSlots);
 
 route.get(

@@ -11,7 +11,7 @@ const createUser = catchAsync(async (req, res) => {
 
 const createMembershipByUser = catchAsync(async (req, res) => {
   await UserServices.createMembershipByUserIntoDB(req.params.id, req.body);
-  sendResponse(res, httpStatus.CREATED, 'Membership get succesfully');
+  sendResponse(res, httpStatus.CREATED, 'Membership purchased successfully');
 });
 
 const updateUser = catchAsync(async (req, res) => {

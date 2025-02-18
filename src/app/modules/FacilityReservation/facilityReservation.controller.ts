@@ -88,32 +88,6 @@ const deleteFacilityReservation = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Facility reservation deleted succesfully');
 });
 
-const getReservationFrequencyByMonth = catchAsync(async (req, res) => {
-  const result =
-    await FacilityReservationServices.getReservationFrequencyByMonthFromDB(
-      req.query,
-    );
-  sendResponse(
-    res,
-    httpStatus.OK,
-    'Reservation frequency by month fetch succesfully',
-    result,
-  );
-});
-
-const getReservationRevenueByMonth = catchAsync(async (req, res) => {
-  const result =
-    await FacilityReservationServices.getReservationRevenueByMonthFromDB(
-      req.query,
-    );
-  sendResponse(
-    res,
-    httpStatus.OK,
-    'Reservation revenue by month fetch succesfully',
-    result,
-  );
-});
-
 export const FacilityReservationController = {
   createFacilityReservationByAdmin,
   getAllFacilitiesReservation,
@@ -123,6 +97,4 @@ export const FacilityReservationController = {
   getFacilityReservationSlots,
   createFacilityReservationByUser,
   getUserFacilitiesReservation,
-  getReservationFrequencyByMonth,
-  getReservationRevenueByMonth,
 };

@@ -23,6 +23,8 @@ const notificationSchema = new Schema<INotification>(
   { timestamps: true, versionKey: false },
 );
 
+notificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 2592000 });
+
 const Notification = model<INotification>('Notification', notificationSchema);
 
 export default Notification;

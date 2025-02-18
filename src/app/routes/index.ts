@@ -36,8 +36,13 @@ import { ShopPaymentRoutes } from '../modules/ShopPayment/shopPayment.route';
 import { BootcampPaymentRoutes } from '../modules/BootcampPayment/bootcampPayment.route';
 import { FacilityPaymentRoutes } from '../modules/FacilityPayment/facilityPayment.route';
 import { TournamentPaymentRoutes } from '../modules/TournamentPayment/tournamentPayment.route';
-import { TrainerReportRoutes } from '../modules/TrainerReport/trainerReport.route';
-import { NotificationRoute } from '../modules/Notification/notification.route';
+import { OverviewReportRoutes } from '../modules/OverviewReport/overviewReport.route';
+import { NotificationRoutes } from '../modules/Notification/notification.route';
+import { FacilityReportsRoutes } from '../modules/FacilityReport/facilityReport.route';
+import { ClassReportsRoutes } from '../modules/ClassReport/classReport.route';
+import { CourseReportsRoutes } from '../modules/CourseReport/courseReport.route';
+import { AppointmentOneOnOneReportsRoutes } from '../modules/AppointmentOneOnOneReport/appointmentOneOnOneReport.route';
+import { AppointmentGroupReportsRoutes } from '../modules/AppointmentGroupReport/appointmentGroupReport.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -190,12 +195,32 @@ const mainRoutes = [
     route: CategoryRoutes,
   },
   {
-    path: '/reports',
-    route: TrainerReportRoutes,
+    path: '/reports/overview',
+    route: OverviewReportRoutes,
+  },
+  {
+    path: '/reports/facilities',
+    route: FacilityReportsRoutes,
+  },
+  {
+    path: '/reports/classes',
+    route: ClassReportsRoutes,
+  },
+  {
+    path: '/reports/courses',
+    route: CourseReportsRoutes,
+  },
+  {
+    path: '/reports/appointment/one-on-one',
+    route: AppointmentOneOnOneReportsRoutes,
+  },
+  {
+    path: '/reports/appointment/group',
+    route: AppointmentGroupReportsRoutes,
   },
   {
     path: '/notifications',
-    route: NotificationRoute,
+    route: NotificationRoutes,
   },
 ];
 

@@ -4,6 +4,7 @@ import { app } from './app'; // Import the Express app
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { NotificationServices } from './app/modules/Notification/notification.services';
+import { startMembershipCronJob } from './app/utils/membershipCronJob';
 
 const port = process.env.PORT || config.port;
 
@@ -24,14 +25,12 @@ async function dbConnection() {
   const url = config.database_url;
   try {
     await mongoose.connect(url as string);
-
+    startMembershipCronJob();
     server.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
 
     io.on('connection', socket => {
-      console.log(`New client connected: ${socket.id}`);
-
       socket.on('up-notification', msg => {
         if (msg == 'update-notifications') {
           NotificationServices.notificationUpdate();

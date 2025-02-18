@@ -580,7 +580,7 @@ export const sendRentalBookingFailedNotifyEmail = async ({
 
             <hr style="border: 1px solid #ccc; margin: 20px 0;">
 
-            <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system (Stripe dashboard) and contact with the user for further assistance.</p>
+            <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system and contact with the user for further assistance.</p>
           </div>
         </body>
       </html>
@@ -1252,7 +1252,7 @@ export const sendMembershipPurchasedFailedNotifyEmail = async ({
   
                   <hr style="border: 1px solid #ccc; margin: 20px 0;">
   
-                  <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system (Stripe dashboard) and contact with the user for further assistance.</p>
+                  <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system  and contact with the user for further assistance.</p>
   
                   <h3 style="color: #E74C3C;">Contact Information</h3>
                   <p>Email: <a href="mailto:${email}">${email}</a></p>
@@ -1321,7 +1321,7 @@ export const sendBundleCreditPurchaseFailedNotifyEmail = async ({
   
                   <hr style="border: 1px solid #ccc; margin: 20px 0;">
   
-                  <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system (Stripe dashboard) and contact with the user for further assistance.</p>
+                  <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system  and contact with the user for further assistance.</p>
   
                   <h3 style="color: #E74C3C;">Contact Information</h3>
                   <p>Email: <a href="mailto:${email}">${email}</a></p>

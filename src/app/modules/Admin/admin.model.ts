@@ -22,6 +22,7 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
       index: true,
     },
     phone: { type: String, required: true },

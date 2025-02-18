@@ -26,6 +26,7 @@ const userSchema = new Schema<IUser, UserModel>(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
     },
     verified: {
       type: Boolean,

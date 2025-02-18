@@ -11,4 +11,4 @@ router.get(
   NotificationControllers.getNotification,
 );
 
-export const NotificationRoute = router;
+export const NotificationRoutes = router;
