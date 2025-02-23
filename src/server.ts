@@ -22,7 +22,7 @@ const io = new SocketIOServer(server, {
 
 // Database connection
 async function dbConnection() {
-  const url = config.database_url;
+  const url = config.database_local_url;
   try {
     await mongoose.connect(url as string);
     startMembershipCronJob();
