@@ -42,7 +42,7 @@ const checkFacilityTempReservations = async () => {
 
       // Check if the reservation has expired
       const expiryTime = new Date(createdAt.getTime() + durationMs);
-      if (currentTime > expiryTime) {
+      if (currentTime.getTime() > expiryTime.getTime()) {
         await FacilityReservation.findByIdAndDelete(reservation._id);
         console.log(`Deleted expired reservation: ${reservation._id}`);
       }
