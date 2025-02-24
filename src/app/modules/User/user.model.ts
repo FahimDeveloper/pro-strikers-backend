@@ -8,7 +8,6 @@ const userSchema = new Schema<IUser, UserModel>(
   {
     first_name: {
       type: String,
-      required: true,
     },
     last_name: {
       type: String,
@@ -61,9 +60,6 @@ const userSchema = new Schema<IUser, UserModel>(
       type: String,
     },
     country: {
-      type: String,
-    },
-    nationality: {
       type: String,
     },
     street_address: {

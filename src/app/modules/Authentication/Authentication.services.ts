@@ -77,7 +77,6 @@ const loginUserIntoDB = async (payload: ILogin) => {
     city,
     state,
     country,
-    nationality,
     date_of_birth,
     membership,
     status,
@@ -102,7 +101,6 @@ const loginUserIntoDB = async (payload: ILogin) => {
       city,
       state,
       country,
-      nationality,
       date_of_birth,
       membership,
       status,
@@ -146,7 +144,7 @@ const continueWithSocialIntoDB = async (payload: any) => {
       verified: true,
     });
     if (result) {
-      await sendSocialLoginConfirmationEmail({
+      sendSocialLoginConfirmationEmail({
         email: payload.email,
         password: randomPass,
         provider: payload.provider,
@@ -168,7 +166,6 @@ const continueWithSocialIntoDB = async (payload: any) => {
       city,
       state,
       country,
-      nationality,
       date_of_birth,
       membership,
       status,
@@ -193,7 +190,6 @@ const continueWithSocialIntoDB = async (payload: any) => {
         city,
         state,
         country,
-        nationality,
         date_of_birth,
         membership,
         status,
@@ -227,7 +223,6 @@ const continueWithSocialIntoDB = async (payload: any) => {
         city,
         state,
         country,
-        nationality,
         date_of_birth,
         membership,
         status,
@@ -252,7 +247,6 @@ const continueWithSocialIntoDB = async (payload: any) => {
           city,
           state,
           country,
-          nationality,
           date_of_birth,
           membership,
           status,
@@ -295,7 +289,7 @@ const registerUserIntoDB = async (payload: IRegister) => {
   );
 
   const emailVerifyLink = `${config.website_live_ui_link}/user/verify/${emailAccessToken}`;
-  await sendVerifyEmail({ email: payload.email, link: emailVerifyLink });
+  sendVerifyEmail({ email: payload.email, link: emailVerifyLink });
 
   const refreshToken = createToken(
     jwtPayload,
@@ -319,7 +313,6 @@ const registerUserIntoDB = async (payload: IRegister) => {
     city,
     state,
     country,
-    nationality,
     date_of_birth,
   } = result;
 
@@ -340,7 +333,6 @@ const registerUserIntoDB = async (payload: IRegister) => {
       city,
       state,
       country,
-      nationality,
       date_of_birth,
     },
     accessToken,
@@ -532,6 +524,14 @@ const verifyLink = async (payload: string) => {
   return;
 };
 
+const verifyPaymentLink = async (payload: string) => {
+  jwt.verify(
+    payload,
+    config.jwt_temp_booking_access_secret as string,
+  ) as JwtPayload;
+  return;
+};
+
 const verifyCode = async ({ token, otp }: { token: string; otp: number }) => {
   const { email } = jwt.verify(
     token,
@@ -670,4 +670,5 @@ export const AuthenticationServices = {
   continueWithSocialIntoDB,
   changeUserPasswordIntoDB,
   changeAdminPasswordIntoDB,
+  verifyPaymentLink,
 };

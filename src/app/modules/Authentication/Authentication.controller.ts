@@ -1,5 +1,4 @@
 import httpStatus from 'http-status';
-import config from '../../config';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { AuthenticationServices } from './Authentication.services';
@@ -134,6 +133,10 @@ const verifyUiLink = catchAsync(async (req, res) => {
   await AuthenticationServices.verifyLink(req.params.token);
   sendResponse(res, httpStatus.OK, 'Success');
 });
+const verifyPaymentUiLink = catchAsync(async (req, res) => {
+  await AuthenticationServices.verifyPaymentLink(req.params.token);
+  sendResponse(res, httpStatus.OK, 'Success');
+});
 
 const verifyResetCode = catchAsync(async (req, res) => {
   await AuthenticationServices.verifyCode(req.body);
@@ -178,4 +181,5 @@ export const AuthenticationControllers = {
   continueWithSocial,
   changeUserPassword,
   changeAdminPassword,
+  verifyPaymentUiLink,
 };

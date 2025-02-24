@@ -4,7 +4,10 @@ import { app } from './app'; // Import the Express app
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { NotificationServices } from './app/modules/Notification/notification.services';
-import { startMembershipCronJob } from './app/utils/membershipCronJob';
+import {
+  startMembershipCronJob,
+  startTempFacilityReservationCronJob,
+} from './app/utils/cronJob';
 
 const port = process.env.PORT || config.port;
 
@@ -22,10 +25,11 @@ const io = new SocketIOServer(server, {
 
 // Database connection
 async function dbConnection() {
-  const url = config.database_local_url;
+  const url = config.database_url;
   try {
     await mongoose.connect(url as string);
     startMembershipCronJob();
+    startTempFacilityReservationCronJob();
     server.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });

@@ -35,6 +35,11 @@ route.post(
 );
 
 route.post(
+  '/user/confirm',
+  FacilityReservationController.confirmFacilityReservationByUser,
+);
+
+route.post(
   '/admin/create/:id',
   authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(FacilityReservationValidations.createValidation),

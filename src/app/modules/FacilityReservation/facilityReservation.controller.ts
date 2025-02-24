@@ -11,6 +11,13 @@ const createFacilityReservationByAdmin = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'Reservation create success');
 });
 
+const confirmFacilityReservationByUser = catchAsync(async (req, res) => {
+  await FacilityReservationServices.confirmFacilityReservationByUserIntoDB(
+    req.body,
+  );
+  sendResponse(res, httpStatus.CREATED, 'Reservation confirm success');
+});
+
 const createFacilityReservationByUser = catchAsync(async (req, res) => {
   await FacilityReservationServices.createFacilityReservationByUserIntoDB(
     req.params.id,
@@ -97,4 +104,5 @@ export const FacilityReservationController = {
   getFacilityReservationSlots,
   createFacilityReservationByUser,
   getUserFacilitiesReservation,
+  confirmFacilityReservationByUser,
 };

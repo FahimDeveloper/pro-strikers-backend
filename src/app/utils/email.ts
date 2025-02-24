@@ -370,6 +370,176 @@ export const sendRentalBookingConfirmationEmail = ({
   });
 };
 
+export const sendRentalBookingPaymentEmail = ({
+  first_name,
+  last_name,
+  expiry,
+  email,
+  bookings,
+  amount,
+  link,
+}: {
+  first_name: string;
+  last_name: string;
+  expiry: string;
+  email: string;
+  bookings: any;
+  amount: number;
+  link: string;
+}) => {
+  transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: email,
+    subject: 'ProStrikers - Complete Your Payment Now',
+    html: `
+            <html>
+  <head>
+    <style>
+      /* Default styles */
+      .table-container {
+        display: block;
+      }
+
+      .mobile-container {
+        display: none;
+      }
+
+      /* Styles for screens smaller than 640px */
+      @media (max-width: 640px) {
+        .table-container {
+          display: none;
+        }
+
+        .mobile-container {
+          display: block;
+        }
+      }
+
+      .addon-item {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+
+      .addon-item img {
+        max-width: 100px;
+        display: block;
+        margin-top: 5px;
+      }
+
+      .mobile-item {
+        background-color: #f4f4f4;
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .mobile-item h4 {
+        margin: 0 0 5px 0;
+        color: #0ABAC3;
+      }
+    </style>
+  </head>
+  <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+      
+      <!-- Logo Section -->
+      <div style="text-align: center; margin-bottom: 20px;">
+          <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+      </div>
+
+      <h2 style="color: #0ABAC3;">Booking Pending Payment - ProStrikers</h2>
+      <p>Dear ${first_name} ${last_name},</p>
+      <p>We are pleased your booking at ProStrikers! Please pay your due to confirm your booking. Link will be expire after ${expiry === '1h' ? '1 hour' : '30 minutes'}</p>
+      
+      <!-- Table for larger screens -->
+      <div class="table-container">
+        <h3 style="color: #0ABAC3;">Booking Details</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #0ABAC3; color: white;">
+              <th style="text-align:center;">Date</th>
+              <th style="text-align:center;">Sport</th>
+              <th style="text-align:center;">Time Slot</th>
+              <th style="text-align:center;">Area</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${bookings.bookings
+              .map(
+                (booking: any) => `
+                <tr>
+                  <td style="text-align:center;">${moment(booking.date).format('dddd, MMM Do YYYY')}</td>
+                  <td style="text-align:center;text-transform:capitalize;">${bookings.sport}</td>
+                  <td style="text-align:center;">${booking.time_slot}</td>
+                  <td style="text-align:center;">${booking.lane}</td>
+                </tr>`,
+              )
+              .join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile-friendly details for smaller screens -->
+<div class="mobile-container">
+  ${bookings.bookings
+    .map(
+      (booking: any) => `
+      <div class="mobile-card">
+        <div class="mobile-card-header">
+          <h3 style="margin: 0; color: #0ABAC3;">Booking For ${moment(booking.date).format('dddd, MMM Do YYYY')}</h3>
+        </div>
+        <div class="mobile-card-body">
+          <p><strong>Sport:</strong> ${bookings.sport}</p>
+          <p><strong>Time Slot:</strong> ${booking.time_slot}</p>
+          <p><strong>Area:</strong> ${booking.lane}</p>
+        </div>
+      </div>`,
+    )
+    .join('')}
+</div>
+
+
+      <h3 style="color: #0ABAC3; margin-top: 20px;">Add-ons</h3>
+      ${
+        bookings.addons.length > 0
+          ? bookings.addons
+              .map(
+                (addon: any) => `
+                <div class="addon-item">
+                  <strong>${addon.name}</strong> - ${addon.hours === 0.5 ? '30 minutes' : `${addon.hours} hours`}
+                  <img src="${addon.image}" alt="${addon.name}">
+                </div>`,
+              )
+              .join('')
+          : '<p>No add-ons selected.</p>'
+      }
+
+      <h3 style="color: #0ABAC3; margin-top: 20px;">Payment Information</h3>
+      <p><strong>Payment Link:</strong> <a href="${link}">${link}</a></p>
+      <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+
+      <hr style="border: 1px solid #ccc; margin: 20px 0;">
+
+      <p>If you have any questions or need to make changes, please don't hesitate to contact us.</p>
+      
+      <h3 style="color: #0ABAC3;">Contact Information</h3>
+      <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
+      <p>Phone: (916)-890-5834</p>
+      <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
+
+      <p>Thank you for choosing ProStrikers! We look forward to your visit.</p>
+    </div>
+  </body>
+</html>
+
+          `,
+  });
+};
+
 export const sendShopPurchaseConfirmationEmail = async ({
   email,
   data,
@@ -1488,14 +1658,14 @@ export const sendResetPasswordVerifyCodeEmail = async ({
   return;
 };
 
-export const sendVerifyEmail = async ({
+export const sendVerifyEmail = ({
   email,
   link,
 }: {
   email: string;
   link: string;
 }) => {
-  await transporter.sendMail({
+  transporter.sendMail({
     from: 'ProStrikers <admin@prostrikers.com>',
     to: email,
     subject: 'Verify your account',
@@ -1626,7 +1796,7 @@ Phone: (916)-890-5834</p>`,
   return;
 };
 
-export const sendSocialLoginConfirmationEmail = async ({
+export const sendTempRegisterConfirmationEmail = ({
   email,
   provider,
   password,
@@ -1635,7 +1805,59 @@ export const sendSocialLoginConfirmationEmail = async ({
   provider: string;
   password: string;
 }) => {
-  await transporter.sendMail({
+  transporter.sendMail({
+    from: 'ProStrikers <admin@prostrikers.com>',
+    to: email,
+    subject: 'Welcome to ProStrikers!',
+    html: `<p>Dear User,
+<br/>
+Welcome to Pro Strikers! We are excited to have you join our family.
+<br/>
+Your account has been created successfully by ${provider} login. We are provide you a temporary password for login with your email and pass if you need. Password is <span style="font-size: 22px; font-weight: 500;">${password}</span>
+<br/>
+To ensure the security of your account, we recommend that you change your password immediately.
+<br/>
+Please follow the steps below to update your password:
+<br/>
+<br/>
+**Change Your Password:**
+<br/>
+we highly suggest changing your password to something unique and secure. To change your password, follow these steps:
+<br/>
+- Log in to your account.
+<br/>
+- Navigate to the "Account" page.
+<br/>
+- Click on "Change Password" and follow the instructions.
+<br/>
+<br/>
+For your security, please ensure that your new password is strong and not easily guessable. A good password includes a combination of upper and lower case letters, numbers, and special characters.
+<br/><br/>
+Thank you for joining us, and we look forward to providing you with a great experience.
+<br/><br/>
+Best regards,
+<br/><br/>
+Prostrikers Team
+<br/>
+2230 16th St, Sacramento, CA 95818, United States.
+<br/>
+Email: admin@prostrikers.com
+<br/>
+Phone: (916)-890-5834</p>`,
+  });
+  return;
+};
+
+export const sendSocialLoginConfirmationEmail = ({
+  email,
+  provider,
+  password,
+}: {
+  email: string;
+  provider: string;
+  password: string;
+}) => {
+  transporter.sendMail({
     from: 'ProStrikers <admin@prostrikers.com>',
     to: email,
     subject: 'Welcome to ProStrikers!',

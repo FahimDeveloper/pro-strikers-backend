@@ -13,6 +13,11 @@ router.get(
   AuthenticationControllers.verifyUiLink,
 );
 
+router.get(
+  '/temp-booking/link-verify/:token',
+  AuthenticationControllers.verifyPaymentUiLink,
+);
+
 router.get('/email-verify/:token', AuthenticationControllers.emailVerify);
 
 router.post(
