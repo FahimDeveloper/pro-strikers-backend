@@ -68,7 +68,7 @@ const startMembershipCronJob = () => {
 
 const startTempFacilityReservationCronJob = () => {
   new CronJob(
-    '*/15 0 * * *',
+    '*/15 * * * *',
     async () => {
       await checkFacilityTempReservations();
     },
