@@ -25,7 +25,14 @@ class QueryBuilder<T> {
 
   filter() {
     const queryObj = { ...this.query };
-    const excludeFields = ['search', 'limit', 'page', 'fields', 'month'];
+    const excludeFields = [
+      'search',
+      'limit',
+      'page',
+      'fields',
+      'month',
+      'date',
+    ];
     excludeFields.forEach(el => delete queryObj[el]);
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
     return this;
@@ -37,6 +44,16 @@ class QueryBuilder<T> {
       this.modelQuery = this.modelQuery.find({
         $gte: start_date,
         $lte: end_date,
+      });
+    }
+    return this;
+  }
+
+  dateFilter() {
+    const { date } = this.query;
+    if (date) {
+      this.modelQuery = this.modelQuery.find({
+        bookings: { $elemMatch: { date: date } },
       });
     }
     return this;

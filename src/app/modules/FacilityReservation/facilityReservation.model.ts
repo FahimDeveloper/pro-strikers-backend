@@ -43,7 +43,7 @@ const FacilityReservationSchema = new Schema<IFacilityReservation>(
     },
     voucher_applied: { type: Boolean, required: true, default: false },
     sport: { type: String, required: true },
-    confirmed: { type: Boolean, default: false },
+    confirmed: { type: Boolean, default: true },
     temp_duration: { type: String, default: false },
     payment_link: { type: String, default: false },
     bookings: { type: [FacilityBookingsSchema], required: true },

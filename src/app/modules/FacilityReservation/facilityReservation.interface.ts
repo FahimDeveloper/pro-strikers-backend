@@ -42,6 +42,7 @@ export interface IFacilityReservationRequest {
     last_name: string;
     email: string;
     voucher_applied: boolean;
+    phone: string;
     confirmed: boolean;
     temp_duration?: string;
     facility: mongoose.Types.ObjectId;

@@ -30,14 +30,12 @@ const checkFacilityTempReservations = async () => {
     for (const reservation of reservations) {
       const { createdAt, temp_duration } = reservation;
 
-      if (!createdAt || !temp_duration) continue; // Skip if missing data
-
-      // Convert temp_duration (e.g., "30m", "1h") into milliseconds
+      if (!createdAt || !temp_duration) continue;
       let durationMs = 0;
       if (temp_duration.includes('m')) {
-        durationMs = parseInt(temp_duration) * 60 * 1000; // Convert minutes to milliseconds
+        durationMs = parseInt(temp_duration) * 60 * 1000;
       } else if (temp_duration.includes('h')) {
-        durationMs = parseInt(temp_duration) * 60 * 60 * 1000; // Convert hours to milliseconds
+        durationMs = parseInt(temp_duration) * 60 * 60 * 1000;
       }
 
       // Check if the reservation has expired
