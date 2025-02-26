@@ -102,17 +102,15 @@ const createFacilityReservationByAdminIntoDB = async (
     } else {
       const paymentAccessToken = jwt.sign(
         {
-          email: facility_data?.email,
-          role: 'user',
-          reservation_id: reservation[0]._id,
-          payment_id: payment[0]._id,
-          payment_info: payment_info,
+          e: facility_data?.email,
+          r: reservation[0]._id,
+          p: payment[0]._id,
+          a: payment_info?.amount,
         },
         config.jwt_temp_booking_access_secret as string,
         {
           algorithm: 'HS256',
           expiresIn: facility_data?.temp_duration,
-          encoding: 'utf8',
         },
       );
       const paymentLink = `${config.website_live_ui_link}/reservation/facilities/payment/${paymentAccessToken}`;
@@ -144,7 +142,7 @@ const createFacilityReservationByAdminIntoDB = async (
 
 const confirmFacilityReservationByUserIntoDB = async (payload: any) => {
   const session = await mongoose.startSession();
-  const { email, reservation_id, payment_id, payment_info } = payload;
+  const { email, reservation_id, payment_id, transaction_id } = payload;
   try {
     session.startTransaction();
     const user = await User.findOne({ email: email });
@@ -157,16 +155,23 @@ const confirmFacilityReservationByUserIntoDB = async (payload: any) => {
       },
       { session },
     );
-    await FacilityPayment.findByIdAndUpdate(payment_id, payment_info, {
-      session,
-    });
-    sendRentalBookingConfirmationEmail({
-      user: user,
-      transactionId: payment_info?.transaction_id,
-      email: payment_info?.email,
-      bookings: facility,
-      amount: payment_info?.amount,
-    });
+    const paymentInfo = await FacilityPayment.findByIdAndUpdate(
+      payment_id,
+      { transaction_id: transaction_id },
+      {
+        session,
+        new: true,
+      },
+    );
+    if (paymentInfo) {
+      sendRentalBookingConfirmationEmail({
+        user: user,
+        transactionId: transaction_id,
+        email: paymentInfo?.email,
+        bookings: facility,
+        amount: paymentInfo?.amount,
+      });
+    }
     await session.commitTransaction();
     await session.endSession();
   } catch (err: any) {
