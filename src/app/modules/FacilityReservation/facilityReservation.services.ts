@@ -110,7 +110,9 @@ const createFacilityReservationByAdminIntoDB = async (
         },
         config.jwt_temp_booking_access_secret as string,
         {
+          algorithm: 'HS256',
           expiresIn: facility_data?.temp_duration,
+          encoding: 'utf8',
         },
       );
       const paymentLink = `${config.website_live_ui_link}/reservation/facilities/payment/${paymentAccessToken}`;
