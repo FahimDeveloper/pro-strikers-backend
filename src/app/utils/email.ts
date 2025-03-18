@@ -16,10 +16,12 @@ const transporter = nodemailer.createTransport({
 export const sendFeedbackEmail = async ({
   name,
   email,
+  phone_number,
   message,
 }: {
   name: string;
   email: string;
+  phone_number: string;
   message: string;
 }) => {
   await transporter.sendMail({
@@ -42,6 +44,7 @@ export const sendFeedbackEmail = async ({
       <!-- Contact Details Section -->
       <div style="margin-top: 20px;">
         <p><strong style="color: #0ABAC3;">Name:</strong> ${name}</p>
+        <p><strong style="color: #0ABAC3;">Number:</strong> ${phone_number}</p>
         <p><strong style="color: #0ABAC3;">Email:</strong> ${email}</p>
         <p><strong style="color: #0ABAC3;">Message:</strong></p>
         <p>${message}</p>
