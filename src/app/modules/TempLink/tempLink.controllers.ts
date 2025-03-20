@@ -10,7 +10,7 @@ const createTempLink = catchAsync(async (req, res) => {
 
 const getTempLink = catchAsync(async (req, res) => {
   const result = await TempLinkServices.getTempLinkFromDB(req.params.id);
-  sendResponse(res, httpStatus.CREATED, 'Link fetched successfully', result);
+  sendResponse(res, httpStatus.OK, 'Link fetched successfully', result);
 });
 
 export const TempLinkControllers = {

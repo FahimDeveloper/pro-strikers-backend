@@ -115,10 +115,12 @@ const createFacilityReservationByAdminIntoDB = async (
         },
       );
       const tempLink = await TempLink.create(
-        {
-          type: 'facility',
-          token: paymentAccessToken,
-        },
+        [
+          {
+            type: 'facility',
+            token: paymentAccessToken,
+          },
+        ],
         { session: session },
       );
       const paymentLink = `${config.website_live_ui_link}/reservation/facilities/payment/${tempLink[0]._id}`;
