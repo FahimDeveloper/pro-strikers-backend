@@ -25,21 +25,14 @@ const checkMembershipStatus = async () => {
 const checkFacilityTempReservations = async () => {
   try {
     const currentTime = new Date();
+    const THIRTY_MINUTES = 30 * 60 * 1000; // 30 minutes in milliseconds
+
     const reservations = await FacilityReservation.find({ confirmed: false });
 
     for (const reservation of reservations) {
-      const { createdAt, temp_duration } = reservation;
+      const createdAt = new Date(reservation.createdAt); // Convert to Date object
+      const expiryTime = new Date(createdAt.getTime() + THIRTY_MINUTES);
 
-      if (!createdAt || !temp_duration) continue;
-      let durationMs = 0;
-      if (temp_duration.includes('m')) {
-        durationMs = parseInt(temp_duration) * 60 * 1000;
-      } else if (temp_duration.includes('h')) {
-        durationMs = parseInt(temp_duration) * 60 * 60 * 1000;
-      }
-
-      // Check if the reservation has expired
-      const expiryTime = new Date(createdAt.getTime() + durationMs);
       if (currentTime.getTime() > expiryTime.getTime()) {
         await FacilityReservation.findByIdAndDelete(reservation._id);
         console.log(`Deleted expired reservation: ${reservation._id}`);
@@ -66,7 +59,7 @@ const startMembershipCronJob = () => {
 
 const startTempFacilityReservationCronJob = () => {
   new CronJob(
-    '*/15 * * * *',
+    '*/5 * * * *',
     async () => {
       await checkFacilityTempReservations();
     },

@@ -5,7 +5,6 @@ export interface IFacilityReservation {
   email: string;
   voucher_applied: boolean;
   confirmed: boolean;
-  temp_duration?: string;
   payment_link?: string;
   facility: mongoose.Types.ObjectId;
   payment: mongoose.Types.ObjectId;
@@ -44,7 +43,6 @@ export interface IFacilityReservationRequest {
     voucher_applied: boolean;
     phone: string;
     confirmed: boolean;
-    temp_duration?: string;
     facility: mongoose.Types.ObjectId;
     payment: mongoose.Types.ObjectId;
     sport: string;

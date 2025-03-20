@@ -23,6 +23,8 @@ import { io } from '../../../server';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
 import { createToken } from '../../utils/auth';
 import config from '../../config';
+import { TempLinkServices } from '../TempLink/tempLink.services';
+import { TempLink } from '../TempLink/tempLink.modal';
 
 const createFacilityReservationByAdminIntoDB = async (
   id: string,
@@ -109,11 +111,17 @@ const createFacilityReservationByAdminIntoDB = async (
         },
         config.jwt_temp_booking_access_secret as string,
         {
-          algorithm: 'HS256',
-          expiresIn: facility_data?.temp_duration,
+          expiresIn: '30m',
         },
       );
-      const paymentLink = `${config.website_live_ui_link}/reservation/facilities/payment/${paymentAccessToken}`;
+      const tempLink = await TempLink.create(
+        {
+          type: 'facility',
+          token: paymentAccessToken,
+        },
+        { session: session },
+      );
+      const paymentLink = `${config.website_live_ui_link}/reservation/facilities/payment/${tempLink[0]._id}`;
       await FacilityReservation.findByIdAndUpdate(
         reservation[0]._id,
         { payment_link: paymentLink },
@@ -122,7 +130,7 @@ const createFacilityReservationByAdminIntoDB = async (
       sendRentalBookingPaymentEmail({
         first_name: facility_data?.first_name,
         last_name: facility_data?.last_name,
-        expiry: facility_data?.temp_duration as string,
+        expiry: '30 minutes',
         email: facility_data?.email,
         bookings: facility_data,
         amount: payment_info?.amount,

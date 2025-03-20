@@ -43,6 +43,7 @@ import { ClassReportsRoutes } from '../modules/ClassReport/classReport.route';
 import { CourseReportsRoutes } from '../modules/CourseReport/courseReport.route';
 import { AppointmentOneOnOneReportsRoutes } from '../modules/AppointmentOneOnOneReport/appointmentOneOnOneReport.route';
 import { AppointmentGroupReportsRoutes } from '../modules/AppointmentGroupReport/appointmentGroupReport.route';
+import { TempLinkRoutes } from '../modules/TempLink/tempLink.route';
 
 const router = express.Router();
 const mainRoutes = [
@@ -193,6 +194,10 @@ const mainRoutes = [
   {
     path: '/categories',
     route: CategoryRoutes,
+  },
+  {
+    path: '/temp-booking',
+    route: TempLinkRoutes,
   },
   {
     path: '/reports/overview',
