@@ -26,7 +26,7 @@ export const sendFeedbackEmail = async ({
 }) => {
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
-    to: `${config.notify_email}`,
+    to: `${config.emitrr_email}`,
     subject: 'New Feedback Notification',
     html: `<html>
   <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
