@@ -26,6 +26,40 @@ export const sendFeedbackEmail = async ({
 }) => {
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'New Feedback Notification',
+    html: `<html>
+  <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+      
+      <!-- Header Section -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-size: 1.875rem; line-height: 2.25rem;">ProStrikers</h1>
+      </div>
+
+      <h2 style="color: #0ABAC3;">New Contact Form Submission</h2>
+      <p>Dear Admin,</p>
+      <p>You have received a new message from a user via the contact form. Below are the details:</p>
+      
+      <!-- Contact Details Section -->
+      <div style="margin-top: 20px;">
+        <p><strong style="color: #0ABAC3;">Name:</strong> ${name}</p>
+        <p><strong style="color: #0ABAC3;">Number:</strong> ${phone_number}</p>
+        <p><strong style="color: #0ABAC3;">Email:</strong> ${email}</p>
+        <p><strong style="color: #0ABAC3;">Message:</strong></p>
+        <p>${message}</p>
+      </div>
+
+      <!-- Footer Section -->
+      <hr style="border: 1px solid #ccc; margin: 20px 0;">
+      <p>If you need to respond, you can reply to the user's email directly or take appropriate action.</p>
+    </div>
+  </body>
+</html>
+`,
+  });
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
     to: `${config.emitrr_email}`,
     subject: 'New Feedback Notification',
     html: `<html>
