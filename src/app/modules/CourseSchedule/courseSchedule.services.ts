@@ -18,8 +18,11 @@ const updateCourseIntoDB = async (
 };
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
+  const now = new Date();
   const courseQuery = new QueryBuilder(
-    CourseSchedule.find().populate('trainer'),
+    CourseSchedule.find({ end_date: { $gte: String(now) } }).populate(
+      'trainer',
+    ),
     query,
   )
     .search(['course_name'])

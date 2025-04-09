@@ -28,11 +28,7 @@ const getVoucherFromDB = async (payload: any) => {
   const result = await Voucher.findOne({ voucher_code: payload.voucher_code });
   if (result) {
     const endDate = new Date(result?.end_date);
-    const currentDate = new Date(
-      endDate.getDate(),
-      endDate.getMonth(),
-      endDate.getFullYear(),
-    );
+    const currentDate = new Date();
     if (
       result?.voucher_type !== payload.voucher_type &&
       result?.voucher_type !== 'general'
