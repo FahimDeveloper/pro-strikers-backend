@@ -30,7 +30,7 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
       required: true,
     },
     end_date: {
-      type: String,
+      type: Date,
       required: true,
     },
     start_time: {

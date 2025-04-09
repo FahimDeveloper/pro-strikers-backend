@@ -8,7 +8,7 @@ export interface ICourseSchedule {
   enrolled: number;
   description: string;
   start_date: string;
-  end_date: string;
+  end_date: Date;
   start_time: string;
   end_time: string;
   price: number;
