@@ -18,7 +18,7 @@ const updateCourseIntoDB = async (
 };
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
-  const now = new Date();
+  const now = new Date().toISOString();
   const courseQuery = new QueryBuilder(
     CourseSchedule.find({ end_date: { $gte: now } }).populate('trainer'),
     query,
