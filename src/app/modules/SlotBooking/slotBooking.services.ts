@@ -43,7 +43,6 @@ const createSlotBookingIntoDB = async (payload: ISlotBooking) => {
       $match: {
         'bookings.date': payload.date,
         'bookings.lane': payload.lane,
-        'bookings.training': payload.training, // optional: match training if needed
       },
     },
     {
@@ -53,7 +52,6 @@ const createSlotBookingIntoDB = async (payload: ISlotBooking) => {
       },
     },
   ]);
-
   for (const slot of reservedSlots) {
     const [slotStart, slotEnd] = parseTime(slot.time_slot);
     if (payloadStart < slotEnd && payloadEnd > slotStart) {
