@@ -23,7 +23,6 @@ import { io } from '../../../server';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
 import { createToken } from '../../utils/auth';
 import config from '../../config';
-import { TempLinkServices } from '../TempLink/tempLink.services';
 import { TempLink } from '../TempLink/tempLink.modal';
 
 const createFacilityReservationByAdminIntoDB = async (
@@ -96,7 +95,10 @@ const createFacilityReservationByAdminIntoDB = async (
     if (facility_data?.confirmed) {
       sendRentalBookingConfirmationEmail({
         transactionId: payment_info?.transaction_id,
-        user: user,
+        user: {
+          first_name: facility_data?.first_name,
+          last_name: facility_data?.last_name,
+        },
         email: payment_info?.email,
         bookings: facility_data,
         amount: payment_info?.amount,
