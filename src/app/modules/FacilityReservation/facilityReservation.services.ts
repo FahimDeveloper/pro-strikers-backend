@@ -130,8 +130,12 @@ const createFacilityReservationByAdminIntoDB = async (
         { new: true, session },
       );
       sendRentalBookingPaymentEmail({
-        first_name: user?.first_name || facility_data?.first_name,
-        last_name: user?.last_name || facility_data?.last_name || '',
+        first_name: facility_data?.first_name
+          ? facility_data?.first_name
+          : user?.first_name,
+        last_name: facility_data?.last_name
+          ? facility_data?.last_name
+          : user?.last_name || '',
         expiry: '30 minutes',
         email: facility_data?.email,
         bookings: facility_data,

@@ -416,7 +416,7 @@ export const sendRentalBookingPaymentEmail = ({
   amount,
   link,
 }: {
-  first_name: string;
+  first_name: string | undefined;
   last_name: string;
   expiry: string;
   email: string;
