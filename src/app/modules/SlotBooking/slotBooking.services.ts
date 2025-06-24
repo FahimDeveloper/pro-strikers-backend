@@ -2,15 +2,10 @@ import httpStatus from 'http-status';
 import AppError from '../../errors/AppError';
 import { ISlotBooking } from './slotBooking.interface';
 import { SlotBooking } from './slotBooking.model';
+import { FacilityReservation } from '../FacilityReservation/facilityReservation.model';
 
 const createSlotBookingIntoDB = async (payload: ISlotBooking) => {
-  const existingSlots = await SlotBooking.find({
-    training: payload.training,
-    date: payload.date,
-    lane: payload.lane,
-  });
-
-  // Step 2: Helper function to parse time ranges
+  // Step 1: Parse time range
   const parseTime = (timeRange: string): [number, number] => {
     const [startTime, endTime] = timeRange.split(' - ');
     const parseSingleTime = (timeStr: string): number => {
@@ -27,13 +22,46 @@ const createSlotBookingIntoDB = async (payload: ISlotBooking) => {
 
   const [payloadStart, payloadEnd] = parseTime(payload.time_slot);
 
-  for (const slot of existingSlots) {
+  // Step 2: Check existing slots in SlotBooking (carted slots)
+  const existingCartedSlots = await SlotBooking.find({
+    training: payload.training,
+    date: payload.date,
+    lane: payload.lane,
+  });
+
+  for (const slot of existingCartedSlots) {
+    const [slotStart, slotEnd] = parseTime(slot.time_slot);
+    if (payloadStart < slotEnd && payloadEnd > slotStart) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Slot is already in cart');
+    }
+  }
+
+  // Step 3: Check reserved slots from FacilityReservation
+  const reservedSlots = await FacilityReservation.aggregate([
+    { $unwind: '$bookings' },
+    {
+      $match: {
+        'bookings.date': payload.date,
+        'bookings.lane': payload.lane,
+        'bookings.training': payload.training, // optional: match training if needed
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        time_slot: '$bookings.time_slot',
+      },
+    },
+  ]);
+
+  for (const slot of reservedSlots) {
     const [slotStart, slotEnd] = parseTime(slot.time_slot);
     if (payloadStart < slotEnd && payloadEnd > slotStart) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Slot is already booked');
     }
   }
 
+  // Step 4: Create the new booking
   const result = await SlotBooking.create(payload);
 
   if (!result) {
