@@ -31,4 +31,5 @@ export default {
   node_mailer_mail: process.env.NODEMAILER_MAIL,
   node_mailer_mail_pass: process.env.NODEMAILER_MAIL_PASS,
   stripe_sk_key: process.env.STRIPE_SK_KEY,
+  stripe_webhook_key: process.env.STRIPE_WEBHOOK_SECRET,
 };

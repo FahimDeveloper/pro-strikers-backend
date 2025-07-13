@@ -83,6 +83,7 @@ const loginUserIntoDB = async (payload: ILogin) => {
     issue_date,
     expiry_date,
     package_name,
+    plan,
   } = user;
   return {
     user: {
@@ -107,6 +108,7 @@ const loginUserIntoDB = async (payload: ILogin) => {
       issue_date,
       expiry_date,
       package_name,
+      plan,
     },
     accessToken,
     refreshToken,
@@ -172,6 +174,7 @@ const continueWithSocialIntoDB = async (payload: any) => {
       issue_date,
       expiry_date,
       package_name,
+      plan,
     } = result;
     return {
       user: {
@@ -196,6 +199,7 @@ const continueWithSocialIntoDB = async (payload: any) => {
         issue_date,
         expiry_date,
         package_name,
+        plan,
       },
       accessToken,
       refreshToken,
@@ -229,6 +233,7 @@ const continueWithSocialIntoDB = async (payload: any) => {
         issue_date,
         expiry_date,
         package_name,
+        plan,
       } = user;
       return {
         user: {
@@ -253,6 +258,7 @@ const continueWithSocialIntoDB = async (payload: any) => {
           issue_date,
           expiry_date,
           package_name,
+          plan,
         },
         accessToken,
         refreshToken,

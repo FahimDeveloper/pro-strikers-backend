@@ -1,11 +1,22 @@
 import express from 'express';
-import { StripePaymentController } from './stripePaymentController';
+import { StripePaymentControllers } from './stripePayment.controllers';
 
 const route = express.Router();
 
 route.post(
   '/create-payment-intent',
-  StripePaymentController.stripePaymentIntent,
+  StripePaymentControllers.createPaymentIntent,
+);
+
+route.post(
+  '/create-subscription',
+  StripePaymentControllers.createMembershipSubscription,
+);
+
+route.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  StripePaymentControllers.stripeWebhook,
 );
 
 export const StripePaymentRoutes = route;

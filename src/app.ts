@@ -32,7 +32,6 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   }),
 );
-
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1', router);

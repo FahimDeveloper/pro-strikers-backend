@@ -1,0 +1,34 @@
+import httpStatus from 'http-status';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { StripePaymentServices } from './stripePayment.services';
+
+const createPaymentIntent = catchAsync(async (req, res) => {
+  const { amount } = req.body;
+  const result = await StripePaymentServices.createPaymentIntent(amount);
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Payment intent created successfully',
+    result,
+  );
+});
+const createMembershipSubscription = catchAsync(async (req, res) => {
+  const result = await StripePaymentServices.createMembershipSubscription(
+    req.body,
+  );
+
+  sendResponse(res, httpStatus.OK, 'Setup intent created', result);
+});
+
+// STEP 3: WEBHOOKS FOR PAYMENT SUCCESS/FAILURE
+const stripeWebhook = catchAsync(async (req, res) => {
+  await StripePaymentServices.reCurringProccess(req.body, req.headers);
+  sendResponse(res, httpStatus.OK, 'Recurring webhook call success');
+});
+
+export const StripePaymentControllers = {
+  createPaymentIntent,
+  createMembershipSubscription,
+  stripeWebhook,
+};
