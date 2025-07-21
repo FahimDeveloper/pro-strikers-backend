@@ -1403,7 +1403,6 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
 export const sendMembershipChangeConfirmationEmail = async ({
   invoiceId,
   email,
-  amount,
   subscription,
   subscription_plan,
 }: {
@@ -1416,7 +1415,7 @@ export const sendMembershipChangeConfirmationEmail = async ({
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: email,
-    subject: 'ProStrikers - Membership Purchase Confirmation',
+    subject: 'ProStrikers - Membership Change Confirmation',
     html: `
         <html>
   <head>

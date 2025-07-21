@@ -172,7 +172,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         email: customer.email,
         invoiceId: invoice.id,
         amount: invoice.amount_paid / 100,
-        subscription: customer.subscription,
+        subscription: customer.subscription.split('_').join(' '),
         subscription_plan: customer.subscription_plan,
         issue_date: moment().toISOString(),
         expiry_date:
@@ -185,7 +185,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         email: customer.email,
         invoiceId: invoice.id,
         amount: invoice.amount_paid / 100,
-        subscription: customer.subscription,
+        subscription: customer.subscription.split('_').join(' '),
         subscription_plan: customer.subscription_plan,
         issue_date: moment().toISOString(),
         expiry_date:
@@ -229,7 +229,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       email: customer.email,
       invoiceId: invoice.id,
       amount: invoice.amount_paid / 100,
-      subscription: customer.subscription,
+      subscription: customer.subscription.split('_').join(' '),
       subscription_plan: customer.subscription_plan,
     });
 
@@ -265,7 +265,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       email: customer.email,
       invoiceId: invoice.id,
       amount: invoice.amount_paid / 100,
-      subscription: customer.subscription,
+      subscription: customer.subscription.split('_').join(' '),
       subscription_plan: customer.subscription_plan,
       issue_date: moment().toISOString(),
       expiry_date:
