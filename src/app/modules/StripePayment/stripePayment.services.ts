@@ -7,6 +7,7 @@ import { User } from '../User/user.model';
 import moment from 'moment';
 import MembershipPayment from '../MembershipPayment/membershipPayment.model';
 import {
+  sendMembershipChangeConfirmationEmail,
   sendMembershipPurchasedConfirmationEmail,
   sendMembershipRenewFailedNotifyEmail,
   sendMembershipRenewSuccessNotifyEmail,
@@ -224,18 +225,13 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       },
     );
 
-    // await sendMembershipChangeNotifyEmail({
-    //   email: customer.email,
-    //   invoiceId: invoice.id,
-    //   amount: invoice.amount_paid / 100,
-    //   subscription: customer.subscription,
-    //   subscription_plan: customer.subscription_plan,
-    //   issue_date: moment().toISOString(),
-    //   expiry_date:
-    //     customer.subscription_plan == 'monthly'
-    //       ? moment().add(1, 'month').toISOString()
-    //       : moment().add(1, 'year').toISOString(),
-    // });
+    await sendMembershipChangeConfirmationEmail({
+      email: customer.email,
+      invoiceId: invoice.id,
+      amount: invoice.amount_paid / 100,
+      subscription: customer.subscription,
+      subscription_plan: customer.subscription_plan,
+    });
 
     return { statusCode: 200 };
   }

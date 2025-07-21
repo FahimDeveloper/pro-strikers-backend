@@ -1400,6 +1400,177 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
   return;
 };
 
+export const sendMembershipChangeConfirmationEmail = async ({
+  invoiceId,
+  email,
+  amount,
+  subscription,
+  subscription_plan,
+}: {
+  invoiceId: string;
+  email: string;
+  amount: number;
+  subscription: string;
+  subscription_plan: string;
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: email,
+    subject: 'ProStrikers - Membership Purchase Confirmation',
+    html: `
+        <html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+        border-radius: 8px;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+        margin: 0;
+      }
+      h2, h3 {
+        color: #0ABAC3;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th, td {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      th {
+        background-color: #0ABAC3;
+        color: white;
+      }
+      .contact-info {
+        margin-top: 20px;
+      }
+      a {
+        color: #0ABAC3;
+        text-decoration: none;
+      }
+      hr {
+        border: 1px solid #ccc;
+        margin: 20px 0;
+      }
+      /* Responsive Design */
+      @media screen and (max-width: 640px) {
+        .container {
+          padding: 15px;
+        }
+        table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        .responsive-details {
+          display: none;
+        }
+        .mobile-details {
+          display: block;
+        }
+      }
+      @media screen and (min-width: 641px) {
+        .mobile-details {
+          display: none;
+        }
+      }
+      .mobile-card {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .mobile-card h4 {
+        margin: 0;
+        color: #0ABAC3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Logo Section -->
+      <div class="logo">
+        <h1>ProStrikers</h1>
+      </div>
+
+      <h2>Membership Purchase Confirmation</h2>
+      <p>Dear Customer,</p>
+      <p>Thank you for moving another membership at ProStrikers! Below are your membership details:</p>
+
+      <h3>Membership Details</h3>
+      <!-- Responsive Details -->
+      <div class="responsive-details">
+        <table>
+          <thead>
+            <tr>
+              <th>Package Name</th>
+              <th>Plan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${subscription}</td>
+              <td>${subscription_plan}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile-Friendly Details -->
+      <div class="mobile-details">
+        <div class="mobile-card">
+          <h4>Package Name:</h4>
+          <p>${subscription}</p>
+          <h4>Plan:</h4>
+          <p>${subscription_plan}</p>
+        </div>
+      </div>
+
+      <h3 style="color: #0ABAC3;">Payment Information</h3>
+      <h4>Payment will be automatically handled by stripe in your next renewal invoice</h4>
+      <p><strong>Invoice ID:</strong> ${invoiceId}</p>
+     
+      <hr>
+
+      <p>If you have any questions about your membership, please don't hesitate to contact us.</p>
+
+      <h3>Contact Information</h3>
+      <p>Email: <a href="mailto:admin@prostrikers.com">admin@prostrikers.com</a></p>
+      <p>Phone: (916)-890-5834</p>
+      <p>Address: 2230 16th St, Sacramento, CA 95818, United States</p>
+
+      <p>Thank you for choosing ProStrikers! We look forward to serving you.</p>
+    </div>
+  </body>
+</html>
+
+      `,
+  });
+  return;
+};
+
 export const sendMembershipRenewFailedNotifyEmail = async ({
   invoiceId,
   email,
