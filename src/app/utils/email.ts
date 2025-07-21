@@ -1216,7 +1216,7 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
 
       <h3 style="color: #0ABAC3;">Payment Information</h3>
       <h4>Payment By Stripe</h4>
-      <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+      <p><strong>Invoice ID:</strong> ${invoiceId}</p>
       <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
 
       <hr>
@@ -1381,7 +1381,7 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
 
                 <h3 style="color: #0ABAC3;">Payment Information</h3>
                 <h4>Payment By Stripe</h4>
-                <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                <p><strong>Invoice ID:</strong> ${invoiceId}</p>
                 <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
 
                 <hr style="border: 1px solid #ccc; margin: 20px 0;">
@@ -1453,7 +1453,7 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
   
                   <h3 style="color: #E74C3C;">Payment Information</h3>
                   <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
-                  <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                  <p><strong>Invoice ID:</strong> ${invoiceId}</p>
                  
 
                   <hr style="border: 1px solid #ccc; margin: 20px 0;">
@@ -1505,7 +1505,7 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
   
                   <h3 style="color: #E74C3C;">Payment Information</h3>
                   <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
-                  <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                  <p><strong>Invoice ID:</strong> ${invoiceId}</p>
                   <p>Please complete the due payment to avoid any interruption in service.</p>
                   <hr style="border: 1px solid #ccc; margin: 20px 0;">
   
@@ -1571,7 +1571,7 @@ export const sendMembershipRenewSuccessNotifyEmail = async ({
   
                   <h3 style="color: #0ABAC3;">Payment Information</h3>
                   <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
-                  <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                  <p><strong>Invoice ID:</strong> ${invoiceId}</p>
                  
 
                   <hr style="border: 1px solid #ccc; margin: 20px 0;">
@@ -1623,7 +1623,7 @@ export const sendMembershipRenewSuccessNotifyEmail = async ({
   
                   <h3 style="color: #0ABAC3;">Payment Information</h3>
                   <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
-                  <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                  <p><strong>Invoice ID:</strong> ${invoiceId}</p>
                   <hr style="border: 1px solid #ccc; margin: 20px 0;">
   
                   <p>Thank you for using ProStrikers Services.</p>
