@@ -20,8 +20,10 @@ const createMembershipSubscription = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Setup intent created', result);
 });
 
-// STEP 3: WEBHOOKS FOR PAYMENT SUCCESS/FAILURE
 const stripeWebhook = catchAsync(async (req, res) => {
+  console.log('Type of req.body:', typeof req.body);
+  console.log('Is Buffer:', Buffer.isBuffer(req.body));
+  console.log('Raw body length:', req.body.length);
   await StripePaymentServices.reCurringProccess(req.body, req.headers);
   sendResponse(res, httpStatus.OK, 'Recurring webhook call success');
 });
