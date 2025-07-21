@@ -1055,22 +1055,21 @@ export const sendOrderCanceledByUserNotifyEmail = async ({
 };
 
 export const sendMembershipPurchasedConfirmationEmail = async ({
-  transactionId,
+  invoiceId,
   email,
   amount,
-  membership,
+  subscription,
+  subscription_plan,
+  issue_date,
+  expiry_date,
 }: {
-  transactionId: string;
+  invoiceId: string;
   email: string;
   amount: number;
-  membership: {
-    package_name: string;
-    plan: string;
-    status: boolean;
-    membership: boolean;
-    issue_date: string;
-    expiry_date: string;
-  };
+  subscription: string;
+  subscription_plan: string;
+  issue_date: string;
+  expiry_date: string;
 }) => {
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
@@ -1192,10 +1191,10 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
           </thead>
           <tbody>
             <tr>
-              <td>${membership.package_name}</td>
-              <td>${membership.plan}</td>
-              <td>${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-              <td>${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+              <td>${subscription}</td>
+              <td>${subscription_plan}</td>
+              <td>${moment(issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+              <td>${moment(expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
             </tr>
           </tbody>
         </table>
@@ -1205,18 +1204,19 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
       <div class="mobile-details">
         <div class="mobile-card">
           <h4>Package Name:</h4>
-          <p>${membership.package_name}</p>
+          <p>${subscription}</p>
           <h4>Plan:</h4>
-          <p>${membership.plan}</p>
+          <p>${subscription_plan}</p>
           <h4>Issue Date:</h4>
-          <p>${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+          <p>${moment(issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
           <h4>Expiry Date:</h4>
-          <p>${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+          <p>${moment(expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
         </div>
       </div>
 
-      <h3>Payment Information</h3>
-      <p><strong>Transaction ID:</strong> ${transactionId}</p>
+      <h3 style="color: #0ABAC3;">Payment Information</h3>
+      <h4>Payment By Stripe</h4>
+      <p><strong>Subscription ID:</strong> ${invoiceId}</p>
       <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
 
       <hr>
@@ -1356,10 +1356,10 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
           </thead>
           <tbody>
             <tr>
-              <td>${membership.package_name}</td>
-              <td>${membership.plan}</td>
-              <td>${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
-              <td>${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+              <td>${subscription}</td>
+              <td>${subscription_plan}</td>
+              <td>${moment(issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+              <td>${moment(expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
             </tr>
           </tbody>
         </table>
@@ -1369,18 +1369,19 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
       <div class="mobile-details">
         <div class="mobile-card">
           <h4>Package Name:</h4>
-          <p>${membership.package_name}</p>
+          <p>${subscription}</p>
           <h4>Plan:</h4>
-          <p>${membership.plan}</p>
+          <p>${subscription_plan}</p>
           <h4>Issue Date:</h4>
-          <p>${moment(membership.issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+          <p>${moment(issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
           <h4>Expiry Date:</h4>
-          <p>${moment(membership.expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+          <p>${moment(expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
         </div>
       </div>
 
                 <h3 style="color: #0ABAC3;">Payment Information</h3>
-                <p><strong>Transaction ID:</strong> ${transactionId}</p>
+                <h4>Payment By Stripe</h4>
+                <p><strong>Subscription ID:</strong> ${invoiceId}</p>
                 <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
 
                 <hr style="border: 1px solid #ccc; margin: 20px 0;">
@@ -1399,28 +1400,77 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
   return;
 };
 
-export const sendMembershipPurchasedFailedNotifyEmail = async ({
+export const sendMembershipRenewFailedNotifyEmail = async ({
+  invoiceId,
   email,
   amount,
-  membership,
-  transactionId,
+  subscription,
+  subscription_plan,
 }: {
-  transactionId: string;
+  invoiceId: string;
   email: string;
   amount: number;
-  membership: {
-    package_name: string;
-    plan: string;
-    status: boolean;
-    membership: boolean;
-    issue_date: string;
-    expiry_date: string;
-  };
+  subscription: string;
+  subscription_plan: string;
+  issue_date: string;
+  expiry_date: string;
 }) => {
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: `${config.notify_email}`,
-    subject: 'Membership Purchase Failed - ProStrikers',
+    subject: 'Membership Renewal Failed - ProStrikers',
+    html: `
+            <html>
+              <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+  
+                  <!-- Logo Section -->
+                  <div style="text-align: center; margin-bottom: 20px;">
+                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+                  </div>
+  
+                  <h2 style="color: #E74C3C;">Membership Renewal Failed</h2>
+                  <p><strong>User Email:</strong> ${email}</p>
+                  <p>The following membership renewal attempt failed. Please review the details below:</p>
+
+                  <h3 style="color: #E74C3C;">Membership Details</h3>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                      <tr style="background-color: #E74C3C; color: white;">
+                        <th style="text-align:center;">Package Name</th>
+                        <th style="text-align:center;">Plan</th>
+                        <th style="text-align:center;">Renew/Due Attempt</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="text-align:center;">${subscription}</td>
+                        <td style="text-align:center;">${subscription_plan}</td>
+                        <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+  
+                  <h3 style="color: #E74C3C;">Payment Information</h3>
+                  <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+                  <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                 
+
+                  <hr style="border: 1px solid #ccc; margin: 20px 0;">
+  
+                  <h3 style="color: #E74C3C;">Contact Information</h3>
+                  <p>Email: <a href="mailto:${email}">${email}</a></p>
+  
+                  <p>Thank you for using ProStrikers Admin Services.</p>
+                </div>
+              </body>
+            </html>
+          `,
+  });
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${email}`,
+    subject: 'Membership Renewal Failed - ProStrikers',
     html: `
             <html>
               <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -1441,30 +1491,142 @@ export const sendMembershipPurchasedFailedNotifyEmail = async ({
                       <tr style="background-color: #E74C3C; color: white;">
                         <th style="text-align:center;">Package Name</th>
                         <th style="text-align:center;">Plan</th>
-                        <th style="text-align:center;">Attempt Date</th>
+                        <th style="text-align:center;">Renew Attempt</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td style="text-align:center;">${membership.package_name}</td>
-                        <td style="text-align:center;">${membership.plan}</td>
+                        <td style="text-align:center;">${subscription}</td>
+                        <td style="text-align:center;">${subscription_plan}</td>
                         <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
                       </tr>
                     </tbody>
                   </table>
   
                   <h3 style="color: #E74C3C;">Payment Information</h3>
-                  <p><strong>Attempted Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
-                  <p><strong>Transaction ID:</strong> ${transactionId || 'Not Available'}</p>
-  
+                  <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+                  <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                  <p>Please complete the due payment to avoid any interruption in service.</p>
                   <hr style="border: 1px solid #ccc; margin: 20px 0;">
   
-                  <p style="color: #E74C3C;">The process failed due to an issue. Please verify the payment information from Payment managment system  and contact with the user for further assistance.</p>
+                  <p>Thank you for using ProStrikers Services.</p>
+                </div>
+              </body>
+            </html>
+          `,
+  });
+  return;
+};
+
+export const sendMembershipRenewSuccessNotifyEmail = async ({
+  invoiceId,
+  email,
+  amount,
+  subscription,
+  subscription_plan,
+}: {
+  invoiceId: string;
+  email: string;
+  amount: number;
+  subscription: string;
+  subscription_plan: string;
+  issue_date: string;
+  expiry_date: string;
+}) => {
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${config.notify_email}`,
+    subject: 'Membership Renewal Success - ProStrikers',
+    html: `
+            <html>
+              <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
   
-                  <h3 style="color: #E74C3C;">Contact Information</h3>
+                  <!-- Logo Section -->
+                  <div style="text-align: center; margin-bottom: 20px;">
+                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+                  </div>
+  
+                  <h2 style="color: #0ABAC3;">Membership Renewal Failed</h2>
+                  <p><strong>User Email:</strong> ${email}</p>
+                  <p>The following membership renewal attempt failed. Please review the details below:</p>
+
+                  <h3 style="color: #0ABAC3;">Membership Details</h3>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                      <tr style="background-color: #0ABAC3; color: white;">
+                        <th style="text-align:center;">Package Name</th>
+                        <th style="text-align:center;">Plan</th>
+                        <th style="text-align:center;">Renew/Due Attempt</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="text-align:center;">${subscription}</td>
+                        <td style="text-align:center;">${subscription_plan}</td>
+                        <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+  
+                  <h3 style="color: #0ABAC3;">Payment Information</h3>
+                  <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+                  <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                 
+
+                  <hr style="border: 1px solid #ccc; margin: 20px 0;">
+  
+                  <h3 style="color: #0ABAC3;">Contact Information</h3>
                   <p>Email: <a href="mailto:${email}">${email}</a></p>
   
                   <p>Thank you for using ProStrikers Admin Services.</p>
+                </div>
+              </body>
+            </html>
+          `,
+  });
+  await transporter.sendMail({
+    from: `ProStrikers <${config.notify_email}>`,
+    to: `${email}`,
+    subject: 'Membership Renewal Failed - ProStrikers',
+    html: `
+            <html>
+              <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                <div style="background-color: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; background-color: #ffffff;">
+  
+                  <!-- Logo Section -->
+                  <div style="text-align: center; margin-bottom: 20px;">
+                      <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
+                  </div>
+  
+                  <h2 style="color: #0ABAC3;">Membership Purchase Failed</h2>
+                  <p><strong>User Email:</strong> ${email}</p>
+                  <p>The following membership purchase attempt failed. Please review the details below:</p>
+  
+                  <h3 style="color: #0ABAC3;">Membership Details</h3>
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                      <tr style="background-color: #0ABAC3; color: white;">
+                        <th style="text-align:center;">Package Name</th>
+                        <th style="text-align:center;">Plan</th>
+                        <th style="text-align:center;">Renew/Due Attempt</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="text-align:center;">${subscription}</td>
+                        <td style="text-align:center;">${subscription_plan}</td>
+                        <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+  
+                  <h3 style="color: #0ABAC3;">Payment Information</h3>
+                  <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+                  <p><strong>Subscription ID:</strong> ${invoiceId}</p>
+                  <hr style="border: 1px solid #ccc; margin: 20px 0;">
+  
+                  <p>Thank you for using ProStrikers Services.</p>
                 </div>
               </body>
             </html>

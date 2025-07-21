@@ -6,7 +6,11 @@ import { priceIds } from './stripePayment.constant';
 import { User } from '../User/user.model';
 import moment from 'moment';
 import MembershipPayment from '../MembershipPayment/membershipPayment.model';
-import Stripe from 'stripe';
+import {
+  sendMembershipPurchasedConfirmationEmail,
+  sendMembershipRenewFailedNotifyEmail,
+  sendMembershipRenewSuccessNotifyEmail,
+} from '../../utils/email';
 
 const sk_key = config.stripe_sk_key;
 const stripe = require('stripe')(sk_key);
@@ -163,11 +167,31 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     );
 
     if (invoice.billing_reason === 'subscription_create') {
-      // await sendMembershipEmail(customer.email, 'new_purchase');
-      console.log('new purchase');
+      await sendMembershipPurchasedConfirmationEmail({
+        email: customer.email,
+        invoiceId: invoice.id,
+        amount: invoice.amount_paid / 100,
+        subscription: customer.subscription,
+        subscription_plan: customer.subscription_plan,
+        issue_date: moment().toISOString(),
+        expiry_date:
+          customer.subscription_plan == 'monthly'
+            ? moment().add(1, 'month').toISOString()
+            : moment().add(1, 'year').toISOString(),
+      });
     } else {
-      // await sendMembershipEmail(customer.email, 'renew_success');
-      console.log('renew success');
+      await sendMembershipRenewSuccessNotifyEmail({
+        email: customer.email,
+        invoiceId: invoice.id,
+        amount: invoice.amount_paid / 100,
+        subscription: customer.subscription,
+        subscription_plan: customer.subscription_plan,
+        issue_date: moment().toISOString(),
+        expiry_date:
+          customer.subscription_plan == 'monthly'
+            ? moment().add(1, 'month').toISOString()
+            : moment().add(1, 'year').toISOString(),
+      });
     }
 
     console.log(`✅ Payment processed for ${customer.email}`);
@@ -182,8 +206,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       customer_id: invoice.customer,
     });
 
-    console.log(customer);
-
     if (!customer) {
       console.error(
         '❌ Customer not found for recurring payment',
@@ -192,7 +214,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       return { statusCode: 200 };
     }
 
-    // Update user membership info
     await User.findOneAndUpdate(
       { email: customer.email },
       {
@@ -203,13 +224,18 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       },
     );
 
-    // if (invoice.billing_reason === 'subscription_create') {
-    //   await sendMembershipEmail(customer.email, 'new_purchase');
-    // } else {
-    //   await sendMembershipEmail(customer.email, 'renew_success');
-    // }
-
-    console.log(`✅ Payment processed for ${customer.email}`);
+    // await sendMembershipChangeNotifyEmail({
+    //   email: customer.email,
+    //   invoiceId: invoice.id,
+    //   amount: invoice.amount_paid / 100,
+    //   subscription: customer.subscription,
+    //   subscription_plan: customer.subscription_plan,
+    //   issue_date: moment().toISOString(),
+    //   expiry_date:
+    //     customer.subscription_plan == 'monthly'
+    //       ? moment().add(1, 'month').toISOString()
+    //       : moment().add(1, 'year').toISOString(),
+    // });
 
     return { statusCode: 200 };
   }
@@ -238,6 +264,19 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         package_name: customer.subscription.split('_').join(' '),
       },
     );
+
+    await sendMembershipRenewFailedNotifyEmail({
+      email: customer.email,
+      invoiceId: invoice.id,
+      amount: invoice.amount_paid / 100,
+      subscription: customer.subscription,
+      subscription_plan: customer.subscription_plan,
+      issue_date: moment().toISOString(),
+      expiry_date:
+        customer.subscription_plan == 'monthly'
+          ? moment().add(1, 'month').toISOString()
+          : moment().add(1, 'year').toISOString(),
+    });
 
     return { statusCode: 200 };
   }

@@ -5,11 +5,8 @@ import { User } from './user.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
-import mongoose from 'mongoose';
 import {
   sendClientAccountConfirmationEmail,
-  sendMembershipPurchasedConfirmationEmail,
-  sendMembershipPurchasedFailedNotifyEmail,
 } from '../../utils/email';
 import MembershipPayment from '../MembershipPayment/membershipPayment.model';
 
