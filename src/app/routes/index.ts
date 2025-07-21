@@ -223,6 +223,10 @@ const mainRoutes = [
     path: '/notifications',
     route: NotificationRoutes,
   },
+  {
+    path: '/stripe-payment',
+    route: StripePaymentRoutes,
+  },
 ];
 
 mainRoutes.forEach(route => router.use(route.path, route.route));

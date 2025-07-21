@@ -9,6 +9,7 @@ import sendResponse from './app/utils/sendResponse';
 import httpStatus from 'http-status';
 import { limiter } from './app/utils/limiter';
 import { StripePaymentRoutes } from './app/modules/StripePayment/stripePayment.route';
+import { StripePaymentControllers } from './app/modules/StripePayment/stripePayment.controllers';
 
 export const app: Application = express();
 
@@ -33,7 +34,11 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   }),
 );
-app.use('/api/v1/stripe-payment', StripePaymentRoutes);
+app.post(
+  '/api/v1/stripe-payment/webhook',
+  express.raw({ type: 'application/json' }),
+  StripePaymentControllers.stripeWebhook,
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1', router);
