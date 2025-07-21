@@ -9,10 +9,10 @@ const createUser = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'User is created succesfully');
 });
 
-const createMembershipByUser = catchAsync(async (req, res) => {
-  await UserServices.createMembershipByUserIntoDB(req.params.id, req.body);
-  sendResponse(res, httpStatus.CREATED, 'Membership purchased successfully');
-});
+// const createMembershipByUser = catchAsync(async (req, res) => {
+//   await UserServices.createMembershipByUserIntoDB(req.params.id, req.body);
+//   sendResponse(res, httpStatus.CREATED, 'Membership purchased successfully');
+// });
 
 const updateUser = catchAsync(async (req, res) => {
   const file = req.file;
@@ -71,5 +71,5 @@ export const UserControllers = {
   getUsresEmail,
   updateUser,
   deleteUser,
-  createMembershipByUser,
+  // createMembershipByUser,
 };

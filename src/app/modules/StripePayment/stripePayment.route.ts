@@ -5,11 +5,13 @@ const route = express.Router();
 
 route.post(
   '/create-payment-intent',
+  express.json(),
   StripePaymentControllers.createPaymentIntent,
 );
 
 route.post(
   '/create-subscription',
+  express.json(),
   StripePaymentControllers.createMembershipSubscription,
 );
 

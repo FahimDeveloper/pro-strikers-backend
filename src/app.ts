@@ -8,6 +8,7 @@ import { sendFeedbackEmail } from './app/utils/email';
 import sendResponse from './app/utils/sendResponse';
 import httpStatus from 'http-status';
 import { limiter } from './app/utils/limiter';
+import { StripePaymentRoutes } from './app/modules/StripePayment/stripePayment.route';
 
 export const app: Application = express();
 
@@ -32,6 +33,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   }),
 );
+app.use('/api/v1/stripe-payment', StripePaymentRoutes);
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1', router);

@@ -14,9 +14,8 @@ const createPaymentIntent = catchAsync(async (req, res) => {
   );
 });
 const createMembershipSubscription = catchAsync(async (req, res) => {
-  const result = await StripePaymentServices.createMembershipSubscription(
-    req.body,
-  );
+  const result =
+    await StripePaymentServices.createOrUpdateMembershipSubscription(req.body);
 
   sendResponse(res, httpStatus.OK, 'Setup intent created', result);
 });

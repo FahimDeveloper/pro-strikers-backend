@@ -31,11 +31,11 @@ route.get(
   UserControllers.getSingleUser,
 );
 
-route.post(
-  '/create-membership/:id',
-  authMiddleware(ROLE.user),
-  UserControllers.createMembershipByUser,
-);
+// route.post(
+//   '/create-membership/:id',
+//   authMiddleware(ROLE.user),
+//   UserControllers.createMembershipByUser,
+// );
 
 route.post(
   '/create',

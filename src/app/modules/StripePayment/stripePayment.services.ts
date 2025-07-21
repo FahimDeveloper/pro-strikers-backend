@@ -6,6 +6,7 @@ import { priceIds } from './stripePayment.constant';
 import { User } from '../User/user.model';
 import moment from 'moment';
 import MembershipPayment from '../MembershipPayment/membershipPayment.model';
+import Stripe from 'stripe';
 
 const sk_key = config.stripe_sk_key;
 const stripe = require('stripe')(sk_key);
@@ -26,21 +27,14 @@ const createPaymentIntent = async (price: number) => {
   };
 };
 
-const createMembershipSubscription = async (payload: {
+const createOrUpdateMembershipSubscription = async (payload: {
   email: string;
-  plan: string;
-  membership: string;
+  plan: 'monthly' | 'yearly';
+  membership: keyof typeof priceIds;
 }) => {
-  type MembershipKey = keyof typeof priceIds;
-  type PlanKey = 'monthly' | 'yearly';
-
   const { email, membership, plan } = payload;
-  const priceId = priceIds[membership as MembershipKey]?.[plan as PlanKey];
 
-  const user = await StripePayment.findOne({ email });
-  if (!user?.customer_id) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Subscription user not found');
-  }
+  const priceId = priceIds[membership]?.[plan];
   if (!priceId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -48,87 +42,212 @@ const createMembershipSubscription = async (payload: {
     );
   }
 
-  let subscription;
+  let user = await StripePayment.findOne({ email });
+
+  if (!user) {
+    const stripeCustomer = await stripe.customers.create({ email });
+    user = await StripePayment.create({
+      email,
+      customer_id: stripeCustomer.id,
+    });
+  }
 
   if (user.subscription_id) {
     const existingSubscription = await stripe.subscriptions.retrieve(
       user.subscription_id,
     );
 
-    const subscriptionItemId = existingSubscription.items.data[0].id;
+    if (existingSubscription.status === 'active') {
+      const subscriptionItemId = existingSubscription.items.data[0]?.id;
+      const currentPriceId = existingSubscription.items.data[0]?.price.id;
 
-    subscription = await stripe.subscriptions.update(user.subscription_id, {
-      items: [
+      if (currentPriceId === priceId) {
+        return {
+          message: 'You already have this membership active.',
+          requiresPayment: false,
+          transaction_id: user.subscription_id,
+        };
+      }
+
+      const updatedSubscription = await stripe.subscriptions.update(
+        user.subscription_id,
         {
-          id: subscriptionItemId,
-          price: priceId,
+          items: [{ id: subscriptionItemId, price: priceId }],
+          proration_behavior: 'create_prorations',
+          expand: ['latest_invoice.payment_intent'],
         },
-      ],
-      expand: ['latest_invoice.payment_intent'],
-    });
-  } else {
-    subscription = await stripe.subscriptions.create({
-      customer: user.customer_id,
-      items: [{ price: priceId }],
-      payment_behavior: 'default_incomplete',
-      expand: ['latest_invoice.payment_intent'],
-    });
+      );
 
-    user.subscription_id = subscription.id;
+      const paymentIntent = updatedSubscription.latest_invoice?.payment_intent;
+
+      user.subscription_plan = plan;
+      user.subscription = membership;
+      await user.save();
+
+      return {
+        requiresPayment: paymentIntent?.status !== 'succeeded',
+        clientSecret: paymentIntent?.client_secret,
+      };
+    }
   }
+  const subscription = await stripe.subscriptions.create({
+    customer: user.customer_id,
+    items: [{ price: priceId }],
+    payment_behavior: 'default_incomplete',
+    expand: ['latest_invoice.payment_intent'],
+  });
 
-  user.subcription_plan = plan;
+  const paymentIntent = subscription.latest_invoice?.payment_intent;
+
+  user.subscription_id = subscription.id;
+  user.subscription_plan = plan;
+  user.subscription = membership;
   await user.save();
 
   return {
-    clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-    transection_id: subscription.id,
+    requiresPayment: paymentIntent?.status !== 'succeeded',
+    clientSecret: paymentIntent?.client_secret,
+    transaction_id: subscription.id,
   };
 };
 
-const reCurringProccess = async (body: any, headers: any) => {
+export const reCurringProccess = async (body: Buffer, headers: any) => {
   let event;
   try {
     event = stripe.webhooks.constructEvent(
       body,
       headers['stripe-signature'],
-      process.env.STRIPE_WEBHOOK_SECRET,
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
   } catch (err: any) {
-    console.error('Webhook error:', err.message);
-    return;
+    console.error('🚨 Webhook signature failed:', err.message);
+    return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
+
   if (event.type === 'invoice.payment_succeeded') {
     const invoice = event.data.object;
+
     const customer = await StripePayment.findOne({
       customer_id: invoice.customer,
     });
+
     if (!customer) {
-      console.error('After recurring payment customer not found');
-      return;
+      console.error(
+        '❌ Customer not found for recurring payment',
+        invoice.customer,
+      );
+      return { statusCode: 200 };
     }
+
+    // Save payment record
     await MembershipPayment.create({
       transaction_id: invoice.id,
       amount: invoice.amount_paid / 100,
       email: customer.email,
     });
+
+    // Update user membership info
     await User.findOneAndUpdate(
       { email: customer.email },
       {
+        membership: true,
         status: true,
-        expiry_date: moment(new Date()).add(1, 'month').toDate(),
+        plan: customer.subscription_plan,
+        package_name: customer.subscription.split('_').join(' '),
+        issue_date: moment().toISOString(),
+        expiry_date:
+          customer.subscription_plan == 'monthly'
+            ? moment().add(1, 'month').toISOString()
+            : moment().add(1, 'year').toISOString(),
       },
     );
+
+    if (invoice.billing_reason === 'subscription_create') {
+      // await sendMembershipEmail(customer.email, 'new_purchase');
+      console.log('new purchase');
+    } else {
+      // await sendMembershipEmail(customer.email, 'renew_success');
+      console.log('renew success');
+    }
+
+    console.log(`✅ Payment processed for ${customer.email}`);
+
+    return { statusCode: 200 };
   }
+
+  if (event.type === 'customer.subscription.updated') {
+    const invoice = event.data.object;
+
+    const customer = await StripePayment.findOne({
+      customer_id: invoice.customer,
+    });
+
+    console.log(customer);
+
+    if (!customer) {
+      console.error(
+        '❌ Customer not found for recurring payment',
+        invoice.customer,
+      );
+      return { statusCode: 200 };
+    }
+
+    // Update user membership info
+    await User.findOneAndUpdate(
+      { email: customer.email },
+      {
+        membership: true,
+        status: true,
+        plan: customer.subscription_plan,
+        package_name: customer.subscription.split('_').join(' '),
+      },
+    );
+
+    // if (invoice.billing_reason === 'subscription_create') {
+    //   await sendMembershipEmail(customer.email, 'new_purchase');
+    // } else {
+    //   await sendMembershipEmail(customer.email, 'renew_success');
+    // }
+
+    console.log(`✅ Payment processed for ${customer.email}`);
+
+    return { statusCode: 200 };
+  }
+
   if (event.type === 'invoice.payment_failed') {
     const invoice = event.data.object;
-    console.error('Recurring payment failed', invoice.customer);
-    return;
+
+    const customer = await StripePayment.findOne({
+      customer_id: invoice.customer,
+    });
+
+    if (!customer) {
+      console.error(
+        '❌ Customer not found for recurring payment',
+        invoice.customer,
+      );
+      return { statusCode: 200 };
+    }
+
+    await User.findOneAndUpdate(
+      { email: customer.email },
+      {
+        membership: true,
+        status: false,
+        plan: customer.subscription_plan,
+        package_name: customer.subscription.split('_').join(' '),
+      },
+    );
+
+    return { statusCode: 200 };
   }
+
+  console.log(`Unhandled event type: ${event.type}`);
+  return { statusCode: 200 };
 };
 
 export const StripePaymentServices = {
   createPaymentIntent,
-  createMembershipSubscription,
+  createOrUpdateMembershipSubscription,
   reCurringProccess,
 };

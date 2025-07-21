@@ -6,7 +6,8 @@ const StripePaymentSchema = new Schema<IStripePayment>(
     email: { type: String, required: true },
     customer_id: { type: String, required: true },
     subscription_id: { type: String },
-    subcription_plan: { type: String },
+    subscription_plan: { type: String },
+    subscription: { type: String },
   },
   {
     timestamps: true,

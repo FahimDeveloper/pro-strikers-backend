@@ -172,10 +172,6 @@ const mainRoutes = [
     route: TournamentPaymentRoutes,
   },
   {
-    path: '/stripe-payment',
-    route: StripePaymentRoutes,
-  },
-  {
     path: '/cancellation/memberships',
     route: MembershipCancellationRoutes,
   },
