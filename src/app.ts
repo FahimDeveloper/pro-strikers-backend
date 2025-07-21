@@ -23,11 +23,6 @@ export const app: Application = express();
 // );
 // app.options('*', cors());
 
-app.post(
-  '/api/v1/stripe-payment/webhook',
-  express.raw({ type: 'application/json' }),
-  StripePaymentControllers.stripeWebhook,
-);
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -39,6 +34,13 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   }),
 );
+
+app.post(
+  '/api/v1/stripe-payment/webhook',
+  express.raw({ type: 'application/json' }),
+  StripePaymentControllers.stripeWebhook,
+);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/v1', router);
