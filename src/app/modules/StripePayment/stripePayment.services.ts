@@ -99,9 +99,6 @@ const createOrUpdateMembershipSubscription = async (payload: {
     customer: user.customer_id,
     items: [{ price: priceId }],
     payment_behavior: 'default_incomplete',
-    payment_settings: {
-      save_default_payment_method: 'on_subscription',
-    },
     expand: ['latest_invoice.payment_intent'],
   });
 
@@ -135,25 +132,41 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
   // ✅ Payment succeeded
   if (event.type === 'invoice.payment_succeeded') {
     const invoice = event.data.object;
+
+    const paymentIntentId = invoice.payment_intent;
+    const customerId = invoice.customer;
+
     const customer = await StripePayment.findOne({
-      customer_id: invoice.customer,
+      customer_id: customerId,
     });
 
     if (!customer) {
-      console.error(
-        '❌ Customer not found for recurring payment',
-        invoice.customer,
-      );
+      console.error('❌ Customer not found for recurring payment', customerId);
       return { statusCode: 200 };
     }
 
-    // Save payment
+    if (invoice.billing_reason === 'subscription_create' && paymentIntentId) {
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        paymentIntentId as string,
+      );
+
+      if (paymentIntent.payment_method) {
+        await stripe.customers.update(customerId as string, {
+          invoice_settings: {
+            default_payment_method: paymentIntent.payment_method as string,
+          },
+        });
+      }
+    }
+
+    // 💳 Save payment record in your DB
     await MembershipPayment.create({
       transaction_id: invoice.id,
       amount: invoice.amount_paid / 100,
       email: customer.email,
     });
 
+    // 🗓 Update user's membership
     const issueDate = moment().toISOString();
     const expiryDate =
       customer.subscription_plan === 'monthly'
@@ -172,6 +185,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       },
     );
 
+    // 📧 Send email notification
     if (invoice.billing_reason === 'subscription_create') {
       await sendMembershipPurchasedConfirmationEmail({
         email: customer.email,
