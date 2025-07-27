@@ -99,6 +99,9 @@ const createOrUpdateMembershipSubscription = async (payload: {
     customer: user.customer_id,
     items: [{ price: priceId }],
     payment_behavior: 'default_incomplete',
+    payment_settings: {
+      save_default_payment_method: 'on_subscription',
+    },
     expand: ['latest_invoice.payment_intent'],
   });
 
@@ -129,9 +132,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
+  // ✅ Payment succeeded
   if (event.type === 'invoice.payment_succeeded') {
     const invoice = event.data.object;
-
     const customer = await StripePayment.findOne({
       customer_id: invoice.customer,
     });
@@ -144,14 +147,19 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       return { statusCode: 200 };
     }
 
-    // Save payment record
+    // Save payment
     await MembershipPayment.create({
       transaction_id: invoice.id,
       amount: invoice.amount_paid / 100,
       email: customer.email,
     });
 
-    // Update user membership info
+    const issueDate = moment().toISOString();
+    const expiryDate =
+      customer.subscription_plan === 'monthly'
+        ? moment().add(1, 'month').toISOString()
+        : moment().add(1, 'year').toISOString();
+
     await User.findOneAndUpdate(
       { email: customer.email },
       {
@@ -159,11 +167,8 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         status: true,
         plan: customer.subscription_plan,
         package_name: customer.subscription.split('_').join(' '),
-        issue_date: moment().toISOString(),
-        expiry_date:
-          customer.subscription_plan == 'monthly'
-            ? moment().add(1, 'month').toISOString()
-            : moment().add(1, 'year').toISOString(),
+        issue_date: issueDate,
+        expiry_date: expiryDate,
       },
     );
 
@@ -174,11 +179,8 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         amount: invoice.amount_paid / 100,
         subscription: customer.subscription.split('_').join(' '),
         subscription_plan: customer.subscription_plan,
-        issue_date: moment().toISOString(),
-        expiry_date:
-          customer.subscription_plan == 'monthly'
-            ? moment().add(1, 'month').toISOString()
-            : moment().add(1, 'year').toISOString(),
+        issue_date: issueDate,
+        expiry_date: expiryDate,
       });
     } else {
       await sendMembershipRenewSuccessNotifyEmail({
@@ -187,30 +189,29 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         amount: invoice.amount_paid / 100,
         subscription: customer.subscription.split('_').join(' '),
         subscription_plan: customer.subscription_plan,
-        issue_date: moment().toISOString(),
-        expiry_date:
-          customer.subscription_plan == 'monthly'
-            ? moment().add(1, 'month').toISOString()
-            : moment().add(1, 'year').toISOString(),
+        issue_date: issueDate,
+        expiry_date: expiryDate,
       });
     }
 
     console.log(`✅ Payment processed for ${customer.email}`);
-
     return { statusCode: 200 };
   }
 
-  if (event.type === 'customer.subscription.updated') {
-    const invoice = event.data.object;
-
+  // ✅ Subscription plan changed (e.g. monthly → yearly)
+  if (
+    event.type === 'customer.subscription.updated' &&
+    event.data.previous_attributes?.items
+  ) {
+    const subscription = event.data.object;
     const customer = await StripePayment.findOne({
-      customer_id: invoice.customer,
+      customer_id: subscription.customer,
     });
 
     if (!customer) {
       console.error(
-        '❌ Customer not found for recurring payment',
-        invoice.customer,
+        '❌ Customer not found for subscription update',
+        subscription.customer,
       );
       return { statusCode: 200 };
     }
@@ -227,29 +228,36 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
 
     await sendMembershipChangeConfirmationEmail({
       email: customer.email,
-      invoiceId: invoice.id,
-      amount: invoice.amount_paid / 100,
+      invoiceId: subscription.latest_invoice, // might be null in some updates
+      amount: 0,
       subscription: customer.subscription.split('_').join(' '),
       subscription_plan: customer.subscription_plan,
     });
 
+    console.log(`🔁 Subscription plan changed for ${customer.email}`);
     return { statusCode: 200 };
   }
 
+  // ❌ Payment failed
   if (event.type === 'invoice.payment_failed') {
     const invoice = event.data.object;
-
     const customer = await StripePayment.findOne({
       customer_id: invoice.customer,
     });
 
     if (!customer) {
       console.error(
-        '❌ Customer not found for recurring payment',
+        '❌ Customer not found for failed payment',
         invoice.customer,
       );
       return { statusCode: 200 };
     }
+
+    const issueDate = moment().toISOString();
+    const expiryDate =
+      customer.subscription_plan === 'monthly'
+        ? moment().add(1, 'month').toISOString()
+        : moment().add(1, 'year').toISOString();
 
     await User.findOneAndUpdate(
       { email: customer.email },
@@ -267,17 +275,15 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       amount: invoice.amount_paid / 100,
       subscription: customer.subscription.split('_').join(' '),
       subscription_plan: customer.subscription_plan,
-      issue_date: moment().toISOString(),
-      expiry_date:
-        customer.subscription_plan == 'monthly'
-          ? moment().add(1, 'month').toISOString()
-          : moment().add(1, 'year').toISOString(),
+      issue_date: issueDate,
+      expiry_date: expiryDate,
     });
 
+    console.log(`❌ Payment failed for ${customer.email}`);
     return { statusCode: 200 };
   }
 
-  console.log(`Unhandled event type: ${event.type}`);
+  console.log(`⚠️ Unhandled event type: ${event.type}`);
   return { statusCode: 200 };
 };
 
