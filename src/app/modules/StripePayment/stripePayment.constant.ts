@@ -1,10 +1,10 @@
 export const priceIds = {
   individual_pro: {
-    monthly: 'price_1RkKBZLPaDIMVHMrjvNfYyhf',
-    yearly: 'price_1RkKDuLPaDIMVHMrMSAkM4Cs',
+    monthly: 'price_1RpqM0LPaDIMVHMrgkQtkdT3',
+    yearly: 'price_1RpqL4LPaDIMVHMrhcehGBX7',
   },
   individual_pro_unlimited: {
-    monthly: 'price_1RkKFtLPaDIMVHMrjxL9hC6C',
+    monthly: 'price_1RpqKFLPaDIMVHMr6awTTVqj',
     yearly: 'price_1RkKGaLPaDIMVHMrZq2So461',
   },
   youth_training_membership: {

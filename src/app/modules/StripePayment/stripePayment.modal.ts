@@ -4,7 +4,6 @@ import { IStripePayment } from './stripePayment.interface';
 const StripePaymentSchema = new Schema<IStripePayment>(
   {
     email: { type: String, required: true },
-    phone: { type: String, required: true },
     customer_id: { type: String, required: true },
     subscription_id: { type: String },
     subscription_plan: { type: String },

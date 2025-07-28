@@ -37,9 +37,8 @@ const createOrUpdateMembershipSubscription = async (payload: {
   email: string;
   plan: 'monthly' | 'yearly';
   membership: keyof typeof priceIds;
-  number: string;
 }) => {
-  const { email, membership, plan, number } = payload;
+  const { email, membership, plan } = payload;
 
   const priceId = priceIds[membership]?.[plan];
   if (!priceId) {
@@ -55,7 +54,6 @@ const createOrUpdateMembershipSubscription = async (payload: {
     const stripeCustomer = await stripe.customers.create({ email });
     user = await StripePayment.create({
       email,
-      phone: number,
       customer_id: stripeCustomer.id,
     });
   }
@@ -196,7 +194,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         expiry_date: expiryDate,
       });
       await sendSms({
-        phone: customer.phone,
+        email: customer.email,
         message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully created. Enjoy your membership!`,
       });
     } else {
@@ -210,7 +208,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         expiry_date: expiryDate,
       });
       await sendSms({
-        phone: customer.phone,
+        email: customer.email,
         message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully renewed. Enjoy your membership!`,
       });
     }
@@ -253,7 +251,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     });
 
     await sendSms({
-      phone: customer.phone,
+      email: customer.email,
       message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully created. Enjoy your membership!`,
     });
 
@@ -303,7 +301,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     });
 
     await sendSms({
-      phone: customer.phone,
+      email: customer.email,
       message: `Your subscription for ${customer.subscription.split('_').join(' ')} has failed to renew. Please check your payment details or contact support for assistance.`,
     });
 
