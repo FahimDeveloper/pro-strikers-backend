@@ -13,3 +13,14 @@ export const priceIds = {
     monthly: config.youth_training_month,
   },
 } as const;
+
+type PriceIds = typeof priceIds;
+type Membership = keyof PriceIds;
+type PlanFor<M extends Membership> = keyof PriceIds[M];
+
+export const getPriceId = <M extends Membership>(
+  membership: M,
+  plan: PlanFor<M>,
+) => {
+  return priceIds[membership][plan];
+};

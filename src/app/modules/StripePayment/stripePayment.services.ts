@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { StripePayment } from './stripePayment.modal';
-import { priceIds } from './stripePayment.constant';
+import { getPriceId, priceIds } from './stripePayment.constant';
 import { User } from '../User/user.model';
 import moment from 'moment';
 import MembershipPayment from '../MembershipPayment/membershipPayment.model';
@@ -36,11 +36,11 @@ const createPaymentIntent = async (price: number) => {
 const createOrUpdateMembershipSubscription = async (payload: {
   email: string;
   plan: 'monthly' | 'yearly';
-  membership: keyof typeof priceIds;
+  membership: any;
 }) => {
   const { email, membership, plan } = payload;
 
-  const priceId = priceIds[membership]?.[plan];
+  const priceId = getPriceId(membership, plan);
   if (!priceId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
