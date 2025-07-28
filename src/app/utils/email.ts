@@ -1403,19 +1403,24 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
 export const sendMembershipChangeConfirmationEmail = async ({
   invoiceId,
   email,
+  amount,
   subscription,
   subscription_plan,
+  issue_date,
+  expiry_date,
 }: {
   invoiceId: string;
   email: string;
   amount: number;
   subscription: string;
   subscription_plan: string;
+  issue_date: string;
+  expiry_date: string;
 }) => {
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: email,
-    subject: 'ProStrikers - Membership Change Confirmation',
+    subject: 'ProStrikers - Membership Purchase Confirmation',
     html: `
         <html>
   <head>
@@ -1516,7 +1521,7 @@ export const sendMembershipChangeConfirmationEmail = async ({
 
       <h2>Membership Purchase Confirmation</h2>
       <p>Dear Customer,</p>
-      <p>Thank you for moving another membership at ProStrikers! Below are your membership details:</p>
+      <p>Thank you for purchasing a membership at ProStrikers! Below are your membership details:</p>
 
       <h3>Membership Details</h3>
       <!-- Responsive Details -->
@@ -1526,12 +1531,16 @@ export const sendMembershipChangeConfirmationEmail = async ({
             <tr>
               <th>Package Name</th>
               <th>Plan</th>
+              <th>Issue Date</th>
+              <th>Expiry Date</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>${subscription}</td>
               <td>${subscription_plan}</td>
+              <td>${moment(issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
+              <td>${moment(expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
             </tr>
           </tbody>
         </table>
@@ -1544,13 +1553,18 @@ export const sendMembershipChangeConfirmationEmail = async ({
           <p>${subscription}</p>
           <h4>Plan:</h4>
           <p>${subscription_plan}</p>
+          <h4>Issue Date:</h4>
+          <p>${moment(issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
+          <h4>Expiry Date:</h4>
+          <p>${moment(expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</p>
         </div>
       </div>
 
       <h3 style="color: #0ABAC3;">Payment Information</h3>
-      <h4>Payment will be automatically handled by stripe in your next renewal invoice</h4>
+      <h4>Payment By Stripe</h4>
       <p><strong>Invoice ID:</strong> ${invoiceId}</p>
-     
+      <p><strong>Total Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+
       <hr>
 
       <p>If you have any questions about your membership, please don't hesitate to contact us.</p>
@@ -1588,7 +1602,7 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: `${config.notify_email}`,
-    subject: 'Membership Renewal Failed - ProStrikers',
+    subject: 'Membership Payment Failed - ProStrikers',
     html: `
             <html>
               <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -1599,9 +1613,9 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
                       <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
                   </div>
   
-                  <h2 style="color: #E74C3C;">Membership Renewal Failed</h2>
+                  <h2 style="color: #E74C3C;">Membership Payment Failed</h2>
                   <p><strong>User Email:</strong> ${email}</p>
-                  <p>The following membership renewal attempt failed. Please review the details below:</p>
+                  <p>The following membership payment attempt failed. Please review the details below:</p>
 
                   <h3 style="color: #E74C3C;">Membership Details</h3>
                   <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -1640,7 +1654,7 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: `${email}`,
-    subject: 'Membership Renewal Failed - ProStrikers',
+    subject: 'Membership Payment Failed - ProStrikers',
     html: `
             <html>
               <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -1651,9 +1665,9 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
                       <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
                   </div>
 
-                  <h2 style="color: #E74C3C;">Membership Renewal Failed</h2>
+                  <h2 style="color: #E74C3C;">Membership Payment Failed</h2>
                   <p><strong>User Email:</strong> ${email}</p>
-                  <p>The following membership renewal attempt failed. Please review the details below:</p>
+                  <p>The following membership payment attempt failed. Please review the details below:</p>
 
                   <h3 style="color: #E74C3C;">Membership Details</h3>
                   <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">

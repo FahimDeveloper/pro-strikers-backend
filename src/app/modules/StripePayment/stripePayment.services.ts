@@ -209,7 +209,25 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         email: customer.email,
         message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully created. Enjoy your membership!`,
       });
-    } else {
+    }
+
+    if (invoice.billing_reason === 'subscription_update') {
+      await sendMembershipChangeConfirmationEmail({
+        email: customer.email,
+        invoiceId: invoice.id,
+        amount: invoice.amount_paid / 100,
+        subscription: customer.subscription.split('_').join(' '),
+        subscription_plan: customer.subscription_plan,
+        issue_date: issueDate,
+        expiry_date: expiryDate,
+      });
+      await sendSms({
+        email: customer.email,
+        message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully updated. Enjoy your membership!`,
+      });
+    }
+
+    if (invoice.billing_reason === 'subscription_cycle') {
       await sendMembershipRenewSuccessNotifyEmail({
         email: customer.email,
         invoiceId: invoice.id,
@@ -224,51 +242,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully renewed. Enjoy your membership!`,
       });
     }
-    return { statusCode: 200 };
-  }
-
-  if (
-    event.type === 'customer.subscription.updated' &&
-    event.data.previous_attributes?.items
-  ) {
-    const subscription = event.data.object;
-    const customer = await StripePayment.findOne({
-      customer_id: subscription.customer,
-    });
-
-    if (!customer) {
-      console.error(
-        '❌ Customer not found for subscription update',
-        subscription.customer,
-      );
-      return { statusCode: 200 };
-    }
-
-    await User.findOneAndUpdate(
-      { email: customer.email },
-      {
-        membership: true,
-        status: true,
-        plan: customer.subscription_plan,
-        package_name: customer.subscription.split('_').join(' '),
-      },
-    );
-
-    await sendMembershipChangeConfirmationEmail({
-      email: customer.email,
-      invoiceId: subscription.latest_invoice,
-      amount: 0,
-      subscription: customer.subscription.split('_').join(' '),
-      subscription_plan: customer.subscription_plan,
-    });
-
-    await sendSms({
-      email: customer.email,
-      message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully created. Enjoy your membership!`,
-    });
-
-    console.log(`✅ Subscription updated for ${customer.email}`);
-
     return { statusCode: 200 };
   }
 
