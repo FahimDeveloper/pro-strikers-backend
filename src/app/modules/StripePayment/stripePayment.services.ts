@@ -12,6 +12,7 @@ import {
   sendMembershipRenewFailedNotifyEmail,
   sendMembershipRenewSuccessNotifyEmail,
 } from '../../utils/email';
+import { sendSms } from '../../utils/sendSms';
 
 const sk_key = config.stripe_sk_key;
 const stripe = require('stripe')(sk_key);
@@ -36,8 +37,9 @@ const createOrUpdateMembershipSubscription = async (payload: {
   email: string;
   plan: 'monthly' | 'yearly';
   membership: keyof typeof priceIds;
+  number: string;
 }) => {
-  const { email, membership, plan } = payload;
+  const { email, membership, plan, number } = payload;
 
   const priceId = priceIds[membership]?.[plan];
   if (!priceId) {
@@ -53,6 +55,7 @@ const createOrUpdateMembershipSubscription = async (payload: {
     const stripeCustomer = await stripe.customers.create({ email });
     user = await StripePayment.create({
       email,
+      phone: number,
       customer_id: stripeCustomer.id,
     });
   }
@@ -129,7 +132,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
-  // ✅ Payment succeeded
   if (event.type === 'invoice.payment_succeeded') {
     const invoice = event.data.object;
 
@@ -159,14 +161,12 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       }
     }
 
-    // 💳 Save payment record in your DB
     await MembershipPayment.create({
       transaction_id: invoice.id,
       amount: invoice.amount_paid / 100,
       email: customer.email,
     });
 
-    // 🗓 Update user's membership
     const issueDate = moment().toISOString();
     const expiryDate =
       customer.subscription_plan === 'monthly'
@@ -185,7 +185,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       },
     );
 
-    // 📧 Send email notification
     if (invoice.billing_reason === 'subscription_create') {
       await sendMembershipPurchasedConfirmationEmail({
         email: customer.email,
@@ -195,6 +194,10 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         subscription_plan: customer.subscription_plan,
         issue_date: issueDate,
         expiry_date: expiryDate,
+      });
+      await sendSms({
+        phone: customer.phone,
+        message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully created. Enjoy your membership!`,
       });
     } else {
       await sendMembershipRenewSuccessNotifyEmail({
@@ -206,13 +209,14 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         issue_date: issueDate,
         expiry_date: expiryDate,
       });
+      await sendSms({
+        phone: customer.phone,
+        message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully renewed. Enjoy your membership!`,
+      });
     }
-
-    console.log(`✅ Payment processed for ${customer.email}`);
     return { statusCode: 200 };
   }
 
-  // ✅ Subscription plan changed (e.g. monthly → yearly)
   if (
     event.type === 'customer.subscription.updated' &&
     event.data.previous_attributes?.items
@@ -242,17 +246,20 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
 
     await sendMembershipChangeConfirmationEmail({
       email: customer.email,
-      invoiceId: subscription.latest_invoice, // might be null in some updates
+      invoiceId: subscription.latest_invoice,
       amount: 0,
       subscription: customer.subscription.split('_').join(' '),
       subscription_plan: customer.subscription_plan,
     });
 
-    console.log(`🔁 Subscription plan changed for ${customer.email}`);
+    await sendSms({
+      phone: customer.phone,
+      message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully created. Enjoy your membership!`,
+    });
+
     return { statusCode: 200 };
   }
 
-  // ❌ Payment failed
   if (event.type === 'invoice.payment_failed') {
     const invoice = event.data.object;
     const customer = await StripePayment.findOne({
@@ -291,6 +298,11 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       subscription_plan: customer.subscription_plan,
       issue_date: issueDate,
       expiry_date: expiryDate,
+    });
+
+    await sendSms({
+      phone: customer.phone,
+      message: `Your subscription for ${customer.subscription.split('_').join(' ')} has failed to renew. Please check your payment details or contact support for assistance.`,
     });
 
     console.log(`❌ Payment failed for ${customer.email}`);
