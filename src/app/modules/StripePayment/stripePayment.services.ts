@@ -80,11 +80,23 @@ const createOrUpdateMembershipSubscription = async (payload: {
         {
           items: [{ id: subscriptionItemId, price: priceId }],
           proration_behavior: 'create_prorations',
-          expand: ['latest_invoice.payment_intent'],
+          billing_cycle_anchor: 'now',
         },
       );
 
-      const paymentIntent = updatedSubscription.latest_invoice?.payment_intent;
+      const invoice = await stripe.invoices.retrieve(
+        updatedSubscription.latest_invoice as string,
+      );
+
+      if (invoice.amount_due > 0 && invoice.status === 'open') {
+        await stripe.invoices.pay(invoice.id);
+      }
+
+      const refreshedInvoice = await stripe.invoices.retrieve(invoice.id, {
+        expand: ['payment_intent'],
+      });
+
+      const paymentIntent = refreshedInvoice.payment_intent;
 
       user.subscription_plan = plan;
       user.subscription = membership;
@@ -96,6 +108,7 @@ const createOrUpdateMembershipSubscription = async (payload: {
       };
     }
   }
+
   const subscription = await stripe.subscriptions.create({
     customer: user.customer_id,
     items: [{ price: priceId }],
@@ -113,7 +126,6 @@ const createOrUpdateMembershipSubscription = async (payload: {
   return {
     requiresPayment: paymentIntent?.status !== 'succeeded',
     clientSecret: paymentIntent?.client_secret,
-    transaction_id: subscription.id,
   };
 };
 
