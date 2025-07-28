@@ -1,14 +1,15 @@
+import config from '../../config';
+
 export const priceIds = {
   individual_pro: {
-    monthly: 'price_1RpqM0LPaDIMVHMrgkQtkdT3',
-    yearly: 'price_1RpqL4LPaDIMVHMrhcehGBX7',
+    monthly: config.ind_pro_month,
+    yearly: config.ind_pro_year,
   },
   individual_pro_unlimited: {
-    monthly: 'price_1RpqKFLPaDIMVHMr6awTTVqj',
-    yearly: 'price_1RkKGaLPaDIMVHMrZq2So461',
+    monthly: config.ind_pro_unlimited_month,
+    yearly: config.ind_pro_unlimited_year,
   },
   youth_training_membership: {
-    monthly: 'price_1RkKFtLPaDIMVHMrjxL9hC6C',
-    yearly: 'price_1RkKGaLPaDIMVHMrZq2So461',
+    monthly: config.youth_training_month,
   },
 } as const;
