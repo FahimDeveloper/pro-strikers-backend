@@ -1650,11 +1650,11 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
                   <div style="text-align: center; margin-bottom: 20px;">
                       <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
                   </div>
-  
-                  <h2 style="color: #E74C3C;">Membership Purchase Failed</h2>
+
+                  <h2 style="color: #E74C3C;">Membership Renewal Failed</h2>
                   <p><strong>User Email:</strong> ${email}</p>
-                  <p>The following membership purchase attempt failed. Please review the details below:</p>
-  
+                  <p>The following membership renewal attempt failed. Please review the details below:</p>
+
                   <h3 style="color: #E74C3C;">Membership Details</h3>
                   <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
                     <thead>
@@ -1716,10 +1716,10 @@ export const sendMembershipRenewSuccessNotifyEmail = async ({
                   <div style="text-align: center; margin-bottom: 20px;">
                       <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
                   </div>
-  
-                  <h2 style="color: #0ABAC3;">Membership Renewal Failed</h2>
+
+                  <h2 style="color: #0ABAC3;">Membership Renewal Success</h2>
                   <p><strong>User Email:</strong> ${email}</p>
-                  <p>The following membership renewal attempt failed. Please review the details below:</p>
+                  <p>The following membership renewal attempt was successful. Please review the details below:</p>
 
                   <h3 style="color: #0ABAC3;">Membership Details</h3>
                   <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -1758,7 +1758,7 @@ export const sendMembershipRenewSuccessNotifyEmail = async ({
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
     to: `${email}`,
-    subject: 'Membership Renewal Failed - ProStrikers',
+    subject: 'Membership Renewal Success - ProStrikers',
     html: `
             <html>
               <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -1769,9 +1769,9 @@ export const sendMembershipRenewSuccessNotifyEmail = async ({
                       <h1 style="font-size: 1.875rem; line-height: 2.25rem">ProStrikers</h1>
                   </div>
   
-                  <h2 style="color: #0ABAC3;">Membership Purchase Failed</h2>
+                  <h2 style="color: #0ABAC3;">Membership Renewal Success</h2>
                   <p><strong>User Email:</strong> ${email}</p>
-                  <p>The following membership purchase attempt failed. Please review the details below:</p>
+                  <p>The following membership renewal attempt was successful. Please review the details below:</p>
   
                   <h3 style="color: #0ABAC3;">Membership Details</h3>
                   <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -1792,7 +1792,7 @@ export const sendMembershipRenewSuccessNotifyEmail = async ({
                   </table>
   
                   <h3 style="color: #0ABAC3;">Payment Information</h3>
-                  <p><strong>Due Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
+                  <p><strong>Amount:</strong> $<span style="font-size:14px; font-weight:600;">${amount}</span></p>
                   <p><strong>Invoice ID:</strong> ${invoiceId}</p>
                   <hr style="border: 1px solid #ccc; margin: 20px 0;">
   

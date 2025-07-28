@@ -257,6 +257,8 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully created. Enjoy your membership!`,
     });
 
+    console.log(`✅ Subscription updated for ${customer.email}`);
+
     return { statusCode: 200 };
   }
 

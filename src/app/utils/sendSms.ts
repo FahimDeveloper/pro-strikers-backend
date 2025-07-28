@@ -17,13 +17,13 @@ export const sendSms = async ({
       {
         recipients: [
           {
-            phone: '+19786159222',
+            phone: phone,
             firstName: 'Dev',
             lastName: 'Fahim',
           },
         ],
         locationId: locationKey,
-        msg: 'Membership purchased successfully',
+        msg: message,
       },
       {
         headers: {
