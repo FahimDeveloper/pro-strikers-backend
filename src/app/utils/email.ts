@@ -577,6 +577,129 @@ export const sendRentalBookingPaymentEmail = ({
   });
 };
 
+export const sendCustomMembershipPaymentEmail = async ({
+  email,
+  amount,
+  expiry,
+  link,
+  team,
+  team_name,
+}: {
+  email: string;
+  amount: number;
+  expiry: string;
+  link: string;
+  team: { email: string; role: string }[];
+  team_name: string;
+}) => {
+  const teamRows = team
+    .map(
+      (member: any) => `
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd; text-transform: lowercase;">${member.email}</td>
+          <td style="padding: 8px; border: 1px solid #ddd; text-transform: capitalize;">${member.role}</td>
+        </tr>`,
+    )
+    .join('');
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head><meta charset="UTF-8" /></head>
+      <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif; color: #333;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; background-color: #f4f4f4; padding: 20px 0;">
+          <tr>
+            <td align="center">
+              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 600px; background-color: #fff; border-radius: 8px; padding: 20px; box-sizing: border-box;">
+                <tr>
+                  <td>
+                    <!-- Logo/Brand -->
+                    <h1 style="color: #0ABAC3; margin-bottom: 30px;">ProStrikers</h1>
+
+                    <!-- Highlighted Notice -->
+                    <div style="
+                      background-color: #d1ecf1;
+                      border-left: 6px solid #0ABAC3;
+                      padding: 15px 20px;
+                      margin-bottom: 25px;
+                      border-radius: 5px;
+                      color: #0c5460;
+                      font-size: 15px;
+                    ">
+                      <strong>Important:</strong> Before proceeding with the payment, please <strong>log in and verify your email</strong>. If you haven't completed verification, do so first.
+                    </div>
+
+                    <h2 style="color: #0ABAC3; margin-top: 0;">Membership Payment Pending for ${team_name}</h2>
+                    <p style="font-size: 14px;">
+                      Thank you for choosing the <strong>Team & Organizations</strong> membership.
+                    </p>
+                    <p style="font-size: 14px;">
+                      Please complete your payment to activate your membership. This link will expire in <strong>${expiry}</strong>.
+                    </p>
+
+                    <h3 style="color: #0ABAC3; margin-top: 30px;">Team Members</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                      <thead>
+                        <tr style="background-color: #0ABAC3; color: white;">
+                          <th style="text-align: left; padding: 10px;">Email</th>
+                          <th style="text-align: left; padding: 10px;">Role</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${teamRows}
+                      </tbody>
+                    </table>
+
+                    <h3 style="color: #0ABAC3; margin-top: 30px;">Payment Details</h3>
+                    <p style="font-size: 14px;">
+                      <strong>Total Amount:</strong> $${amount.toFixed(2)}
+                    </p>
+
+                    <p style="text-align: center; margin: 40px 0;">
+                      <a href="${link}" style="
+                        background-color: #72B626;
+                        color: white;
+                        padding: 14px 30px;
+                        text-decoration: none;
+                        border-radius: 6px;
+                        font-weight: 600;
+                        display: inline-block;
+                      ">Complete Payment</a>
+                    </p>
+
+                    <hr style="border: 1px solid #ccc; margin: 40px 0;">
+
+                    <p style="font-size: 13px; color: #666;">
+                      If you have any questions, please contact us at
+                      <a href="mailto:admin@prostrikers.com" style="color: #0ABAC3;">admin@prostrikers.com</a>
+                      or call (916)-890-5834.
+                    </p>
+
+                    <p style="font-size: 13px; color: #666;">
+                      Address: 2230 16th St, Sacramento, CA 95818, United States
+                    </p>
+
+                    <p style="font-size: 13px; color: #666;">
+                      Thank you for choosing ProStrikers! We look forward to your visit.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `;
+
+  return transporter.sendMail({
+    from: `"ProStrikers" <${config.notify_email}>`,
+    to: email,
+    subject: `Membership Payment Pending for ${team_name} - ProStrikers`,
+    html,
+  });
+};
+
 export const sendShopPurchaseConfirmationEmail = async ({
   email,
   data,

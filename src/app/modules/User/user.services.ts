@@ -1,14 +1,11 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
-import { IUser, IUserMembership } from './user.interface';
+import { IUser } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../errors/AppError';
 import { uploadImageIntoCloduinary } from '../../utils/uploadImageToCloudinary';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
-import {
-  sendClientAccountConfirmationEmail,
-} from '../../utils/email';
-import MembershipPayment from '../MembershipPayment/membershipPayment.model';
+import { sendClientAccountConfirmationEmail } from '../../utils/email';
 
 const createUserIntoDB = async (payload: IUser, file: any) => {
   const findUser = await User.isUserExistsByEmail(payload.email);

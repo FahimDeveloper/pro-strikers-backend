@@ -13,9 +13,27 @@ import {
   sendMembershipRenewSuccessNotifyEmail,
 } from '../../utils/email';
 import { sendSms } from '../../utils/sendSms';
+import { Types } from 'mongoose';
+import { CustomMembership } from '../CustomMembership/customMembership.model';
 
 const sk_key = config.stripe_sk_key;
 const stripe = require('stripe')(sk_key);
+
+const createCustomStripeMembership = async (payload: {
+  name: string;
+  amount: number;
+  billing_cycle: string;
+}) => {
+  const createStripeProduct = await stripe.products.create({
+    name: payload.name,
+  });
+  const price = await stripe.prices.create({
+    unit_amount: payload.amount * 100,
+    currency: 'usd',
+    recurring: { interval: payload.billing_cycle },
+    product: createStripeProduct.id,
+  });
+};
 
 const createPaymentIntent = async (price: number) => {
   const amount = Math.round(price * 100);
@@ -30,6 +48,107 @@ const createPaymentIntent = async (price: number) => {
   return {
     clientSecret: paymentIntent.client_secret,
     transection_id: paymentIntent.id,
+  };
+};
+
+const createCustomMembershipSubscription = async (payload: {
+  email: string;
+  membership: Types.ObjectId;
+  team: Types.ObjectId;
+}) => {
+  const { email, membership, team } = payload;
+
+  const membershipData = await CustomMembership.findById(membership).lean();
+  if (!membershipData) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Membership not found');
+  }
+  let user = await StripePayment.findOne({ email });
+
+  if (!user) {
+    const stripeCustomer = await stripe.customers.create({ email });
+    user = await StripePayment.create({
+      email,
+      customer_id: stripeCustomer.id,
+    });
+  }
+
+  if (user.subscription_id) {
+    const existingSubscription = await stripe.subscriptions.retrieve(
+      user.subscription_id,
+    );
+
+    if (existingSubscription.status === 'active') {
+      const subscriptionItemId = existingSubscription.items.data[0]?.id;
+      const currentPriceId = existingSubscription.items.data[0]?.price.id;
+
+      if (currentPriceId === membershipData?.price_id) {
+        return {
+          message: 'You and your team already have this membership active.',
+          requiresPayment: false,
+        };
+      }
+
+      const updatedSubscription = await stripe.subscriptions.update(
+        user.subscription_id,
+        {
+          items: [{ id: subscriptionItemId, price: membershipData.price_id }],
+          proration_behavior: 'create_prorations',
+          billing_cycle_anchor: 'now',
+          metadata: {
+            team: team,
+            membership: membership,
+            email: email,
+          },
+        },
+      );
+
+      const invoice = await stripe.invoices.retrieve(
+        updatedSubscription.latest_invoice as string,
+      );
+
+      if (invoice.amount_due > 0 && invoice.status === 'open') {
+        await stripe.invoices.pay(invoice.id);
+      }
+
+      const refreshedInvoice = await stripe.invoices.retrieve(invoice.id, {
+        expand: ['payment_intent'],
+      });
+
+      const paymentIntent = refreshedInvoice.payment_intent;
+
+      user.subscription_plan = membershipData.billing_cycle;
+      user.subscription = membershipData.name;
+      await user.save();
+
+      return {
+        requiresPayment: paymentIntent?.status !== 'succeeded',
+        clientSecret: paymentIntent?.client_secret,
+      };
+    }
+  }
+
+  const subscription = await stripe.subscriptions.create({
+    customer: user.customer_id,
+    items: [{ price: membershipData.price_id }],
+    payment_behavior: 'default_incomplete',
+    expand: ['latest_invoice.payment_intent'],
+    metadata: {
+      team: team,
+      membership: membership,
+      email: email,
+    },
+  });
+
+  const paymentIntent = subscription.latest_invoice?.payment_intent;
+
+  user.subscription_id = subscription.id;
+  user.subscription_plan = membershipData.billing_cycle;
+  user.subscription = membershipData.name;
+  await user.save();
+
+  return {
+    requiresPayment: paymentIntent?.status !== 'succeeded',
+    clientSecret: paymentIntent?.client_secret,
   };
 };
 
