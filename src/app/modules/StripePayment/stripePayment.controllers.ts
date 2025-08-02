@@ -13,6 +13,14 @@ const createPaymentIntent = catchAsync(async (req, res) => {
     result,
   );
 });
+const createCustomSubscription = catchAsync(async (req, res) => {
+  const result = await StripePaymentServices.createCustomMembershipSubscription(
+    req.body,
+  );
+
+  sendResponse(res, httpStatus.OK, 'Setup intent created', result);
+});
+
 const createMembershipSubscription = catchAsync(async (req, res) => {
   const result =
     await StripePaymentServices.createOrUpdateMembershipSubscription(req.body);
@@ -29,4 +37,5 @@ export const StripePaymentControllers = {
   createPaymentIntent,
   createMembershipSubscription,
   stripeWebhook,
+  createCustomSubscription,
 };

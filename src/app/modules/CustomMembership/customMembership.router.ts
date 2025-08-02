@@ -18,3 +18,11 @@ router.get(
   authMiddleware(ROLE.admin, ROLE.superAdmin),
   CustomMembershipControllers.getCustomMemberships,
 );
+
+router.get(
+  '/all',
+  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  CustomMembershipControllers.getAllCustomMembership,
+);
+
+export const CustomMembershipRoutes = router;

@@ -44,6 +44,8 @@ import { CourseReportsRoutes } from '../modules/CourseReport/courseReport.route'
 import { AppointmentOneOnOneReportsRoutes } from '../modules/AppointmentOneOnOneReport/appointmentOneOnOneReport.route';
 import { AppointmentGroupReportsRoutes } from '../modules/AppointmentGroupReport/appointmentGroupReport.route';
 import { TempLinkRoutes } from '../modules/TempLink/tempLink.route';
+import { CustomMembershipRoutes } from '../modules/CustomMembership/customMembership.router';
+import { TeamMembershipRouter } from '../modules/TeamMembership/teamMembership.router';
 
 const router = express.Router();
 const mainRoutes = [
@@ -226,6 +228,14 @@ const mainRoutes = [
   {
     path: '/stripe-payment',
     route: StripePaymentRoutes,
+  },
+  {
+    path: '/custom-membership',
+    route: CustomMembershipRoutes,
+  },
+  {
+    path: '/team-membership',
+    route: TeamMembershipRouter,
   },
 ];
 

@@ -13,4 +13,9 @@ route.post(
   StripePaymentControllers.createMembershipSubscription,
 );
 
+route.post(
+  '/create-custom-subscription',
+  StripePaymentControllers.createCustomSubscription,
+);
+
 export const StripePaymentRoutes = route;

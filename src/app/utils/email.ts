@@ -626,7 +626,7 @@ export const sendCustomMembershipPaymentEmail = async ({
                       color: #0c5460;
                       font-size: 15px;
                     ">
-                      <strong>Important:</strong> Before proceeding with the payment, please <strong>log in and verify your email</strong>. If you haven't completed verification, do so first.
+                      <strong>Important:</strong> Before proceeding with the payment, please <strong>log in</strong> to your account.
                     </div>
 
                     <h2 style="color: #0ABAC3; margin-top: 0;">Membership Payment Pending for ${team_name}</h2>
@@ -696,6 +696,86 @@ export const sendCustomMembershipPaymentEmail = async ({
     from: `"ProStrikers" <${config.notify_email}>`,
     to: email,
     subject: `Membership Payment Pending for ${team_name} - ProStrikers`,
+    html,
+  });
+};
+
+export const sendTeamMembershipNotificationEmail = async ({
+  email,
+  team,
+  team_name,
+}: {
+  email: string;
+  team: { email: string; role: string }[];
+  team_name: string;
+}) => {
+  const teamRows = team
+    .map(
+      member => `
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;">${member.email}</td>
+          <td style="padding: 8px; border: 1px solid #ddd; text-transform: capitalize;">${member.role}</td>
+        </tr>`,
+    )
+    .join('');
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head><meta charset="UTF-8" /></head>
+      <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif; color: #333;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; background-color: #f4f4f4; padding: 20px 0;">
+          <tr>
+            <td align="center">
+              <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 600px; background-color: #fff; border-radius: 8px; padding: 20px; box-sizing: border-box;">
+                <tr>
+                  <td>
+                    <h1 style="color: #0ABAC3; margin-bottom: 30px;">ProStrikers</h1>
+
+                    <h2 style="color: #0ABAC3; margin-top: 0;">Team Membership Activated</h2>
+                    <p style="font-size: 14px;">
+                      You're receiving this email because your team <strong>${team_name}</strong> has purchased a membership plan.
+                    </p>
+
+                    <p style="font-size: 14px;">
+                      Below is the list of your team members:
+                    </p>
+
+                    <table style="width: 100%; border-collapse: collapse;">
+                      <thead>
+                        <tr style="background-color: #0ABAC3; color: white;">
+                          <th style="text-align: left; padding: 10px;">Email</th>
+                          <th style="text-align: left; padding: 10px;">Role</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${teamRows}
+                      </tbody>
+                    </table>
+
+                    <p style="font-size: 13px; color: #666; margin-top: 30px;">
+                      If you have any questions, contact us at 
+                      <a href="mailto:admin@prostrikers.com" style="color: #0ABAC3;">admin@prostrikers.com</a>
+                      or (916)-890-5834.
+                    </p>
+
+                    <p style="font-size: 13px; color: #666;">
+                      Address: 2230 16th St, Sacramento, CA 95818, United States
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `;
+
+  return transporter.sendMail({
+    from: `"ProStrikers" <${config.notify_email}>`,
+    to: email,
+    subject: `You're Part of ${team_name}'s Membership - ProStrikers`,
     html,
   });
 };

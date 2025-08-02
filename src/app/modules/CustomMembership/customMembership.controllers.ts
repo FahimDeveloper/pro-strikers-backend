@@ -26,7 +26,18 @@ const getCustomMemberships = catchAsync(async (req, res) => {
   );
 });
 
+const getAllCustomMembership = catchAsync(async (req, res) => {
+  const result = await CustomMembershipServices.getAllCustomMembershipFromDB();
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Custom memberships retrieved successfully',
+    result,
+  );
+});
+
 export const CustomMembershipControllers = {
   createCustomMembership,
   getCustomMemberships,
+  getAllCustomMembership,
 };

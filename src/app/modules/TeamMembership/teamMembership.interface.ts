@@ -10,9 +10,6 @@ export interface ITeamMembership {
 }
 
 export interface ITeamMembers {
-  first_name: string;
-  last_name: string;
   email: string;
-  phone: string;
   role: string;
 }

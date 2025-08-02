@@ -2,38 +2,26 @@ import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { StripePayment } from './stripePayment.modal';
-import { getPriceId, priceIds } from './stripePayment.constant';
+import { getPriceId } from './stripePayment.constant';
 import { User } from '../User/user.model';
 import moment from 'moment';
 import MembershipPayment from '../MembershipPayment/membershipPayment.model';
 import {
+  sendClientAccountConfirmationEmail,
   sendMembershipChangeConfirmationEmail,
   sendMembershipPurchasedConfirmationEmail,
   sendMembershipRenewFailedNotifyEmail,
   sendMembershipRenewSuccessNotifyEmail,
+  sendTeamMembershipNotificationEmail,
 } from '../../utils/email';
 import { sendSms } from '../../utils/sendSms';
 import { Types } from 'mongoose';
 import { CustomMembership } from '../CustomMembership/customMembership.model';
+import { TeamMembership } from '../TeamMembership/teamMembership.model';
+import { generateRandomPassword } from '../../utils/generateRandomPassword';
 
 const sk_key = config.stripe_sk_key;
 const stripe = require('stripe')(sk_key);
-
-const createCustomStripeMembership = async (payload: {
-  name: string;
-  amount: number;
-  billing_cycle: string;
-}) => {
-  const createStripeProduct = await stripe.products.create({
-    name: payload.name,
-  });
-  const price = await stripe.prices.create({
-    unit_amount: payload.amount * 100,
-    currency: 'usd',
-    recurring: { interval: payload.billing_cycle },
-    product: createStripeProduct.id,
-  });
-};
 
 const createPaymentIntent = async (price: number) => {
   const amount = Math.round(price * 100);
@@ -134,15 +122,13 @@ const createCustomMembershipSubscription = async (payload: {
     expand: ['latest_invoice.payment_intent'],
     metadata: {
       team: team,
-      membership: membership,
-      email: email,
     },
   });
 
   const paymentIntent = subscription.latest_invoice?.payment_intent;
-
   user.subscription_id = subscription.id;
-  user.subscription_plan = membershipData.billing_cycle;
+  user.subscription_plan =
+    membershipData.billing_cycle === 'month' ? 'monthly' : 'yearly';
   user.subscription = membershipData.name;
   await user.save();
 
@@ -315,6 +301,60 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     );
 
     if (invoice.billing_reason === 'subscription_create') {
+      const subscriptionId = invoice.subscription;
+      const subscription = await stripe.subscriptions.retrieve(
+        subscriptionId as string,
+      );
+      const teamId = subscription.metadata?.team;
+      if (teamId) {
+        const teamMembership = await TeamMembership.findById(teamId).lean();
+        const members = teamMembership?.team.filter(
+          member => member.role === 'member',
+        );
+        if (members?.length) {
+          for (const member of members) {
+            const existingUser = await User.isUserExistsByEmail(member.email);
+
+            let password: string | null = null;
+
+            if (!existingUser) {
+              password = generateRandomPassword();
+
+              await User.create({
+                email: member.email,
+                password,
+                provider: 'email with password',
+                verified: true,
+                membership: true,
+                status: true,
+                issue_date: issueDate,
+                expiry_date: expiryDate,
+                package_name: customer.subscription,
+                plan: customer.subscription_plan,
+              });
+              await sendClientAccountConfirmationEmail({
+                email: member.email,
+                password,
+              });
+            } else {
+              await User.findByIdAndUpdate(existingUser._id, {
+                membership: true,
+                status: true,
+                issue_date: issueDate,
+                expiry_date: expiryDate,
+                package_name: customer.subscription,
+                plan: customer.subscription_plan,
+              });
+            }
+
+            await sendTeamMembershipNotificationEmail({
+              team_name: teamMembership?.team_name!,
+              email: member.email,
+              team: teamMembership?.team!,
+            });
+          }
+        }
+      }
       await sendMembershipPurchasedConfirmationEmail({
         email: customer.email,
         invoiceId: invoice.id,
@@ -347,6 +387,33 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     }
 
     if (invoice.billing_reason === 'subscription_cycle') {
+      const subscriptionId = invoice.subscription;
+      const subscription = await stripe.subscriptions.retrieve(
+        subscriptionId as string,
+      );
+      const teamId = subscription.metadata?.team;
+      if (teamId) {
+        const teamMembership = await TeamMembership.findById(teamId).lean();
+        const members = teamMembership?.team.filter(
+          member => member.role === 'member',
+        );
+        if (members?.length) {
+          for (const member of members) {
+            const existingUser = await User.isUserExistsByEmail(member.email);
+            if (!existingUser) {
+              return;
+            }
+            await User.findByIdAndUpdate(existingUser._id, {
+              membership: true,
+              status: true,
+              issue_date: issueDate,
+              expiry_date: expiryDate,
+              package_name: customer.subscription,
+              plan: customer.subscription_plan,
+            });
+          }
+        }
+      }
       await sendMembershipRenewSuccessNotifyEmail({
         email: customer.email,
         invoiceId: invoice.id,
@@ -419,6 +486,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
 
 export const StripePaymentServices = {
   createPaymentIntent,
+  createCustomMembershipSubscription,
   createOrUpdateMembershipSubscription,
   reCurringProccess,
 };

@@ -39,7 +39,13 @@ const getCustomMembershipsFromDB = async (query: Record<string, any>) => {
   };
 };
 
+const getAllCustomMembershipFromDB = async () => {
+  const result = await CustomMembership.find();
+  return result;
+};
+
 export const CustomMembershipServices = {
   createCustomMembershipIntoDB,
   getCustomMembershipsFromDB,
+  getAllCustomMembershipFromDB,
 };

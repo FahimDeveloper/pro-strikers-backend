@@ -9,7 +9,7 @@ import {
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
 import { User } from '../User/user.model';
 import { ITeamMembership } from './teamMembership.interface';
-import { TeamMembershipModel } from './teamMembership.model';
+import { TeamMembership } from './teamMembership.model';
 import { TempLink } from '../TempLink/tempLink.modal';
 import jwt from 'jsonwebtoken';
 import { CustomMembership } from '../CustomMembership/customMembership.model';
@@ -28,7 +28,7 @@ const createTeamMembershipIntoDB = async (teamMembership: ITeamMembership) => {
       );
     }
 
-    const existingMembership = await TeamMembershipModel.findOne({
+    const existingMembership = await TeamMembership.findOne({
       'team.email': leader.email,
     }).session(session);
 
@@ -48,6 +48,7 @@ const createTeamMembershipIntoDB = async (teamMembership: ITeamMembership) => {
             email: leader.email,
             password: randomPass,
             provider: 'email with password',
+            verified: true,
           },
         ],
         { session },
@@ -67,7 +68,7 @@ const createTeamMembershipIntoDB = async (teamMembership: ITeamMembership) => {
       throw new AppError(httpStatus.NOT_FOUND, 'Membership plan not found');
     }
 
-    const result = await TeamMembershipModel.create([teamMembership], {
+    const result = await TeamMembership.create([teamMembership], {
       session,
     });
 
@@ -117,7 +118,7 @@ const createTeamMembershipIntoDB = async (teamMembership: ITeamMembership) => {
 
 const getTeamMembershipsFromDB = async (query: Record<string, any>) => {
   const TeamMembershipQuery = new QueryBuilder(
-    TeamMembershipModel.find(),
+    TeamMembership.find().populate('membership'),
     query,
   )
     .search(['team_name'])
@@ -134,7 +135,7 @@ const updateTeamMembershipInDB = async (
   id: string,
   payload: Partial<ITeamMembership>,
 ) => {
-  const result = await TeamMembershipModel.findByIdAndUpdate(id, payload, {
+  const result = await TeamMembership.findByIdAndUpdate(id, payload, {
     new: true,
   });
   return result;
