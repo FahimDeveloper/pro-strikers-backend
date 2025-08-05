@@ -88,7 +88,7 @@ const createTeamMembershipIntoDB = async (teamMembership: ITeamMembership) => {
         {
           type: 'facility',
           token: paymentAccessToken,
-          expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days
+          expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
         },
       ],
       { session },
