@@ -301,7 +301,11 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     );
 
     if (invoice.billing_reason === 'subscription_create') {
-      const subscriptionId = invoice.subscription;
+      const subscriptionId =
+        invoice.subscription ??
+        invoice.parent?.subscription_details?.subscription ??
+        invoice.lines?.data?.[0]?.parent?.subscription_item_details
+          ?.subscription;
       const subscription = await stripe.subscriptions.retrieve(
         subscriptionId as string,
       );
