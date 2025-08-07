@@ -311,7 +311,11 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       );
       const teamId = subscription.metadata?.team;
       if (teamId) {
-        const teamMembership = await TeamMembership.findById(teamId).lean();
+        const teamMembership = await TeamMembership.findByIdAndUpdate(teamId, {
+          status: true,
+          issue_date: issueDate,
+          expiry_date: expiryDate,
+        }).lean();
         const members = teamMembership?.team.filter(
           member => member.role === 'member',
         );
