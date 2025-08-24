@@ -19,6 +19,7 @@ import { Types } from 'mongoose';
 import { CustomMembership } from '../CustomMembership/customMembership.model';
 import { TeamMembership } from '../TeamMembership/teamMembership.model';
 import { generateRandomPassword } from '../../utils/generateRandomPassword';
+import Stripe from 'stripe';
 
 const sk_key = config.stripe_sk_key;
 const stripe = require('stripe')(sk_key);
@@ -155,6 +156,7 @@ const createOrUpdateMembershipSubscription = async (payload: {
 
   let user = await StripePayment.findOne({ email });
 
+  // Create user if not exists
   if (!user) {
     const stripeCustomer = await stripe.customers.create({ email });
     user = await StripePayment.create({
@@ -163,15 +165,22 @@ const createOrUpdateMembershipSubscription = async (payload: {
     });
   }
 
+  // -------------------
+  // Update existing subscription
+  // -------------------
   if (user.subscription_id) {
     const existingSubscription = await stripe.subscriptions.retrieve(
       user.subscription_id,
+      {
+        expand: ['latest_invoice.payment_intent'],
+      },
     );
 
     if (existingSubscription.status === 'active') {
       const subscriptionItemId = existingSubscription.items.data[0]?.id;
       const currentPriceId = existingSubscription.items.data[0]?.price.id;
 
+      // Already on the same plan
       if (currentPriceId === priceId) {
         return {
           message: 'You already have this membership active.',
@@ -180,40 +189,53 @@ const createOrUpdateMembershipSubscription = async (payload: {
         };
       }
 
+      // Update subscription to new plan
       const updatedSubscription = await stripe.subscriptions.update(
         user.subscription_id,
         {
           items: [{ id: subscriptionItemId, price: priceId }],
           proration_behavior: 'create_prorations',
           billing_cycle_anchor: 'now',
+          expand: ['latest_invoice.payment_intent'],
         },
       );
 
-      const invoice = await stripe.invoices.retrieve(
-        updatedSubscription.latest_invoice as string,
-      );
+      const invoice = updatedSubscription.latest_invoice as Stripe.Invoice;
 
-      if (invoice.amount_due > 0 && invoice.status === 'open') {
-        await stripe.invoices.pay(invoice.id);
+      let paymentIntent: Stripe.PaymentIntent | null = null;
+      let requiresPayment = false;
+
+      if (invoice?.payment_intent) {
+        if (typeof invoice.payment_intent === 'string') {
+          paymentIntent = await stripe.paymentIntents.retrieve(
+            invoice.payment_intent,
+          );
+        } else {
+          paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+        }
+
+        // Pay invoice if required
+        if (invoice.amount_due > 0 && invoice.status === 'open') {
+          await stripe.invoices.pay(invoice.id);
+        }
+
+        requiresPayment = paymentIntent?.status !== 'succeeded';
       }
-
-      const refreshedInvoice = await stripe.invoices.retrieve(invoice.id, {
-        expand: ['payment_intent'],
-      });
-
-      const paymentIntent = refreshedInvoice.payment_intent;
 
       user.subscription_plan = plan;
       user.subscription = membership;
       await user.save();
 
       return {
-        requiresPayment: paymentIntent?.status !== 'succeeded',
-        clientSecret: paymentIntent?.client_secret,
+        requiresPayment,
+        clientSecret: paymentIntent?.client_secret || null,
       };
     }
   }
 
+  // -------------------
+  // Create new subscription
+  // -------------------
   const subscription = await stripe.subscriptions.create({
     customer: user.customer_id,
     items: [{ price: priceId }],
@@ -221,7 +243,21 @@ const createOrUpdateMembershipSubscription = async (payload: {
     expand: ['latest_invoice.payment_intent'],
   });
 
-  const paymentIntent = subscription.latest_invoice?.payment_intent;
+  const invoice = subscription.latest_invoice as Stripe.Invoice;
+
+  let paymentIntent: Stripe.PaymentIntent | null = null;
+  let requiresPayment = false;
+
+  if (invoice?.payment_intent) {
+    if (typeof invoice.payment_intent === 'string') {
+      paymentIntent = await stripe.paymentIntents.retrieve(
+        invoice.payment_intent,
+      );
+    } else {
+      paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+    }
+    requiresPayment = paymentIntent?.status !== 'succeeded';
+  }
 
   user.subscription_id = subscription.id;
   user.subscription_plan = plan;
@@ -229,8 +265,8 @@ const createOrUpdateMembershipSubscription = async (payload: {
   await user.save();
 
   return {
-    requiresPayment: paymentIntent?.status !== 'succeeded',
-    clientSecret: paymentIntent?.client_secret,
+    requiresPayment,
+    clientSecret: paymentIntent?.client_secret || null,
   };
 };
 
