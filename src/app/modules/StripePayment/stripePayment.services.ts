@@ -516,7 +516,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     await sendMembershipRenewFailedNotifyEmail({
       email: customer.email,
       invoiceId: invoice.id,
-      amount: invoice.amount_paid / 100,
+      amount: invoice.amount_due / 100,
       subscription: customer.subscription.split('_').join(' '),
       subscription_plan: customer.subscription_plan,
       issue_date: issueDate,
@@ -525,7 +525,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
 
     await sendSms({
       email: customer.email,
-      message: `Your subscription for ${customer.subscription.split('_').join(' ')} has failed to renew. Please check your payment details or contact support for assistance.`,
+      message: `Your subscription for ${customer.subscription.split('_').join(' ')} has failed to renew. Please check your email for more information. Contact support for assistance.`,
     });
 
     console.log(`❌ Payment failed for ${customer.email}`);
