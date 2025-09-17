@@ -37,7 +37,9 @@ export default {
   stripe_webhook_key: process.env.STRIPE_WEBHOOK_SECRET,
   ind_pro_month: process.env.IND_PRO_MONTH,
   ind_pro_year: process.env.IND_PRO_YEAR,
+  ind_pro_quarterly: process.env.IND_PRO_QUARTERLY,
   ind_pro_unlimited_month: process.env.IND_PRO_UNLIMITED_MONTH,
+  ind_pro_unlimited_quarterly: process.env.IND_PRO_UNLIMITED_QUARTERLY,
   ind_pro_unlimited_year: process.env.IND_PRO_UNLIMITED_YEAR,
   youth_training_month: process.env.YOUTH_TRAINING_MONTH,
 };

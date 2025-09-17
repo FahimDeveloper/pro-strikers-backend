@@ -141,7 +141,7 @@ const createCustomMembershipSubscription = async (payload: {
 
 const createOrUpdateMembershipSubscription = async (payload: {
   email: string;
-  plan: 'monthly' | 'yearly';
+  plan: 'monthly' | 'yearly' | 'quarterly';
   membership: any;
 }) => {
   const { email, membership, plan } = payload;
@@ -322,7 +322,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     const expiryDate =
       customer.subscription_plan === 'monthly'
         ? moment().add(1, 'month').toISOString()
-        : moment().add(1, 'year').toISOString();
+        : customer.subscription_plan === 'quarterly'
+          ? moment().add(3, 'months').toISOString()
+          : moment().add(1, 'year').toISOString();
 
     await User.findOneAndUpdate(
       { email: customer.email },
@@ -497,7 +499,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     const expiryDate =
       customer.subscription_plan === 'monthly'
         ? moment().add(1, 'month').toISOString()
-        : moment().add(1, 'year').toISOString();
+        : customer.subscription_plan === 'quarterly'
+          ? moment().add(3, 'months').toISOString()
+          : moment().add(1, 'year').toISOString();
 
     await User.findOneAndUpdate(
       { email: customer.email },
