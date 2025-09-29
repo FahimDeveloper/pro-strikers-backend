@@ -42,7 +42,11 @@ app.post(
   StripePaymentControllers.stripeWebhook,
 );
 
-app.post('/api/v1/waiver-sign/webhook', UserControllers.waiverSignWebhook);
+app.post(
+  '/api/v1/waiver-sign/webhook',
+  express.raw({ type: 'application/json' }),
+  UserControllers.waiverSignWebhook,
+);
 
 app.use(express.json());
 app.use(cookieParser());

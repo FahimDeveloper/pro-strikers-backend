@@ -105,7 +105,7 @@ const deleteUserFromDB = async (id: string) => {
 
 const waiverSignWebhook = async (req: any, res: any) => {
   console.log('Received waiver sign webhook:', req.body);
-  res.status(200).json({ received: true });
+  return { received: true };
 };
 
 export const UserServices = {
