@@ -112,7 +112,7 @@ const waiverSignWebhook = async (req: any, res: any) => {
     if (email) {
       await User.findOneAndUpdate(
         { email },
-        { waiver_sign: true },
+        { waiver_signed: true },
         { new: true },
       );
     }

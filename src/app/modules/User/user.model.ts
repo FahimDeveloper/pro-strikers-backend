@@ -32,7 +32,7 @@ const userSchema = new Schema<IUser, UserModel>(
       required: true,
       default: false,
     },
-    waiver_sign: {
+    waiver_signed: {
       type: Boolean,
       required: true,
       default: false,

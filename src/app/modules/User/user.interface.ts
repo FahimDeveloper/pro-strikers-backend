@@ -13,7 +13,7 @@ export interface IUser {
   phone?: string;
   provider: 'email with password' | 'google' | 'facebook';
   verified: boolean;
-  waiver_sign: boolean;
+  waiver_signed: boolean;
   street_address?: string;
   zip_code?: string;
   city?: string;
