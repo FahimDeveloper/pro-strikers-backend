@@ -108,10 +108,8 @@ const waiverSignWebhook = async (req: any, res: any) => {
   let data;
   try {
     data = JSON.parse(raw);
-    console.log('Parsed JSON data:', data);
     const { email } = data;
     if (email) {
-      console.log(email);
       await User.findOneAndUpdate(
         { email },
         { waiver_sign: true },
