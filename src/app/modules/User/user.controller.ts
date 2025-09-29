@@ -9,11 +9,6 @@ const createUser = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'User is created succesfully');
 });
 
-// const createMembershipByUser = catchAsync(async (req, res) => {
-//   await UserServices.createMembershipByUserIntoDB(req.params.id, req.body);
-//   sendResponse(res, httpStatus.CREATED, 'Membership purchased successfully');
-// });
-
 const updateUser = catchAsync(async (req, res) => {
   const file = req.file;
   const result = await UserServices.updateUserIntoDB(
@@ -63,13 +58,18 @@ const deleteUser = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'User is deleted succesfully');
 });
 
+const waiverSignWebhook = catchAsync(async (req, res) => {
+  const result = await UserServices.waiverSignWebhook(req, res);
+  sendResponse(res, httpStatus.OK, 'Webhook received', result);
+});
+
 export const UserControllers = {
   createUser,
   getMembershipUsers,
+  waiverSignWebhook,
   getAllUsers,
   getSingleUser,
   getUsresEmail,
   updateUser,
   deleteUser,
-  // createMembershipByUser,
 };

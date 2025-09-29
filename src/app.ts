@@ -10,6 +10,7 @@ import httpStatus from 'http-status';
 import { limiter } from './app/utils/limiter';
 import { StripePaymentRoutes } from './app/modules/StripePayment/stripePayment.route';
 import { StripePaymentControllers } from './app/modules/StripePayment/stripePayment.controllers';
+import { UserControllers } from './app/modules/User/user.controller';
 
 export const app: Application = express();
 
@@ -40,6 +41,8 @@ app.post(
   express.raw({ type: 'application/json' }),
   StripePaymentControllers.stripeWebhook,
 );
+
+app.post('/api/v1/waiver-sign/webhook', UserControllers.waiverSignWebhook);
 
 app.use(express.json());
 app.use(cookieParser());

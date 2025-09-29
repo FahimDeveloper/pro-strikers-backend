@@ -65,45 +65,6 @@ const updateUserIntoDB = async (
   return result;
 };
 
-// const createMembershipByUserIntoDB = async (
-//   id: string,
-//   payload: IUserMembership,
-// ) => {
-//   const session = await mongoose.startSession();
-//   const { membership, payment_info } = payload;
-//   try {
-//     session.startTransaction();
-//     // const result = await User.findByIdAndUpdate(id, membership, { session });
-//     // if (!result) {
-//     //   throw new Error('Failed to get membership');
-//     // }
-//     // await MembershipPayment.create([payment_info], { session });
-//     await sendMembershipPurchasedConfirmationEmail({
-//       transactionId: payment_info.transaction_id,
-//       email: payment_info.email,
-//       membership: membership,
-//       amount: payment_info.amount,
-//     });
-//     await session.commitTransaction();
-//     await session.endSession();
-//     return;
-//   } catch (error: any) {
-//     await session.abortTransaction();
-//     await session.endSession();
-//     await sendMembershipPurchasedFailedNotifyEmail({
-//       transactionId: payment_info.transaction_id,
-//       email: payment_info.email,
-//       membership: membership,
-//       amount: payment_info.amount,
-//     });
-//     console.log(error?.message);
-//     throw new AppError(
-//       httpStatus.BAD_REQUEST,
-//       'Your membership purchase was unsuccessful, but your payment went through. There was an issue with our processing. Please be patient; our customer support team will contact you as soon as possible to assist you further.',
-//     );
-//   }
-// };
-
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   const userQuery = new QueryBuilder(User.find().select('-password'), query)
     .search(['email', 'first_name', 'last_name'])
@@ -142,6 +103,11 @@ const deleteUserFromDB = async (id: string) => {
   return result;
 };
 
+const waiverSignWebhook = async (req: any, res: any) => {
+  console.log('Received waiver sign webhook:', req.body);
+  res.status(200).json({ received: true });
+};
+
 export const UserServices = {
   createUserIntoDB,
   updateUserIntoDB,
@@ -150,5 +116,5 @@ export const UserServices = {
   getMembershipUsersFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,
-  // createMembershipByUserIntoDB,
+  waiverSignWebhook,
 };
