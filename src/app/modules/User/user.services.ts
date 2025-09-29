@@ -104,7 +104,17 @@ const deleteUserFromDB = async (id: string) => {
 };
 
 const waiverSignWebhook = async (req: any, res: any) => {
-  console.log('Received waiver sign webhook:', req.body);
+  const raw = req.body.toString('utf8');
+
+  console.log('Raw body:', raw);
+  let data;
+  try {
+    data = JSON.parse(raw);
+    console.log('Parsed JSON:', data);
+  } catch (err) {
+    console.log('Not valid JSON, maybe form-data or XML?');
+  }
+
   return { received: true };
 };
 
