@@ -105,12 +105,17 @@ const deleteUserFromDB = async (id: string) => {
 
 const waiverSignWebhook = async (req: any, res: any) => {
   const raw = req.body.toString('utf8');
-
-  console.log('Raw body:', raw);
   let data;
   try {
     data = JSON.parse(raw);
-    console.log('Parsed JSON:', data);
+    const { email } = data;
+    if (email) {
+      await User.findOneAndUpdate(
+        { email },
+        { waiver_sign: true },
+        { new: true },
+      );
+    }
   } catch (err) {
     console.log('Not valid JSON, maybe form-data or XML?');
   }
