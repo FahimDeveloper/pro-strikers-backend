@@ -285,82 +285,26 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
-  // -----------------------------
-  // Handle user credit safely
-  // -----------------------------
-  const handleUserCredits = async (customer: any) => {
-    const issueDate = moment().toISOString();
-    const expiryDate =
-      customer.subscription_plan === 'monthly'
-        ? moment().add(1, 'month').toISOString()
-        : customer.subscription_plan === 'quarterly'
-          ? moment().add(4, 'months').toISOString()
-          : moment().add(1, 'year').toISOString();
-
-    // Map subscription to base membership key
-    const baseMembership = customer.subscription.split('_')[0];
-    const membershipCredit =
-      membershipsCredits[baseMembership as keyof typeof membershipsCredits];
-
-    if (!membershipCredit) {
-      console.warn('❌ Membership credit not found for', baseMembership);
-      return;
-    }
-
-    const user = await User.findOne({ email: customer.email }).lean();
-
-    const sessionCredit =
-      user?.credit_balance?.session_credit === 'unlimited'
-        ? 'unlimited'
-        : membershipCredit.session_credit === 'unlimited'
-          ? 'unlimited'
-          : Number(membershipCredit.session_credit) +
-            Number(user?.credit_balance?.session_credit || 0);
-
-    const machineCredit =
-      user?.credit_balance?.machine_credit === 'unlimited'
-        ? 'unlimited'
-        : membershipCredit.machine_credit === 'unlimited'
-          ? 'unlimited'
-          : Number(membershipCredit.machine_credit) +
-            Number(user?.credit_balance?.machine_credit || 0);
-
-    await User.findOneAndUpdate(
-      { email: customer.email },
-      {
-        membership: true,
-        status: true,
-        plan: customer.subscription_plan,
-        package_name: customer.subscription.split('_').join(' '),
-        issue_date: issueDate,
-        expiry_date: expiryDate,
-        credit_balance: {
-          session_credit: sessionCredit,
-          machine_credit: machineCredit,
-        },
-      },
-    );
-  };
-
-  // -----------------------------
-  // Payment succeeded
-  // -----------------------------
   if (event.type === 'invoice.payment_succeeded') {
     const invoice = event.data.object;
+
     const paymentIntentId = invoice.payment_intent;
     const customerId = invoice.customer;
 
-    const customer = await StripePayment.findOne({ customer_id: customerId });
+    const customer = await StripePayment.findOne({
+      customer_id: customerId,
+    });
+
     if (!customer) {
       console.error('❌ Customer not found for recurring payment', customerId);
       return { statusCode: 200 };
     }
 
-    // Set default payment method on subscription create
     if (invoice.billing_reason === 'subscription_create' && paymentIntentId) {
       const paymentIntent = await stripe.paymentIntents.retrieve(
         paymentIntentId as string,
       );
+
       if (paymentIntent.payment_method) {
         await stripe.customers.update(customerId as string, {
           invoice_settings: {
@@ -370,21 +314,63 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       }
     }
 
-    // Save payment record
     await MembershipPayment.create({
       transaction_id: invoice.id,
       amount: invoice.amount_paid / 100,
       email: customer.email,
     });
 
-    // Update user credits and membership
-    await handleUserCredits(customer);
-
-    // Handle team memberships
+    const issueDate = moment().toISOString();
+    const expiryDate =
+      customer.subscription_plan === 'monthly'
+        ? moment().add(1, 'month').toISOString()
+        : customer.subscription_plan === 'quarterly'
+          ? moment().add(4, 'months').toISOString()
+          : moment().add(1, 'year').toISOString();
+    const membershipCredit =
+      membershipsCredits[
+        customer.subscription as keyof typeof membershipsCredits
+      ];
+    const user = await User.findOne({ email: customer.email }).lean();
     if (
-      invoice.billing_reason === 'subscription_create' ||
-      invoice.billing_reason === 'subscription_cycle'
+      user?.credit_balance &&
+      user?.credit_balance?.session_credit !== 'unlimited' &&
+      membershipCredit.session_credit !== 'unlimited'
     ) {
+      await User.findOneAndUpdate(
+        { email: customer.email },
+        {
+          membership: true,
+          status: true,
+          plan: customer.subscription_plan,
+          package_name: customer.subscription.split('_').join(' '),
+          issue_date: issueDate,
+          expiry_date: expiryDate,
+          credit_balance: {
+            session_credit:
+              Number(membershipCredit.session_credit) +
+              Number(user.credit_balance.session_credit),
+            machine_credit:
+              Number(membershipCredit.machine_credit) +
+              Number(user.credit_balance.machine_credit || '0'),
+          },
+        },
+      );
+    } else {
+      await User.findOneAndUpdate(
+        { email: customer.email },
+        {
+          membership: true,
+          status: true,
+          plan: customer.subscription_plan,
+          package_name: customer.subscription.split('_').join(' '),
+          issue_date: issueDate,
+          expiry_date: expiryDate,
+          credit_balance: membershipCredit,
+        },
+      );
+    }
+    if (invoice.billing_reason === 'subscription_create') {
       const subscriptionId =
         invoice.subscription ??
         invoice.parent?.subscription_details?.subscription ??
@@ -394,27 +380,37 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         subscriptionId as string,
       );
       const teamId = subscription.metadata?.team;
-
       if (teamId) {
-        const teamMembership = await TeamMembership.findById(teamId).lean();
+        const teamMembership = await TeamMembership.findByIdAndUpdate(
+          teamId,
+          {
+            status: true,
+            issue_date: issueDate,
+            expiry_date: expiryDate,
+          },
+          { new: true },
+        ).lean();
         const members = teamMembership?.team.filter(
           member => member.role === 'member',
         );
         if (members?.length) {
           for (const member of members) {
-            let existingUser = await User.isUserExistsByEmail(member.email);
+            const existingUser = await User.isUserExistsByEmail(member.email);
+
+            let password: string | null = null;
 
             if (!existingUser) {
-              const password = generateRandomPassword();
-              existingUser = await User.create({
+              password = generateRandomPassword();
+
+              await User.create({
                 email: member.email,
                 password,
                 provider: 'email with password',
                 verified: true,
                 membership: true,
                 status: true,
-                issue_date: moment().toISOString(),
-                expiry_date: moment().add(1, 'year').toISOString(), // adjust if needed
+                issue_date: issueDate,
+                expiry_date: expiryDate,
                 package_name: customer.subscription,
                 plan: customer.subscription_plan,
               });
@@ -426,8 +422,8 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
               await User.findByIdAndUpdate(existingUser._id, {
                 membership: true,
                 status: true,
-                issue_date: moment().toISOString(),
-                expiry_date: moment().add(1, 'year').toISOString(),
+                issue_date: issueDate,
+                expiry_date: expiryDate,
                 package_name: customer.subscription,
                 plan: customer.subscription_plan,
               });
@@ -441,58 +437,103 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
           }
         }
       }
-    }
-
-    // Send notifications
-    if (invoice.billing_reason === 'subscription_create') {
       await sendMembershipPurchasedConfirmationEmail({
         email: customer.email,
         invoiceId: invoice.id,
         amount: invoice.amount_paid / 100,
         subscription: customer.subscription.split('_').join(' '),
         subscription_plan: customer.subscription_plan,
-        issue_date: moment().toISOString(),
-        expiry_date: moment().add(1, 'year').toISOString(),
+        issue_date: issueDate,
+        expiry_date: expiryDate,
       });
-    } else if (invoice.billing_reason === 'subscription_update') {
+      await sendSms({
+        email: customer.email,
+        message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully created. Enjoy your membership!`,
+      });
+    }
+
+    if (invoice.billing_reason === 'subscription_update') {
       await sendMembershipChangeConfirmationEmail({
         email: customer.email,
         invoiceId: invoice.id,
         amount: invoice.amount_paid / 100,
         subscription: customer.subscription.split('_').join(' '),
         subscription_plan: customer.subscription_plan,
-        issue_date: moment().toISOString(),
-        expiry_date: moment().add(1, 'year').toISOString(),
+        issue_date: issueDate,
+        expiry_date: expiryDate,
       });
-    } else if (invoice.billing_reason === 'subscription_cycle') {
+      await sendSms({
+        email: customer.email,
+        message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully updated. Enjoy your membership!`,
+      });
+    }
+
+    if (invoice.billing_reason === 'subscription_cycle') {
+      const subscriptionId = invoice.subscription;
+      const subscription = await stripe.subscriptions.retrieve(
+        subscriptionId as string,
+      );
+      const teamId = subscription.metadata?.team;
+      if (teamId) {
+        const teamMembership = await TeamMembership.findById(teamId).lean();
+        const members = teamMembership?.team.filter(
+          member => member.role === 'member',
+        );
+        if (members?.length) {
+          for (const member of members) {
+            const existingUser = await User.isUserExistsByEmail(member.email);
+            if (!existingUser) {
+              return;
+            }
+            await User.findByIdAndUpdate(existingUser._id, {
+              membership: true,
+              status: true,
+              issue_date: issueDate,
+              expiry_date: expiryDate,
+              package_name: customer.subscription,
+              plan: customer.subscription_plan,
+            });
+          }
+        }
+      }
       await sendMembershipRenewSuccessNotifyEmail({
         email: customer.email,
         invoiceId: invoice.id,
         amount: invoice.amount_paid / 100,
         subscription: customer.subscription.split('_').join(' '),
         subscription_plan: customer.subscription_plan,
-        issue_date: moment().toISOString(),
-        expiry_date: moment().add(1, 'year').toISOString(),
+        issue_date: issueDate,
+        expiry_date: expiryDate,
+      });
+      await sendSms({
+        email: customer.email,
+        message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully renewed. Enjoy your membership!`,
       });
     }
-
-    await sendSms({
-      email: customer.email,
-      message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully processed. Enjoy your membership!`,
-    });
-
     return { statusCode: 200 };
   }
 
-  // -----------------------------
-  // Payment failed
-  // -----------------------------
   if (event.type === 'invoice.payment_failed') {
     const invoice = event.data.object;
     const customer = await StripePayment.findOne({
       customer_id: invoice.customer,
     });
-    if (!customer) return { statusCode: 200 };
+
+    if (!customer) {
+      console.error(
+        '❌ Customer not found for failed payment',
+        invoice.customer,
+      );
+      return { statusCode: 200 };
+    }
+
+    const issueDate = moment().toISOString();
+    const expiryDate =
+      customer.subscription_plan === 'monthly'
+        ? moment().add(1, 'month').toISOString()
+        : customer.subscription_plan === 'quarterly'
+          ? moment().add(3, 'months').toISOString()
+          : moment().add(1, 'year').toISOString();
 
     await User.findOneAndUpdate(
       { email: customer.email },
@@ -510,15 +551,16 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       amount: invoice.amount_due / 100,
       subscription: customer.subscription.split('_').join(' '),
       subscription_plan: customer.subscription_plan,
-      issue_date: moment().toISOString(),
-      expiry_date: moment().add(1, 'year').toISOString(),
+      issue_date: issueDate,
+      expiry_date: expiryDate,
     });
 
     await sendSms({
       email: customer.email,
-      message: `Your subscription for ${customer.subscription.split('_').join(' ')} has failed to renew. Please check your email for more information.`,
+      message: `Your subscription for ${customer.subscription.split('_').join(' ')} has failed to renew. Please check your email for more information. Contact support for assistance.`,
     });
 
+    console.log(`❌ Payment failed for ${customer.email}`);
     return { statusCode: 200 };
   }
 
