@@ -331,6 +331,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       membershipsCredits[
         customer.subscription as keyof typeof membershipsCredits
       ];
+    console.log(membershipCredit);
     const user = await User.findOne({ email: customer.email }).lean();
     if (
       user?.credit_balance &&
