@@ -12,6 +12,7 @@ import {
   sendBundleCreditPurchaseFailedNotifyEmail,
 } from '../../utils/email';
 import FacilityPayment from '../FacilityPayment/facilityPayment.model';
+import { User } from '../User/user.model';
 
 const purchaseBundleCreditPackageIntoDB = async (
   payload: IBundleCreditPackPurchase,
@@ -26,6 +27,39 @@ const purchaseBundleCreditPackageIntoDB = async (
       payment: payment[0]._id,
     };
     await BundleCreditPackage.create([createPayload], { session });
+    const result = await User.findById(bundle.user).session(session);
+    if (
+      result?.credit_balance &&
+      result.credit_balance.session_credit !== 'unlimited'
+    ) {
+      const session_credit = result.credit_balance.session_credit;
+      const machine_credit = result.credit_balance.machine_credit;
+      const newSessionCredit = Number(session_credit) + bundle.hours;
+      const newMachineCredit =
+        Number(machine_credit) + (bundle.piching_machine ? bundle.hours : 0);
+      const creditBalance = {
+        session_credit: newSessionCredit.toString(),
+        machine_credit: newMachineCredit.toString(),
+      };
+      await User.findByIdAndUpdate(
+        bundle.user,
+        { credit_balance: creditBalance },
+        { session, _id: false },
+      );
+    } else if (result?.credit_balance?.session_credit !== 'unlimited') {
+      await User.findByIdAndUpdate(
+        bundle.user,
+        {
+          credit_balance: {
+            session_credit: bundle.hours.toString(),
+            machine_credit: bundle.piching_machine
+              ? bundle.hours.toString()
+              : '0',
+          },
+        },
+        { _id: false, session },
+      );
+    }
     await sendBundleCreditPackPurchasedConfirmationEmail({
       email: payment_info.email,
       bundle: bundle,
@@ -37,7 +71,6 @@ const purchaseBundleCreditPackageIntoDB = async (
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
-    console.log(error?.message);
     await sendBundleCreditPurchaseFailedNotifyEmail({
       email: payment_info.email,
       bundle: bundle,

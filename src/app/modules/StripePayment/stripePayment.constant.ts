@@ -26,3 +26,12 @@ export const getPriceId = <M extends Membership>(
 ) => {
   return priceIds[membership][plan];
 };
+
+export const membershipsCredits = {
+  individual_pro: { machine_credit: '4', session_credit: '4' },
+  individual_pro_unlimited: {
+    machine_credit: 'unlimited',
+    session_credit: 'unlimited',
+  },
+  // youth_training_membership: { session_credit: '4' },
+};

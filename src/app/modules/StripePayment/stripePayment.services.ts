@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { StripePayment } from './stripePayment.modal';
-import { getPriceId } from './stripePayment.constant';
+import { getPriceId, membershipsCredits } from './stripePayment.constant';
 import { User } from '../User/user.model';
 import moment from 'moment';
 import MembershipPayment from '../MembershipPayment/membershipPayment.model';
@@ -139,12 +139,13 @@ const createCustomMembershipSubscription = async (payload: {
   };
 };
 
-const createOrUpdateMembershipSubscription = async (payload: {
+export const createOrUpdateMembershipSubscription = async (payload: {
   email: string;
   plan: 'monthly' | 'yearly' | 'quarterly';
   membership: any;
+  amount?: number;
 }) => {
-  const { email, membership, plan } = payload;
+  const { email, membership, plan, amount } = payload;
 
   const priceId = getPriceId(membership, plan);
   if (!priceId) {
@@ -156,7 +157,6 @@ const createOrUpdateMembershipSubscription = async (payload: {
 
   let user = await StripePayment.findOne({ email });
 
-  // Create user if not exists
   if (!user) {
     const stripeCustomer = await stripe.customers.create({ email });
     user = await StripePayment.create({
@@ -165,22 +165,30 @@ const createOrUpdateMembershipSubscription = async (payload: {
     });
   }
 
-  // -------------------
-  // Update existing subscription
-  // -------------------
   if (user.subscription_id) {
     const existingSubscription = await stripe.subscriptions.retrieve(
       user.subscription_id,
-      {
-        expand: ['latest_invoice.payment_intent'],
-      },
+      { expand: ['latest_invoice.payment_intent'] },
     );
+
+    if (amount && amount > 0) {
+      const paymentIntent = await stripe.paymentIntents.create({
+        customer: user.customer_id,
+        amount: amount * 100,
+        currency: 'usd',
+        automatic_payment_methods: { enabled: true },
+      });
+
+      return {
+        requiresPayment: true,
+        clientSecret: paymentIntent.client_secret,
+      };
+    }
 
     if (existingSubscription.status === 'active') {
       const subscriptionItemId = existingSubscription.items.data[0]?.id;
       const currentPriceId = existingSubscription.items.data[0]?.price.id;
 
-      // Already on the same plan
       if (currentPriceId === priceId) {
         return {
           message: 'You already have this membership active.',
@@ -189,7 +197,6 @@ const createOrUpdateMembershipSubscription = async (payload: {
         };
       }
 
-      // Update subscription to new plan
       const updatedSubscription = await stripe.subscriptions.update(
         user.subscription_id,
         {
@@ -201,7 +208,6 @@ const createOrUpdateMembershipSubscription = async (payload: {
       );
 
       const invoice = updatedSubscription.latest_invoice as Stripe.Invoice;
-
       let paymentIntent: Stripe.PaymentIntent | null = null;
       let requiresPayment = false;
 
@@ -214,7 +220,6 @@ const createOrUpdateMembershipSubscription = async (payload: {
           paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
         }
 
-        // Pay invoice if required
         if (invoice.amount_due > 0 && invoice.status === 'open') {
           await stripe.invoices.pay(invoice.id);
         }
@@ -233,9 +238,6 @@ const createOrUpdateMembershipSubscription = async (payload: {
     }
   }
 
-  // -------------------
-  // Create new subscription
-  // -------------------
   const subscription = await stripe.subscriptions.create({
     customer: user.customer_id,
     items: [{ price: priceId }],
@@ -323,21 +325,50 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       customer.subscription_plan === 'monthly'
         ? moment().add(1, 'month').toISOString()
         : customer.subscription_plan === 'quarterly'
-          ? moment().add(3, 'months').toISOString()
+          ? moment().add(4, 'months').toISOString()
           : moment().add(1, 'year').toISOString();
-
-    await User.findOneAndUpdate(
-      { email: customer.email },
-      {
-        membership: true,
-        status: true,
-        plan: customer.subscription_plan,
-        package_name: customer.subscription.split('_').join(' '),
-        issue_date: issueDate,
-        expiry_date: expiryDate,
-      },
-    );
-
+    const membershipCredit =
+      membershipsCredits[
+        customer.subscription as keyof typeof membershipsCredits
+      ];
+    const user = await User.findOne({ email: customer.email }).lean();
+    if (
+      user?.credit_balance &&
+      membershipCredit.session_credit !== 'unlimited'
+    ) {
+      await User.findOneAndUpdate(
+        { email: customer.email },
+        {
+          membership: true,
+          status: true,
+          plan: customer.subscription_plan,
+          package_name: customer.subscription.split('_').join(' '),
+          issue_date: issueDate,
+          expiry_date: expiryDate,
+          credit_balance: {
+            session_credit:
+              Number(membershipCredit.session_credit) +
+              Number(user.credit_balance.session_credit),
+            machine_credit:
+              Number(membershipCredit.machine_credit) +
+              Number(user.credit_balance.machine_credit || '0'),
+          },
+        },
+      );
+    } else {
+      await User.findOneAndUpdate(
+        { email: customer.email },
+        {
+          membership: true,
+          status: true,
+          plan: customer.subscription_plan,
+          package_name: customer.subscription.split('_').join(' '),
+          issue_date: issueDate,
+          expiry_date: expiryDate,
+          credit_balance: membershipCredit,
+        },
+      );
+    }
     if (invoice.billing_reason === 'subscription_create') {
       const subscriptionId =
         invoice.subscription ??

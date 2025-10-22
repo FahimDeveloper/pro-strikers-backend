@@ -93,6 +93,12 @@ const userSchema = new Schema<IUser, UserModel>(
       type: String,
       enum: ['monthly', 'yearly'],
     },
+    credit_balance: {
+      type: {
+        machine_credit: { type: String },
+        session_credit: { type: String },
+      },
+    },
   },
   {
     timestamps: true,
@@ -113,7 +119,7 @@ userSchema.post('save', function (doc, next) {
 });
 
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await User.findOne({ email }).select('+password');
+  return await User.findOne({ email }).select('+password').lean();
 };
 
 userSchema.statics.isPasswordMatched = async function (

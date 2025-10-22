@@ -10,7 +10,7 @@ route.post(
 
 route.post(
   '/create-subscription',
-  StripePaymentControllers.createMembershipSubscription,
+  StripePaymentControllers.createOrUpdateMembershipSubscription,
 );
 
 route.post(

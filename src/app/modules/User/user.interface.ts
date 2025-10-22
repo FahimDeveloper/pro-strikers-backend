@@ -27,6 +27,12 @@ export interface IUser {
   expiry_date?: string;
   package_name?: string;
   plan?: string;
+  credit_balance?: ICredit;
+}
+
+export interface ICredit {
+  machine_credit?: string;
+  session_credit?: string;
 }
 
 export interface UserModel extends Model<IUser> {
