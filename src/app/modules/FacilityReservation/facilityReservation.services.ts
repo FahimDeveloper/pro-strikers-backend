@@ -207,6 +207,29 @@ const createFacilityReservationByUserIntoDB = async (
   const user = await User.findById(id);
   try {
     session.startTransaction();
+    if (user?.credit_balance) {
+      const machineCredit = user.credit_balance.machine_credit;
+      const sessionCredit = user.credit_balance.session_credit;
+
+      if (machineCredit !== 'unlimited' && sessionCredit !== 'unlimited') {
+        const newMachineCredit = Math.max(
+          Number(machineCredit) - facility_data?.addons.length,
+          0,
+        ).toString();
+
+        const newSessionCredit = Math.max(
+          Number(sessionCredit) - facility_data?.bookings.length,
+          0,
+        ).toString();
+
+        await User.findByIdAndUpdate(id, {
+          credit_balance: {
+            machine_credit: newMachineCredit,
+            session_credit: newSessionCredit,
+          },
+        });
+      }
+    }
     await SlotBooking.deleteMany(
       {
         user: new mongoose.Types.ObjectId(id),
