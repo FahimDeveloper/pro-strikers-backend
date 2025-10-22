@@ -285,6 +285,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
+  // -----------------------------
+  // Handle user credit safely
+  // -----------------------------
   const handleUserCredits = async (customer: any) => {
     const issueDate = moment().toISOString();
     const expiryDate =
@@ -295,7 +298,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
           : moment().add(1, 'year').toISOString();
 
     // Map subscription to base membership key
-    const baseMembership = customer.subscription;
+    const baseMembership = customer.subscription.split('_')[0];
     const membershipCredit =
       membershipsCredits[baseMembership as keyof typeof membershipsCredits];
 
@@ -306,18 +309,21 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
 
     const user = await User.findOne({ email: customer.email }).lean();
 
-    // Calculate credits safely
     const sessionCredit =
-      membershipCredit.session_credit === 'unlimited'
+      user?.credit_balance?.session_credit === 'unlimited'
         ? 'unlimited'
-        : Number(membershipCredit.session_credit) +
-          Number(user?.credit_balance?.session_credit || 0);
+        : membershipCredit.session_credit === 'unlimited'
+          ? 'unlimited'
+          : Number(membershipCredit.session_credit) +
+            Number(user?.credit_balance?.session_credit || 0);
 
     const machineCredit =
-      membershipCredit.machine_credit === 'unlimited'
+      user?.credit_balance?.machine_credit === 'unlimited'
         ? 'unlimited'
-        : Number(membershipCredit.machine_credit) +
-          Number(user?.credit_balance?.machine_credit || 0);
+        : membershipCredit.machine_credit === 'unlimited'
+          ? 'unlimited'
+          : Number(membershipCredit.machine_credit) +
+            Number(user?.credit_balance?.machine_credit || 0);
 
     await User.findOneAndUpdate(
       { email: customer.email },
@@ -336,6 +342,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     );
   };
 
+  // -----------------------------
+  // Payment succeeded
+  // -----------------------------
   if (event.type === 'invoice.payment_succeeded') {
     const invoice = event.data.object;
     const paymentIntentId = invoice.payment_intent;
@@ -405,7 +414,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
                 membership: true,
                 status: true,
                 issue_date: moment().toISOString(),
-                expiry_date: moment().add(1, 'year').toISOString(), // adjust based on plan if needed
+                expiry_date: moment().add(1, 'year').toISOString(), // adjust if needed
                 package_name: customer.subscription,
                 plan: customer.subscription_plan,
               });
@@ -434,7 +443,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       }
     }
 
-    // Send notifications based on billing reason
+    // Send notifications
     if (invoice.billing_reason === 'subscription_create') {
       await sendMembershipPurchasedConfirmationEmail({
         email: customer.email,
@@ -475,6 +484,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     return { statusCode: 200 };
   }
 
+  // -----------------------------
+  // Payment failed
+  // -----------------------------
   if (event.type === 'invoice.payment_failed') {
     const invoice = event.data.object;
     const customer = await StripePayment.findOne({
