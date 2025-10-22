@@ -24,6 +24,7 @@ import { generateRandomPassword } from '../../utils/generateRandomPassword';
 import { createToken } from '../../utils/auth';
 import config from '../../config';
 import { TempLink } from '../TempLink/tempLink.modal';
+import { FacilitySchedule } from '../FacilitySchedule/facilitySchedule.model';
 
 const createFacilityReservationByAdminIntoDB = async (
   id: string,
@@ -205,6 +206,9 @@ const createFacilityReservationByUserIntoDB = async (
   const session = await mongoose.startSession();
   const { facility_data, payment_info } = payload;
   const user = await User.findById(id);
+  const facility = await FacilitySchedule.findById(
+    facility_data?.facility,
+  ).select('duration');
   try {
     session.startTransaction();
     if (user?.credit_balance) {
@@ -212,15 +216,29 @@ const createFacilityReservationByUserIntoDB = async (
       const sessionCredit = user.credit_balance.session_credit;
 
       if (machineCredit !== 'unlimited' && sessionCredit !== 'unlimited') {
-        const newMachineCredit = Math.max(
-          Number(machineCredit) - facility_data?.addons.length,
-          0,
-        ).toString();
+        let newMachineCredit: string;
+        let newSessionCredit: string;
+        if (facility?.duration == 60) {
+          newMachineCredit = Math.max(
+            Number(machineCredit) - facility_data?.addons.length,
+            0,
+          ).toString();
 
-        const newSessionCredit = Math.max(
-          Number(sessionCredit) - facility_data?.bookings.length,
-          0,
-        ).toString();
+          newSessionCredit = Math.max(
+            Number(sessionCredit) - facility_data?.bookings.length,
+            0,
+          ).toString();
+        } else {
+          newMachineCredit = Math.max(
+            Number(machineCredit) - facility_data?.addons.length / 2,
+            0,
+          ).toString();
+
+          newSessionCredit = Math.max(
+            Number(sessionCredit) - facility_data?.bookings.length / 2,
+            0,
+          ).toString();
+        }
 
         await User.findByIdAndUpdate(id, {
           credit_balance: {
