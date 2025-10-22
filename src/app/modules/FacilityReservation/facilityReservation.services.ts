@@ -220,7 +220,7 @@ const createFacilityReservationByUserIntoDB = async (
         let newSessionCredit: string;
         if (facility?.duration == 60) {
           newMachineCredit = Math.max(
-            Number(machineCredit) - facility_data?.addons.length,
+            Number(machineCredit) - facility_data?.addons[0].hours,
             0,
           ).toString();
 
@@ -230,7 +230,7 @@ const createFacilityReservationByUserIntoDB = async (
           ).toString();
         } else {
           newMachineCredit = Math.max(
-            Number(machineCredit) - facility_data?.addons.length / 2,
+            Number(machineCredit) - facility_data?.addons[0].hours,
             0,
           ).toString();
 
