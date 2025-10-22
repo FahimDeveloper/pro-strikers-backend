@@ -295,7 +295,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
           : moment().add(1, 'year').toISOString();
 
     // Map subscription to base membership key
-    const baseMembership = customer.subscription.split('_')[0];
+    const baseMembership = customer.subscription;
     const membershipCredit =
       membershipsCredits[baseMembership as keyof typeof membershipsCredits];
 
