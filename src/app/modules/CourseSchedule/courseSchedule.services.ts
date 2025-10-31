@@ -32,6 +32,26 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
   return { result, count };
 };
 
+const getAllAcademyCoursesFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  const now = new Date().toISOString();
+  const courseQuery = new QueryBuilder(
+    CourseSchedule.find({ academy: academy, end_date: { $gte: now } }).populate(
+      'trainer',
+    ),
+    query,
+  )
+    .search(['course_name'])
+    .filter()
+    .rangeFilter()
+    .paginate();
+  const result = await courseQuery?.modelQuery;
+  const count = await courseQuery?.countTotal();
+  return { result, count };
+};
+
 const getCourseByIdFromDB = async (payload: any) => {
   try {
     const result = await CourseSchedule.findById(payload.id).populate([
@@ -67,4 +87,5 @@ export const CourseScheduleServices = {
   getSingleCourseFromDB,
   getCourseByIdFromDB,
   deleteCourseFromDB,
+  getAllAcademyCoursesFromDB,
 };

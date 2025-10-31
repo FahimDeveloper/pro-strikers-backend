@@ -9,8 +9,14 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer, ROLE.academy),
   AppointmentOneOnOneReservationController.getAllAppointmentOneOnOneReservations,
+);
+
+route.get(
+  '/academy/:academy',
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer, ROLE.academy),
+  AppointmentOneOnOneReservationController.getAcademyAllOwnAppointmentOneOnOneReservations,
 );
 
 route.get(
@@ -20,33 +26,33 @@ route.get(
 
 route.get(
   '/user',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   AppointmentOneOnOneReservationController.getUserAppointmentOneOnOneReservationList,
 );
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer, ROLE.academy),
   AppointmentOneOnOneReservationController.getSingleAppointmentOneOnOneReservation,
 );
 
 route.post(
   '/admin/create/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer, ROLE.academy),
   validateRequest(AppointmentOneOnOneReservationValidations.createValidation),
   AppointmentOneOnOneReservationController.createAppointmentOneOnOneReservation,
 );
 
 route.post(
   '/user/create/:id',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   validateRequest(AppointmentOneOnOneReservationValidations.createValidation),
   AppointmentOneOnOneReservationController.createAppointmentOneOnOneReservationByUser,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer, ROLE.academy),
   AppointmentOneOnOneReservationController.deleteAppointmentOneOnOneReservation,
 );
 

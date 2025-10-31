@@ -37,6 +37,31 @@ const getAllAdminUsers = catchAsync(async (req, res) => {
     count,
   );
 });
+const getAcademyAllOwnTrainers = catchAsync(async (req, res) => {
+  const { result, count } = await AdminServices.getAcademyAllOwnTrainersFromDB(
+    req.params.academy,
+    req.query,
+  );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Admins are retrieved succesfully',
+    result,
+    count,
+  );
+});
+
+const getAcademyOwnTrainers = catchAsync(async (req, res) => {
+  const result = await AdminServices.getAcademyOwnTrainersFromDB(
+    req.params.academy,
+  );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Trainers are retrieved succesfully',
+    result,
+  );
+});
 
 const getAllTrainers = catchAsync(async (req, res) => {
   const result = await AdminServices.getAllTrainersFromDB();
@@ -65,4 +90,6 @@ export const AdminControllers = {
   getAllAdminUsers,
   getSingleAdminUser,
   deleteAdminUser,
+  getAcademyAllOwnTrainers,
+  getAcademyOwnTrainers,
 };

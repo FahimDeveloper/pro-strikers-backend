@@ -9,6 +9,7 @@ export interface IAppointmentGroupReservation {
   appointment_date: string;
   voucher_applied: boolean;
   trainer: mongoose.Types.ObjectId;
+  academy: mongoose.Types.ObjectId;
 }
 
 export interface IAppointmentGroupReservationByUser {

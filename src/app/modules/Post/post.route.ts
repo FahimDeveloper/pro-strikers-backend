@@ -13,7 +13,7 @@ route.get('/:id', PostControllers.getSinglePost);
 route.post(
   '/create',
   upload.single('image'),
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
     next();
@@ -24,7 +24,7 @@ route.post(
 route.patch(
   '/update/:id',
   upload.single('image'),
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -36,7 +36,7 @@ route.patch(
 );
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   PostControllers.deletePost,
 );
 

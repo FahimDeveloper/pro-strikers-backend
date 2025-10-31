@@ -10,26 +10,26 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   BrandControllers.getAllBrands,
 );
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   BrandControllers.getSingleBrand,
 );
 
 route.get(
   '/category/:category',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   BrandControllers.getBrandsByCategory,
 );
 
 route.post(
   '/create',
   upload.single('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -43,7 +43,7 @@ route.post(
 route.patch(
   '/update/:id',
   upload.single('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -56,7 +56,7 @@ route.patch(
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   BrandControllers.deleteBrand,
 );
 

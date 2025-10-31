@@ -9,46 +9,46 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   EventGroupReservationController.getAllEventGroupReservations,
 );
 
 route.get(
   '/user',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   EventGroupReservationController.getUserEventGroupReservationList,
 );
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   EventGroupReservationController.getSingleEventGroupReservation,
 );
 
 route.post(
   '/user/create',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   validateRequest(EventGroupResrvationValidations.createValidation),
   EventGroupReservationController.createEventGroupReservationByuser,
 );
 
 route.post(
   '/admin/create',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(EventGroupResrvationValidations.createValidation),
   EventGroupReservationController.createEventGroupReservationByAdmin,
 );
 
 route.patch(
   '/admin/update/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(EventGroupResrvationValidations.updateByAdminValidation),
   EventGroupReservationController.updateEventGroupReservation,
 );
 
 route.delete(
   '/admin/delete/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   EventGroupReservationController.deleteEventGroupReservation,
 );
 

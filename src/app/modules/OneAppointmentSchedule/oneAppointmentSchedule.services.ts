@@ -48,6 +48,30 @@ const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
+const getAcademyAllOwnAppointmentsFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  const appointmentQuery = new QueryBuilder(
+    OneAppointmentSchedule.find({ academy: academy }).populate([
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+    ]),
+    query,
+  )
+    .search(['appointment_name'])
+    .filter()
+    .paginate();
+  const result = await appointmentQuery?.modelQuery;
+  const count = await appointmentQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
 const getSingleAppointmentFromDB = async (id: string) => {
   const result = await OneAppointmentSchedule.findById(id);
   return result;
@@ -76,4 +100,5 @@ export const OneAppointmentScheduleServices = {
   getSingleAppointmentFromDB,
   deleteAppointmentFromDB,
   getAppointmentByIdFromDB,
+  getAcademyAllOwnAppointmentsFromDB,
 };

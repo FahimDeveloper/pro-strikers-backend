@@ -25,6 +25,10 @@ const AppointmentGroupReservationSchema =
         ref: 'AppointmentPayment',
         required: true,
       },
+      academy: {
+        type: Schema.Types.ObjectId,
+        ref: 'Academy',
+      },
       appointment_date: { type: String, required: true },
       voucher_applied: { type: Boolean, required: true, default: false },
       sport: { type: String, required: true },

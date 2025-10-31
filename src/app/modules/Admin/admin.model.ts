@@ -26,21 +26,25 @@ const adminSchema = new Schema<IAdmin, AdminMethods>(
       index: true,
     },
     phone: { type: String, required: true },
-    gender: { type: String, required: true },
+    gender: { type: String },
     date_of_birth: { type: String },
     role: {
       type: String,
       required: true,
-      enum: ['super-admin', 'admin', 'trainer', 'staff', 'manager'],
+      enum: ['super-admin', 'admin', 'trainer', 'staff', 'manager', 'academy'],
     },
     password: {
       type: String,
       required: true,
       select: false,
     },
+    academy: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academy',
+      required: false,
+    },
     description: {
       type: String,
-      required: true,
     },
     city: {
       type: String,
@@ -79,7 +83,9 @@ adminSchema.pre('save', async function (next) {
 
 //checking if user is already exist!
 adminSchema.statics.isAdminExists = async function (email: string) {
-  const existingUser = await Admin.findOne({ email }).select('+password');
+  const existingUser = await Admin.findOne({ email })
+    .select('+password')
+    .lean();
   return existingUser;
 };
 

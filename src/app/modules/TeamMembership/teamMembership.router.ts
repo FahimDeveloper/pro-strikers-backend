@@ -9,20 +9,20 @@ const router = express.Router();
 
 router.post(
   '/create',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(TeamMembershipValidation.createValidation),
   TeamMembershipControllers.createTeamMembership,
 );
 
 router.get(
   '/',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   TeamMembershipControllers.getTeamMemberships,
 );
 
 router.patch(
   '/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(TeamMembershipValidation.updateValidation),
   TeamMembershipControllers.updateTeamMembership,
 );

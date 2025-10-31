@@ -9,33 +9,33 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   ShopPaymentControllers.getShopPaymentList,
 );
 
 route.get(
   '/:email',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   ShopPaymentControllers.getUserShopPaymentList,
 );
 
 route.post(
   '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(ShopPaymentValidations.createValidation),
   ShopPaymentControllers.createShopPayment,
 );
 
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(ShopPaymentValidations.updateValidation),
   ShopPaymentControllers.updateShopPayment,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   ShopPaymentControllers.deleteShopPayment,
 );
 

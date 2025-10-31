@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get(
   '/',
-  authMiddleware(ROLE.superAdmin),
+  //authMiddleware(ROLE.superAdmin),
   NotificationControllers.getNotification,
 );
 

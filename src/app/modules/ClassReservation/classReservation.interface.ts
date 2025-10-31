@@ -9,6 +9,7 @@ export interface IClassReservation {
   sport: string;
   class_date: string;
   trainer: mongoose.Types.ObjectId;
+  academy: mongoose.Types.ObjectId;
 }
 
 export interface IClassReservationRequest {

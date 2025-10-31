@@ -15,6 +15,15 @@ const getAllCourses = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Course fetch succesfully', result, count);
 });
 
+const getAllAcademyCourses = catchAsync(async (req, res) => {
+  const { count, result } =
+    await CourseScheduleServices.getAllAcademyCoursesFromDB(
+      req.params.academy,
+      req.query,
+    );
+  sendResponse(res, httpStatus.OK, 'Course fetch succesfully', result, count);
+});
+
 const getSingleCourse = catchAsync(async (req, res) => {
   const result = await CourseScheduleServices.getSingleCourseFromDB(
     req.params.id,
@@ -44,4 +53,5 @@ export const CourseSheduleControllers = {
   updateCourse,
   deleteCourse,
   getCourseById,
+  getAllAcademyCourses,
 };

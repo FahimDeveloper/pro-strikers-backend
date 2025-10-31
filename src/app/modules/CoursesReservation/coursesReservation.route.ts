@@ -9,39 +9,39 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer, ROLE.academy),
   CourseReservationController.getAllCoursesReservation,
 );
 
 route.get(
   '/user',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   CourseReservationController.getUserCourseReservationList,
 );
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer, ROLE.academy),
   CourseReservationController.getSingleCourseReservation,
 );
 
 route.post(
   '/user/create',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   validateRequest(courseReservationValidations.createValidation),
   CourseReservationController.createCourseReservationByUser,
 );
 
 route.post(
   '/admin/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(courseReservationValidations.createValidation),
   CourseReservationController.createCourseReservationByAdmin,
 );
 
 route.delete(
   '/admin/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   CourseReservationController.deleteCourseReservation,
 );
 

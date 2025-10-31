@@ -9,27 +9,27 @@ const router = express.Router();
 
 router.get(
   '/',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   ColorControllers.getAllColors,
 );
 
 router.post(
   '/create',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(ColorValidations.createValidation),
   ColorControllers.createColor,
 );
 
 router.patch(
   '/update/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(ColorValidations.updateValidation),
   ColorControllers.updateColor,
 );
 
 router.delete(
   '/delete/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   ColorControllers.deleteColor,
 );
 

@@ -10,16 +10,23 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin),
+  //authMiddleware(ROLE.superAdmin),
   AdminControllers.getAllAdminUsers,
 );
+
+route.get(
+  '/academies/trainers/:academy',
+  AdminControllers.getAcademyAllOwnTrainers,
+);
+
+route.get('/academy/trainers/:academy', AdminControllers.getAcademyOwnTrainers);
 
 route.get('/trainers', AdminControllers.getAllTrainers);
 
 route.post(
   '/create',
   upload.single('image'),
-  authMiddleware(ROLE.superAdmin),
+  //authMiddleware(ROLE.superAdmin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -32,14 +39,14 @@ route.post(
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   AdminControllers.getSingleAdminUser,
 );
 
 route.patch(
   '/update/:id',
   upload.single('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.trainer, ROLE.academy),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -52,7 +59,7 @@ route.patch(
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   AdminControllers.deleteAdminUser,
 );
 

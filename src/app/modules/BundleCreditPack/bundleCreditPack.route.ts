@@ -9,26 +9,26 @@ const router = express.Router();
 
 router.get(
   '/',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   BundleCreditPackageControllers.getAllPurchasedBundleCreditPackages,
 );
 
 router.get(
   '/:email',
-  authMiddleware(ROLE.admin, ROLE.superAdmin, ROLE.user),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin, ROLE.user),
   BundleCreditPackageControllers.getUserPurchasedBundleCreditPackages,
 );
 
 router.post(
   '/create',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   // validateRequest(BundleCreditPackageValidations.createValidation),
   BundleCreditPackageControllers.purchaseBundleCreditPackage,
 );
 
 router.patch(
   '/update/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(BundleCreditPackageValidations.updateValidation),
   BundleCreditPackageControllers.updateUseCreditPackage,
 );

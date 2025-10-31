@@ -10,7 +10,7 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.user),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin, ROLE.user),
   ProductControllers.getAllProducts,
 );
 
@@ -24,7 +24,7 @@ route.post(
     { name: 'thumbnail', maxCount: 1 },
     { name: 'gallery', maxCount: 5 },
   ]),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
     next();
@@ -39,7 +39,7 @@ route.patch(
     { name: 'thumbnail', maxCount: 1 },
     { name: 'gallery', maxCount: 5 },
   ]),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -52,7 +52,7 @@ route.patch(
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   ProductControllers.deleteProduct,
 );
 

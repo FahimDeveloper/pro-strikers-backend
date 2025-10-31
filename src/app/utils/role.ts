@@ -5,6 +5,7 @@ export const ROLE = {
   trainer: 'trainer',
   manager: 'manager',
   staff: 'staff',
+  academy: 'academy',
 } as const;
 
 export type IRole =
@@ -13,4 +14,5 @@ export type IRole =
   | 'admin'
   | 'trainer'
   | 'manager'
-  | 'staff';
+  | 'staff'
+  | 'academy';

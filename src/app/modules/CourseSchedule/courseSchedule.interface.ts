@@ -4,6 +4,7 @@ export interface ICourseSchedule {
   course_name: string;
   sport: string;
   trainer: Types.ObjectId;
+  academy: Types.ObjectId;
   capacity: number;
   enrolled: number;
   description: string;

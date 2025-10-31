@@ -33,6 +33,23 @@ const getAllAppointmentGroupReservation = catchAsync(async (req, res) => {
   );
 });
 
+const getAcademyAllOwnAppointmentGroupReservation = catchAsync(
+  async (req, res) => {
+    const { count, result } =
+      await AppointmentGroupReservationServices.getAcademyAllOwnAppointmentGroupReservationsFromDB(
+        req.params.academy,
+        req.query,
+      );
+    sendResponse(
+      res,
+      httpStatus.OK,
+      'Appointment Group reservations fetch succesfully',
+      result,
+      count,
+    );
+  },
+);
+
 const getSingleAppointmentGroupReservation = catchAsync(async (req, res) => {
   const result =
     await AppointmentGroupReservationServices.getSingleAppointmentGroupReservationFromDB(
@@ -78,4 +95,5 @@ export const AppointmentGroupReservationController = {
   getAllAppointmentGroupReservation,
   getSingleAppointmentGroupReservation,
   deleteAppointmentGroupReservation,
+  getAcademyAllOwnAppointmentGroupReservation,
 };

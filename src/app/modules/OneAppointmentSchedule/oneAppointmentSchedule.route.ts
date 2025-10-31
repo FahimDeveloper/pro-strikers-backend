@@ -8,32 +8,36 @@ import { oneAppointmentScheduleValidations } from './oneAppointmentSchedule.vali
 const route = express.Router();
 
 route.get('/', OneAppointmentSheduleControllers.getAllAppointments);
+route.get(
+  '/academy/:academy',
+  OneAppointmentSheduleControllers.getAcademyAllOwnAppointments,
+);
 
 route.get('/:id', OneAppointmentSheduleControllers.getSingleAppointment);
 
 route.post(
   '/create',
-  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(oneAppointmentScheduleValidations.createValidation),
   OneAppointmentSheduleControllers.createAppointment,
 );
 route.post(
   '/appointment',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(oneAppointmentScheduleValidations.idValidation),
   OneAppointmentSheduleControllers.getAppointmentById,
 );
 
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   validateRequest(oneAppointmentScheduleValidations.updateValidation),
   OneAppointmentSheduleControllers.updateAppointment,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.trainer, ROLE.superAdmin, ROLE.admin),
   OneAppointmentSheduleControllers.deleteAppointment,
 );
 

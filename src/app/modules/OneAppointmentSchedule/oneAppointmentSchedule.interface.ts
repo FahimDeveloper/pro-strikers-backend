@@ -10,7 +10,7 @@ export interface IOneAppointmentSchedule {
   description: string;
   price: number;
   capacity: number;
-
+  academy: Types.ObjectId;
   schedules: IOneAppointmentDaySchedule[];
 }
 

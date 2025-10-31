@@ -46,6 +46,8 @@ import { AppointmentGroupReportsRoutes } from '../modules/AppointmentGroupReport
 import { TempLinkRoutes } from '../modules/TempLink/tempLink.route';
 import { CustomMembershipRoutes } from '../modules/CustomMembership/customMembership.router';
 import { TeamMembershipRouter } from '../modules/TeamMembership/teamMembership.router';
+import { AcademyRoutes } from '../modules/Academy/academy.router';
+import { AcademyStudentRoutes } from '../modules/AcademyStudent/acadentStudent.router';
 
 const router = express.Router();
 const mainRoutes = [
@@ -236,6 +238,14 @@ const mainRoutes = [
   {
     path: '/team-membership',
     route: TeamMembershipRouter,
+  },
+  {
+    path: '/academies',
+    route: AcademyRoutes,
+  },
+  {
+    path: '/academy-students',
+    route: AcademyStudentRoutes,
   },
 ];
 

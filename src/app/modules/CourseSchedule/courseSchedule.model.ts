@@ -17,6 +17,10 @@ const courseScheduleSchema = new Schema<ICourseSchedule>(
       ref: 'Admin',
       required: true,
     },
+    academy: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academy',
+    },
     capacity: {
       type: Number,
       required: true,

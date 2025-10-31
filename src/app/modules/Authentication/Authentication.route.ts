@@ -39,13 +39,13 @@ router.post(
 
 router.post(
   '/user/:id/change-password',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   AuthenticationControllers.changeUserPassword,
 );
 
 router.post(
   '/admin/:id/change-password',
-  authMiddleware(ROLE.admin, ROLE.superAdmin, ROLE.trainer),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin, ROLE.trainer),
   AuthenticationControllers.changeAdminPassword,
 );
 

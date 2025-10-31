@@ -5,11 +5,11 @@ export interface IClassSchedule {
   class_name: string;
   sport: string;
   description: string;
-  facility: string;
   trainer: Types.ObjectId;
   level: string;
   capacity: number;
   price: number;
+  academy?: Types.ObjectId;
   schedules: IClassDaySchedule[];
 }
 

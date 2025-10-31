@@ -34,6 +34,25 @@ const getAllClassesFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
+const getAcademyAllOwnClassesFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  const classQuery = new QueryBuilder(
+    ClassSchedule.find({ academy: academy }).populate('trainer'),
+    query,
+  )
+    .search(['class_name'])
+    .filter()
+    .paginate();
+  const result = await classQuery?.modelQuery;
+  const count = await classQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
 const getSingleClassFromDB = async (id: string) => {
   const result = await ClassSchedule.findById(id);
   return result;
@@ -218,4 +237,5 @@ export const ClassScheduleServices = {
   getClassByQueryDataFromDB,
   deleteClassFromDB,
   getClassByIdDateFromDB,
+  getAcademyAllOwnClassesFromDB,
 };

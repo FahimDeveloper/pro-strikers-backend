@@ -2330,6 +2330,58 @@ Phone: (916)-890-5834</p>`,
   return;
 };
 
+export const sendAcademyAccountConfirmationEmail = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  await transporter.sendMail({
+    from: 'ProStrikers <admin@prostrikers.com>',
+    to: email,
+    subject: 'Welcome to ProStrikers!',
+    html: `<p>Dear User,
+<br/>
+Welcome to Pro Strikers! We are excited to have you join our family.
+<br/>
+Your Academy account has been created successfully. Your temporary password is <span style="font-size: 22px; font-weight: 500;">${password}</span>
+<br/>
+To ensure the security of your account, we recommend that you change your password immediately.
+<br/>
+Please follow the steps below to update your password:
+<br/>
+<br/>
+**Change Your Password:**
+<br/>
+we highly suggest changing your password to something unique and secure. To change your password, follow these steps:
+<br/>
+- Log in to your account.
+<br/>
+- Navigate to the "Account" page.
+<br/>
+- Click on "Change Password" and follow the instructions.
+<br/>
+<br/>
+For your security, please ensure that your new password is strong and not easily guessable. A good password includes a combination of upper and lower case letters, numbers, and special characters.
+<br/><br/>
+If you did not create this account, please ignore this email or contact our support team immediately at admin@prostrikers.com.
+<br/><br/>
+Thank you for joining us, and we look forward to providing you with a great experience.
+<br/><br/>
+Best regards,
+<br/><br/>
+Prostrikers Team
+<br/>
+2230 16th St, Sacramento, CA 95818, United States.
+<br/>
+Email: admin@prostrikers.com
+<br/>
+Phone: (916)-890-5834</p>`,
+  });
+  return;
+};
+
 export const sendClientAccountConfirmationEmail = async ({
   email,
   password,

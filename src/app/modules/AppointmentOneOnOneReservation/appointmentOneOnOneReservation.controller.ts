@@ -64,6 +64,23 @@ const getAllAppointmentOneOnOneReservations = catchAsync(async (req, res) => {
   );
 });
 
+const getAcademyAllOwnAppointmentOneOnOneReservations = catchAsync(
+  async (req, res) => {
+    const { count, result } =
+      await AppointmentOneOnOneReservationServices.getAcademyAllOwnAppointmentOneOnOneReservationsFromDB(
+        req.params.academy,
+        req.query,
+      );
+    sendResponse(
+      res,
+      httpStatus.OK,
+      'Appointment One On One reservations fetch succesfully',
+      result,
+      count,
+    );
+  },
+);
+
 const getSingleAppointmentOneOnOneReservation = catchAsync(async (req, res) => {
   const result =
     await AppointmentOneOnOneReservationServices.getSingleAppointmentOneOnOneReservationFromDB(
@@ -96,4 +113,5 @@ export const AppointmentOneOnOneReservationController = {
   getSingleAppointmentOneOnOneReservation,
   deleteAppointmentOneOnOneReservation,
   getAppointmentOneOnOneReservationSlots,
+  getAcademyAllOwnAppointmentOneOnOneReservations,
 };

@@ -7,25 +7,25 @@ const route = express.Router();
 
 route.get(
   '/frequency',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilityReportControllers.getReservationFrequencyByMonth,
 );
 
 route.get(
   '/revenue',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilityReportControllers.getReservationRevenueByMonth,
 );
 
 route.get(
   '/lane-utilization',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilityReportControllers.getReservationLaneUtilizationByMonth,
 );
 
 route.get(
   '/overall',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilityReportControllers.getOverallBookingAnalytics,
 );
 

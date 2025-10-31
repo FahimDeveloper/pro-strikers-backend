@@ -20,6 +20,21 @@ const getAllAppointments = catchAsync(async (req, res) => {
   );
 });
 
+const getAcademyAllAppointments = catchAsync(async (req, res) => {
+  const { count, result } =
+    await GroupAppointmentScheduleServices.getAcademyAllOwnAppointmentsFromDB(
+      req.params.academy,
+      req.query,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Appointment fetch succesfully',
+    result,
+    count,
+  );
+});
+
 const getAppointmentById = catchAsync(async (req, res) => {
   const result =
     await GroupAppointmentScheduleServices.getAppointmentByIdFromDB(
@@ -74,4 +89,5 @@ export const GroupAppointmentSheduleControllers = {
   getAppointmentById,
   getAppointmentsByQueryDate,
   getAppointmentByIdDate,
+  getAcademyAllAppointments,
 };

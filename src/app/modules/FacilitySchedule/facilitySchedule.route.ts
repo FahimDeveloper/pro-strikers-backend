@@ -11,40 +11,40 @@ route.get('/by-query', FacilitySheduleControllers.getFacilityByQuery);
 
 route.get(
   '/',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilitySheduleControllers.getAllFacilities,
 );
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilitySheduleControllers.getSingleFacility,
 );
 
 route.post(
   '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(facilityScheduleValidations.createValidation),
   FacilitySheduleControllers.createFacility,
 );
 
 route.post(
   '/facility',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(facilityScheduleValidations.idValidation),
   FacilitySheduleControllers.getFacilityById,
 );
 
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(facilityScheduleValidations.updateValidation),
   FacilitySheduleControllers.updateFacility,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   FacilitySheduleControllers.deleteFacility,
 );
 

@@ -13,7 +13,16 @@ const adminOverviewReport = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Report successfully collected', result);
 });
 
+const academyOverviewFromDB = catchAsync(async (req, res) => {
+  const result = await OverviewReportService.academyOverviewFromDB(
+    req.params.academy,
+    req.query,
+  );
+  sendResponse(res, httpStatus.OK, 'Report successfully collected', result);
+});
+
 export const OverviewReportController = {
   trainerOverviewReport,
   adminOverviewReport,
+  academyOverviewFromDB,
 };

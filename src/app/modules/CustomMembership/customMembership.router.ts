@@ -9,19 +9,19 @@ const router = express.Router();
 
 router.post(
   '/create',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(CustomMembershipValidation.createValidation),
   CustomMembershipControllers.createCustomMembership,
 );
 router.get(
   '/',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   CustomMembershipControllers.getCustomMemberships,
 );
 
 router.get(
   '/all',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   CustomMembershipControllers.getAllCustomMembership,
 );
 

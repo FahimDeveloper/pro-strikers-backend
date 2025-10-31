@@ -20,6 +20,21 @@ const getAllAppointments = catchAsync(async (req, res) => {
   );
 });
 
+const getAcademyAllOwnAppointments = catchAsync(async (req, res) => {
+  const { count, result } =
+    await OneAppointmentScheduleServices.getAcademyAllOwnAppointmentsFromDB(
+      req.params.academy,
+      req.query,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Appointment fetch succesfully',
+    result,
+    count,
+  );
+});
+
 const getAppointmentById = catchAsync(async (req, res) => {
   const result = await OneAppointmentScheduleServices.getAppointmentByIdFromDB(
     req.body,
@@ -55,4 +70,5 @@ export const OneAppointmentSheduleControllers = {
   updateAppointment,
   deleteAppointment,
   getAppointmentById,
+  getAcademyAllOwnAppointments,
 };

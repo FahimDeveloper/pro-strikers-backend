@@ -1,4 +1,4 @@
-import { Query, Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { IClassDaySchedule, IClassSchedule } from './classSchedule.interface';
 
 const classScheduleDaySchema = new Schema<IClassDaySchedule>(
@@ -35,10 +35,6 @@ const classScheduleSchema = new Schema<IClassSchedule>(
       type: String,
       required: true,
     },
-    facility: {
-      type: String,
-      required: true,
-    },
     trainer: {
       type: Schema.ObjectId,
       ref: 'Admin',
@@ -51,6 +47,10 @@ const classScheduleSchema = new Schema<IClassSchedule>(
     level: {
       type: String,
       required: true,
+    },
+    academy: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academy',
     },
     price: {
       type: Number,

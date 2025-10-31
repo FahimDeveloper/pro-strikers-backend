@@ -75,6 +75,29 @@ const getAllTrainersFromDB = async () => {
   return result;
 };
 
+const getAcademyOwnTrainersFromDB = async (academy: string) => {
+  const result = await Admin.find({ academy: academy, role: 'trainer' }).select(
+    'first_name last_name',
+  );
+  return result;
+};
+
+const getAcademyAllOwnTrainersFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  const adminQuery = new QueryBuilder(
+    Admin.find({ academy: academy, role: 'trainer' }).select('-password'),
+    query,
+  )
+    .search(['email', 'first_name', 'last_name'])
+    .filter()
+    .paginate();
+  const result = await adminQuery?.modelQuery;
+  const count = await adminQuery?.countTotal();
+  return { result, count };
+};
+
 const getAllAdminUsersFromDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(Admin.find().select('-password'), query)
     .search(['email', 'first_name', 'last_name'])
@@ -102,4 +125,6 @@ export const AdminServices = {
   getAllAdminUsersFromDB,
   getSingleAdminUserFromDB,
   deleteAdminUserFromDB,
+  getAcademyAllOwnTrainersFromDB,
+  getAcademyOwnTrainersFromDB,
 };

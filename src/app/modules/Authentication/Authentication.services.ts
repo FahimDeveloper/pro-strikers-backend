@@ -271,10 +271,10 @@ const loginAdminIntoDB = async (payload: ILogin) => {
     );
   }
 
-  const { _id, first_name, last_name, image, email, phone, role } = user;
-
   return {
-    user: { _id, first_name, last_name, image, email, phone, role },
+    user: {
+      ...user,
+    },
     accessToken,
     refreshToken,
   };

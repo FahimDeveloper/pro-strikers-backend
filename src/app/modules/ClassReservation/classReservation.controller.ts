@@ -25,6 +25,21 @@ const getAllClassesReservation = catchAsync(async (req, res) => {
   );
 });
 
+const getAcademyAllOwnClassesReservation = catchAsync(async (req, res) => {
+  const { count, result } =
+    await ClassReservationServices.getAcademyAllOwnClassesReservationsFromDB(
+      req.params.academy,
+      req.query,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Classes reservation fetch succesfully',
+    result,
+    count,
+  );
+});
+
 const getUserClassReservationList = catchAsync(async (req, res) => {
   const { count, result } =
     await ClassReservationServices.getUserClassReservationListFromDB(req.query);
@@ -61,4 +76,5 @@ export const ClassReservationController = {
   getAllClassesReservation,
   getSingleClassReservation,
   deleteClassReservation,
+  getAcademyAllOwnClassesReservation,
 };

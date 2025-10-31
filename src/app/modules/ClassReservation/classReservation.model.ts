@@ -19,6 +19,10 @@ const classReservationSchema = new Schema<IClassReservation>(
       ref: 'Admin',
       required: true,
     },
+    academy: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academy',
+    },
     payment: {
       type: Schema.Types.ObjectId,
       ref: 'ClassPayment',

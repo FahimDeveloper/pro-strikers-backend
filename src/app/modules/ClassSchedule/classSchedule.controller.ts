@@ -15,6 +15,15 @@ const getAllClasses = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result, count);
 });
 
+const getAcademyAllOwnClasses = catchAsync(async (req, res) => {
+  const { count, result } =
+    await ClassScheduleServices.getAcademyAllOwnClassesFromDB(
+      req.params.academy,
+      req.query,
+    );
+  sendResponse(res, httpStatus.OK, 'Class fetch succesfully', result, count);
+});
+
 const getSingleClass = catchAsync(async (req, res) => {
   const result = await ClassScheduleServices.getSingleClassFromDB(
     req.params.id,
@@ -52,4 +61,5 @@ export const ClassSheduleControllers = {
   deleteClass,
   getClassByQueryDate,
   getClassByIdDate,
+  getAcademyAllOwnClasses,
 };

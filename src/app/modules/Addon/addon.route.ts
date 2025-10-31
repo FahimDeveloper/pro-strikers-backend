@@ -16,7 +16,7 @@ route.get('/:id', AddonControllers.getSingleAddon);
 route.post(
   '/create',
   upload.array('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -30,7 +30,7 @@ route.post(
 route.patch(
   '/update/:id',
   upload.array('image'),
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -43,7 +43,7 @@ route.patch(
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   AddonControllers.deleteAddon,
 );
 

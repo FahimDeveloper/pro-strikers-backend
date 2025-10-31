@@ -11,7 +11,7 @@ route.get('/', LaneControllers.getAllLanes);
 
 route.get(
   '/lane-title',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   LaneControllers.getLanes,
 );
 
@@ -19,21 +19,21 @@ route.get('/:id', LaneControllers.getSingleLane);
 
 route.post(
   '/create',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(LaneValidations.createValidation),
   LaneControllers.createLane,
 );
 
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.superAdmin, ROLE.admin),
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
   validateRequest(LaneValidations.updateValidation),
   LaneControllers.updateLane,
 );
 
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   LaneControllers.deleteLane,
 );
 

@@ -1,4 +1,4 @@
-import { Model, Types } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { IRole } from '../../utils/role';
 
 export interface IAdmin {
@@ -9,10 +9,11 @@ export interface IAdmin {
   email: string;
   phone: string;
   date_of_birth?: string;
-  gender: 'male' | 'female';
+  gender?: 'male' | 'female';
   role: IRole;
-  description: string;
+  description?: string;
   password: string;
+  academy?: mongoose.Types.ObjectId;
   city?: string;
   state?: string;
   country?: string;

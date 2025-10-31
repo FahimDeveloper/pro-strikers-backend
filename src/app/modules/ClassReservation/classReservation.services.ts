@@ -137,6 +137,39 @@ const getAllClassesReservationsFromDB = async (
   };
 };
 
+const getAcademyAllOwnClassesReservationsFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  const classReservationQuery = new QueryBuilder(
+    ClassReservation.find({ academy: academy }).populate([
+      {
+        path: 'class',
+      },
+      {
+        path: 'user',
+      },
+      {
+        path: 'payment',
+      },
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+    ]),
+    query,
+  )
+    .search(['email'])
+    .filter()
+    .paginate();
+  const result = await classReservationQuery?.modelQuery;
+  const count = await classReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
 const getUserClassReservationListFromDB = async (
   query: Record<string, unknown>,
 ) => {
@@ -182,4 +215,5 @@ export const ClassReservationServices = {
   getAllClassesReservationsFromDB,
   getSingleClassReservationFromDB,
   deleteClassReservationFromDB,
+  getAcademyAllOwnClassesReservationsFromDB,
 };

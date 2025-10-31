@@ -39,6 +39,30 @@ const getAllAppointmentsFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
+const getAcademyAllOwnAppointmentsFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  const appointmentQuery = new QueryBuilder(
+    GroupAppointmentSchedule.find({ academy: academy }).populate([
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+    ]),
+    query,
+  )
+    .search(['appointment_name'])
+    .filter()
+    .paginate();
+  const result = await appointmentQuery?.modelQuery;
+  const count = await appointmentQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
 const getAppointmentsByQueryDateFromDB = async (
   query: Record<string, unknown>,
 ) => {
@@ -251,4 +275,5 @@ export const GroupAppointmentScheduleServices = {
   getAppointmentByIdFromDB,
   getAppointmentsByQueryDateFromDB,
   getAppointmentByIdDateFromDB,
+  getAcademyAllOwnAppointmentsFromDB,
 };

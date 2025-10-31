@@ -9,6 +9,7 @@ export interface IGroupAppointmentSchedule {
   description: string;
   price: number;
   capacity: number;
+  academy: Types.ObjectId;
   schedules: IGroupAppointmentDaySchedule[];
 }
 

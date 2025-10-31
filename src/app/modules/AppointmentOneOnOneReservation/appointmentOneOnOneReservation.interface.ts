@@ -8,6 +8,7 @@ export interface IAppointmentOneOnOneReservation {
   voucher_applied: boolean;
   payment: mongoose.Types.ObjectId;
   trainer: mongoose.Types.ObjectId;
+  academy: mongoose.Types.ObjectId;
   bookings: IAppointmentBookings[];
 }
 

@@ -12,14 +12,14 @@ route.get('/', EventControllers.getAllEvents);
 route.get('/:id', EventControllers.getSingleEvent);
 route.post(
   '/event',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(EventValidations.idValidation),
   EventControllers.getEventById,
 );
 route.post(
   '/create',
   upload.single('image'),
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
     next();
@@ -30,7 +30,7 @@ route.post(
 route.patch(
   '/update/:id',
   upload.single('image'),
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = JSON.parse(req.body.data);
@@ -42,7 +42,7 @@ route.patch(
 );
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   EventControllers.deleteEvent,
 );
 

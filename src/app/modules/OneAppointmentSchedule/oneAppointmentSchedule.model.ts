@@ -51,6 +51,10 @@ const appointmentScheduleSchema = new Schema<IOneAppointmentSchedule>(
       type: Number,
       required: true,
     },
+    academy: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academy',
+    },
     schedules: [appointmentScheduleDaySchema],
   },
   { timestamps: true, versionKey: false },

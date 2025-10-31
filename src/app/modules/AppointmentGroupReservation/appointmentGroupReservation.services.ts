@@ -143,6 +143,39 @@ const getAllAppointmentGroupReservationsFromDB = async (
   };
 };
 
+const getAcademyAllOwnAppointmentGroupReservationsFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  const appointmentGroupReservationQuery = new QueryBuilder(
+    AppointmentGroupReservation.find({ academy: academy }).populate([
+      {
+        path: 'user',
+      },
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+      {
+        path: 'appointment',
+      },
+      {
+        path: 'payment',
+      },
+    ]),
+    query,
+  )
+    .search(['email', 'phone'])
+    .filter()
+    .paginate();
+  const result = await appointmentGroupReservationQuery?.modelQuery;
+  const count = await appointmentGroupReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
 const getUserAppointmentGroupReservationListFromDB = async (
   query: Record<string, unknown>,
 ) => {
@@ -188,4 +221,5 @@ export const AppointmentGroupReservationServices = {
   getUserAppointmentGroupReservationListFromDB,
   getSingleAppointmentGroupReservationFromDB,
   deleteAppointmentGroupReservationFromDB,
+  getAcademyAllOwnAppointmentGroupReservationsFromDB,
 };

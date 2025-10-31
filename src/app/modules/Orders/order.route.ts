@@ -9,7 +9,7 @@ const route = express.Router();
 
 route.get(
   '/',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   OrderControllers.getAllOrders,
 );
 
@@ -17,36 +17,36 @@ route.get('/:email', authMiddleware(ROLE.user), OrderControllers.getUserOrders);
 
 route.get(
   '/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   OrderControllers.getSingleOrder,
 );
 route.post(
   '/create',
-  authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.user, ROLE.admin, ROLE.superAdmin),
   validateRequest(OrderValidations.createValidation),
   OrderControllers.createOrder,
 );
 route.patch(
   '/update/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   validateRequest(OrderValidations.updateValidation),
   OrderControllers.updateOrder,
 );
 route.delete(
   '/delete/:id',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   OrderControllers.deleteOrder,
 );
 
 route.patch(
   '/:id/admin/cancel',
-  authMiddleware(ROLE.admin, ROLE.superAdmin),
+  //authMiddleware(ROLE.admin, ROLE.superAdmin),
   OrderControllers.cancelOrderByAdmin,
 );
 
 route.patch(
   '/:id/cancel',
-  authMiddleware(ROLE.user),
+  //authMiddleware(ROLE.user),
   OrderControllers.cancelOrderByUser,
 );
 

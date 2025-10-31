@@ -156,6 +156,40 @@ const getAllAppointmentOneOnOneReservationsFromDB = async (
   };
 };
 
+const getAcademyAllOwnAppointmentOneOnOneReservationsFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  const appointmentOneOnOneReservationQuery = new QueryBuilder(
+    AppointmentOneOnOneReservation.find({ academy: academy }).populate([
+      {
+        path: 'user',
+      },
+      {
+        path: 'trainer',
+        select: 'first_name last_name',
+      },
+      {
+        path: 'appointment',
+        select: 'appointment_name duration price description',
+      },
+      {
+        path: 'payment',
+      },
+    ]),
+    query,
+  )
+    .search(['email'])
+    .filter()
+    .paginate();
+  const result = await appointmentOneOnOneReservationQuery?.modelQuery;
+  const count = await appointmentOneOnOneReservationQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
 const getUserAppointmentOneOnOneReservationListFromDB = async (
   query: Record<string, unknown>,
 ) => {
@@ -205,4 +239,5 @@ export const AppointmentOneOnOneReservationServices = {
   getUserAppointmentOneOnOneReservationListFromDB,
   deleteAppointmentOneOnOneReservationFromDB,
   getAppointmentOneOnOneReservationSlotsFromDB,
+  getAcademyAllOwnAppointmentOneOnOneReservationsFromDB,
 };

@@ -379,7 +379,240 @@ const adminOverviewFromDB = async (query: Record<string, unknown>) => {
   }
 };
 
+const academyOverviewFromDB = async (
+  academy: string,
+  query: Record<string, unknown>,
+) => {
+  {
+    try {
+      const { date } = query;
+
+      if (!academy) {
+        throw new Error('academyId is required');
+      }
+
+      const academyObjectId = new mongoose.Types.ObjectId(academy);
+
+      // Split date and calculate month range
+      const [year, month] = (date as string).split('/').map(Number);
+      const startDate = new Date(Date.UTC(year, month - 1, 1));
+      const endDate = new Date(Date.UTC(year, month, 0));
+      const daysInMonth = endDate.getUTCDate();
+
+      // Generate all dates and day names for this month
+      const datesInMonth = Array.from({ length: daysInMonth }, (_, i) => {
+        const date = new Date(Date.UTC(year, month - 1, i + 1));
+        return {
+          date: date.toISOString().split('T')[0],
+          dayName: date.toLocaleDateString('en-US', { weekday: 'long' }),
+        };
+      });
+
+      /** -----------------------------
+       *   COURSE SCHEDULE
+       *  ----------------------------- */
+      const courses = await CourseSchedule.aggregate([
+        {
+          $match: {
+            academy: academyObjectId,
+            $expr: {
+              $and: [
+                { $lte: [{ $toDate: '$start_date' }, endDate] },
+                { $gte: [{ $toDate: '$end_date' }, startDate] },
+              ],
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'admins',
+            localField: 'trainer',
+            foreignField: '_id',
+            as: 'trainer',
+          },
+        },
+        { $unwind: '$trainer' },
+        {
+          $project: {
+            course_name: 1,
+            start_date: 1,
+            end_date: 1,
+            start_time: 1,
+            end_time: 1,
+            trainer: { first_name: 1, last_name: 1 },
+          },
+        },
+      ]);
+
+      /** -----------------------------
+       *   GROUP APPOINTMENTS
+       *  ----------------------------- */
+      const groupAppointments = await GroupAppointmentSchedule.aggregate([
+        { $unwind: '$schedules' },
+        {
+          $match: {
+            academy: academyObjectId,
+            'schedules.active': true,
+          },
+        },
+        {
+          $lookup: {
+            from: 'admins',
+            localField: 'trainer',
+            foreignField: '_id',
+            as: 'trainer',
+          },
+        },
+        { $unwind: '$trainer' },
+        {
+          $project: {
+            appointment_name: 1,
+            'schedules.day': 1,
+            'schedules.start_time': 1,
+            'schedules.end_time': 1,
+            trainer: { first_name: 1, last_name: 1 },
+          },
+        },
+      ]);
+
+      /** -----------------------------
+       *   ONE-ON-ONE APPOINTMENTS
+       *  ----------------------------- */
+      const oneOnOneAppointments = await OneAppointmentSchedule.aggregate([
+        { $unwind: '$schedules' },
+        {
+          $match: {
+            academy: academyObjectId,
+            'schedules.active': true,
+          },
+        },
+        {
+          $lookup: {
+            from: 'admins',
+            localField: 'trainer',
+            foreignField: '_id',
+            as: 'trainer',
+          },
+        },
+        { $unwind: '$trainer' },
+        {
+          $project: {
+            appointment_name: 1,
+            'schedules.day': 1,
+            'schedules.start_time': 1,
+            'schedules.end_time': 1,
+            trainer: { first_name: 1, last_name: 1 },
+          },
+        },
+      ]);
+
+      /** -----------------------------
+       *   CLASS SCHEDULES
+       *  ----------------------------- */
+      const classes = await ClassSchedule.aggregate([
+        { $unwind: '$schedules' },
+        {
+          $match: {
+            academy: academyObjectId,
+            'schedules.active': true,
+          },
+        },
+        {
+          $lookup: {
+            from: 'admins',
+            localField: 'trainer',
+            foreignField: '_id',
+            as: 'trainer',
+          },
+        },
+        { $unwind: '$trainer' },
+        {
+          $project: {
+            class_name: 1,
+            'schedules.day': 1,
+            'schedules.start_time': 1,
+            'schedules.end_time': 1,
+            trainer: { first_name: 1, last_name: 1 },
+          },
+        },
+      ]);
+
+      /** -----------------------------
+       *   BUILD RESPONSE BY DATE
+       *  ----------------------------- */
+      const response = datesInMonth.map(({ date, dayName }) => {
+        const training: any[] = [];
+
+        // Add courses
+        courses.forEach(course => {
+          const courseStartDate = new Date(course.start_date);
+          const courseEndDate = new Date(course.end_date);
+          if (
+            new Date(date) >= courseStartDate &&
+            new Date(date) <= courseEndDate
+          ) {
+            training.push({
+              name: course.course_name,
+              start_time: course.start_time,
+              end_time: course.end_time,
+              trainer: course.trainer,
+            });
+          }
+        });
+
+        // Add group appointments
+        groupAppointments.forEach(appointment => {
+          if (appointment.schedules.day === dayName) {
+            training.push({
+              name: appointment.appointment_name,
+              start_time: appointment.schedules.start_time,
+              end_time: appointment.schedules.end_time,
+              trainer: appointment.trainer,
+            });
+          }
+        });
+
+        // Add one-on-one appointments
+        oneOnOneAppointments.forEach(appointment => {
+          if (appointment.schedules.day === dayName) {
+            training.push({
+              name: appointment.appointment_name,
+              start_time: appointment.schedules.start_time,
+              end_time: appointment.schedules.end_time,
+              trainer: appointment.trainer,
+            });
+          }
+        });
+
+        // Add classes
+        classes.forEach(classItem => {
+          if (classItem.schedules.day === dayName) {
+            training.push({
+              name: classItem.class_name,
+              start_time: classItem.schedules.start_time,
+              end_time: classItem.schedules.end_time,
+              trainer: classItem.trainer,
+            });
+          }
+        });
+
+        return {
+          date,
+          day: dayName,
+          training,
+        };
+      });
+
+      return response;
+    } catch (error) {
+      console.error('Error fetching academy overview:', error);
+      throw error;
+    }
+  }
+};
+
 export const OverviewReportService = {
   trainerOverviewFromDB,
   adminOverviewFromDB,
+  academyOverviewFromDB,
 };
