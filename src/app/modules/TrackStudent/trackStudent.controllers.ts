@@ -8,6 +8,22 @@ const attendance = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Track completed', result);
 });
 
+const getUserAllAttendance = catchAsync(async (req, res) => {
+  const { result, count } =
+    await TrackStudentServices.getUserAllAttendanceFromDB(
+      req.query,
+      req.params.email,
+    );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Student Track list fetch successfully',
+    result,
+    count,
+  );
+});
+
 export const TrackStudentControllers = {
   attendance,
+  getUserAllAttendance,
 };

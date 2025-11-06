@@ -3,6 +3,7 @@ import AppError from '../../errors/AppError';
 import { User } from '../User/user.model';
 import { TrackStudentModel } from './trackStudent.modal';
 import moment from 'moment-timezone';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const attendanceIntoDB = async (payload: { email: string; phone: string }) => {
   const { email, phone } = payload;
@@ -94,6 +95,25 @@ const attendanceIntoDB = async (payload: { email: string; phone: string }) => {
   };
 };
 
+const getUserAllAttendanceFromDB = async (
+  query: Record<string, unknown>,
+  email: string,
+) => {
+  const attendanceQuery = new QueryBuilder(
+    TrackStudentModel.find({ email: email }),
+    query,
+  )
+    .filter()
+    .paginate();
+  const result = await attendanceQuery?.modelQuery;
+  const count = await attendanceQuery?.countTotal();
+  return {
+    count,
+    result,
+  };
+};
+
 export const TrackStudentServices = {
   attendanceIntoDB,
+  getUserAllAttendanceFromDB,
 };
