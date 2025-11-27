@@ -49,6 +49,7 @@ import { TeamMembershipRouter } from '../modules/TeamMembership/teamMembership.r
 import { AcademyRoutes } from '../modules/Academy/academy.router';
 import { AcademyStudentRoutes } from '../modules/AcademyStudent/acadentStudent.router';
 import { TrackRoutes } from '../modules/TrackStudent/trackStudent.router';
+import { GiftCardRoutes } from '../modules/GiftCard/giftCard.router';
 
 const router = express.Router();
 const mainRoutes = [
@@ -251,6 +252,10 @@ const mainRoutes = [
   {
     path: '/attendance',
     route: TrackRoutes,
+  },
+  {
+    path: '/gift-cards',
+    route: GiftCardRoutes,
   },
 ];
 

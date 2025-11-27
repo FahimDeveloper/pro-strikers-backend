@@ -13,6 +13,316 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+export const sendFacilityGiftCardToBuyer = ({
+  email,
+  amount,
+  giftCode,
+}: {
+  email: string;
+  amount: number;
+  giftCode: string;
+}) => {
+  transporter.sendMail({
+    from: 'ProStrikers <admin@prostrikers.com>',
+    to: email,
+    subject: 'Your Prostrikers Black Friday Gift Card',
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Your Gift Card</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f5f5f5; padding:20px; }
+  .container { max-width:600px; margin:auto; background:#ffffff; border-radius:8px; padding:30px; }
+  .brand { text-align:center; font-size:32px; font-weight:700; color:#0EBBBC; margin-bottom:25px; }
+  .headline { font-size:22px; font-weight:600; text-align:center; margin-bottom:10px; }
+  .amount { text-align:center; font-size:20px; margin-bottom:20px; }
+  .code-box { background:#0EBBBC; color:#fff; padding:18px; text-align:center; font-size:26px; font-weight:700; border-radius:6px; margin-bottom:25px; letter-spacing:2px; }
+  .instructions { font-size:15px; color:#444; line-height:1.6; margin-bottom:35px; }
+  .important-note { 
+    font-size:15px; 
+    color:#222; 
+    background:#EFFFFB; 
+    border-left:4px solid #0EBBBC; 
+    padding:12px 15px; 
+    margin-bottom:25px;
+  }
+  .footer { text-align:center; font-size:13px; color:#666; margin-top:20px; }
+  .footer a { color:#0EBBBC; text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="brand">Prostrikers</div>
+
+  <div class="headline">Your Black Friday Gift Card Has Arrived</div>
+
+  <div class="amount">Value: <strong>${amount}</strong></div>
+
+  <div class="code-box">${giftCode}</div>
+
+  <div class="instructions">
+    Apply this code as a voucher to redeem your gift card balance.
+    Enter it exactly as shown above.
+  </div>
+
+  <div class="important-note">
+    Create an account using this email on our website, or log in if you already have an account associated with this email. This gift card will be active from <strong>December 8th, 2025</strong> and will remain valid for the next <strong>6 months</strong>.
+  </div>
+
+  <div class="footer">
+    Thank you for shopping with us!<br>
+    <a href="https://prostrikers.com">prostrikers.com</a>
+  </div>
+
+</div>
+</body>
+</html>
+`,
+  });
+
+  return;
+};
+
+export const sendFacilityGiftCardToRecipient = ({
+  email,
+  amount,
+  giftCode,
+  sender,
+}: {
+  email: string;
+  amount: number;
+  giftCode: string;
+  sender: string;
+}) => {
+  transporter.sendMail({
+    from: 'ProStrikers <admin@prostrikers.com>',
+    to: email,
+    subject: 'You’ve Received a Prostrikers Gift Card',
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Your Gift Card</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f5f5f5; padding:20px; }
+  .container { max-width:600px; margin:auto; background:#ffffff; border-radius:8px; padding:30px; }
+  .brand { text-align:center; font-size:32px; font-weight:700; color:#0EBBBC; margin-bottom:25px; }
+  .headline { font-size:22px; font-weight:600; text-align:center; margin-bottom:5px; }
+  .message { font-size:16px; text-align:center; color:#444; margin:15px 0 25px; line-height:1.6; }
+  .amount { text-align:center; font-size:20px; margin-bottom:20px; }
+  .code-box { background:#0EBBBC; color:#fff; padding:18px; text-align:center; font-size:26px; font-weight:700; border-radius:6px; margin-bottom:25px; letter-spacing:2px; }
+  .instructions { font-size:15px; color:#444; line-height:1.6; margin-bottom:35px; }
+  .important-note { 
+    font-size:15px; 
+    color:#222; 
+    background:#EFFFFB; 
+    border-left:4px solid #0EBBBC; 
+    padding:12px 15px; 
+    margin-bottom:25px;
+  }
+  .footer { text-align:center; font-size:13px; color:#666; margin-top:20px; }
+  .footer a { color:#0EBBBC; text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="brand">Prostrikers</div>
+
+  <div class="headline">You’ve Received a Gift Card</div>
+
+  <div class="message">
+    <a href="mailto:${sender}">Prostrikers User</a> has sent you a Black Friday gift card from Prostrikers.
+    Use it anytime during checkout.
+  </div>
+
+  <div class="amount">Value: <strong>${amount}</strong></div>
+
+  <div class="code-box">${giftCode}</div>
+
+  <div class="instructions">
+    Apply this code as a voucher to redeem your gift card balance.
+    Enter it exactly as shown above.
+  </div>
+
+  <div class="important-note">
+    Create an account using this email on our website, or log in if you already have an account associated with this email. This gift card will be active from <strong>December 8th, 2025</strong> and will remain valid for the next <strong>6 months</strong>.
+  </div>
+
+  <div class="footer">
+    Enjoy your gift!<br>
+    <a href="https://prostrikers.com">prostrikers.com</a>
+  </div>
+
+</div>
+</body>
+</html>
+`,
+  });
+
+  return;
+};
+
+export const sendShopifyGiftCardToBuyer = ({
+  email,
+  amount,
+  giftCode,
+}: {
+  email: string;
+  amount: number;
+  giftCode: string;
+}) => {
+  transporter.sendMail({
+    from: 'ProStrikers <admin@prostrikers.com>',
+    to: email,
+    subject: 'Your Prostrikers Black Friday Gift Card',
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Your Gift Card</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f5f5f5; padding:20px; }
+  .container { max-width:600px; margin:auto; background:#ffffff; border-radius:8px; padding:30px; }
+  .brand { text-align:center; font-size:32px; font-weight:700; color:#0EBBBC; margin-bottom:25px; }
+  .headline { font-size:22px; font-weight:600; text-align:center; margin-bottom:10px; }
+  .amount { text-align:center; font-size:20px; margin-bottom:20px; }
+  .code-box { background:#0EBBBC; color:#fff; padding:18px; text-align:center; font-size:26px; font-weight:700; border-radius:6px; margin-bottom:25px; letter-spacing:2px; }
+  .instructions { font-size:15px; color:#444; line-height:1.6; margin-bottom:35px; }
+  .important-note { 
+    font-size:15px; 
+    color:#222; 
+    background:#EFFFFB; 
+    border-left:4px solid #0EBBBC; 
+    padding:12px 15px; 
+    margin-bottom:25px;
+  }
+  .footer { text-align:center; font-size:13px; color:#666; margin-top:20px; }
+  a { color:#0EBBBC; text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="brand">Prostrikers</div>
+
+  <div class="headline">Your Black Friday Gift Card Has Arrived</div>
+
+  <div class="amount">Value: <strong>${amount}</strong></div>
+
+  <div class="code-box">${giftCode}</div>
+
+  <div class="instructions">
+    You can redeem your gift card anytime at checkout on our Shop <a href="https://shop.prostrikers.com">shop.prostrikers.com</a> website.
+    Just enter the code exactly as shown above to apply your balance.
+  </div>
+
+  <div class="important-note">
+    This gift card will be active from <strong>December 8th, 2025</strong> 
+    and will remain valid for the next <strong>6 months</strong>.
+  </div>
+
+  <div class="footer">
+    Thank you for shopping with us!<br>
+    <a href="https://prostrikers.com">prostrikers.com</a>
+  </div>
+
+</div>
+</body>
+</html>
+`,
+  });
+
+  return;
+};
+
+export const sendShopifyGiftCardToRecipient = ({
+  email,
+  amount,
+  giftCode,
+  sender,
+}: {
+  email: string;
+  amount: number;
+  giftCode: string;
+  sender: string;
+}) => {
+  transporter.sendMail({
+    from: 'ProStrikers <admin@prostrikers.com>',
+    to: email,
+    subject: 'You’ve Received a Prostrikers Gift Card',
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Your Gift Card</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f5f5f5; padding:20px; }
+  .container { max-width:600px; margin:auto; background:#ffffff; border-radius:8px; padding:30px; }
+  .brand { text-align:center; font-size:32px; font-weight:700; color:#0EBBBC; margin-bottom:25px; }
+  .headline { font-size:22px; font-weight:600; text-align:center; margin-bottom:5px; }
+  .message { font-size:16px; text-align:center; color:#444; margin:15px 0 25px; line-height:1.6; }
+  .amount { text-align:center; font-size:20px; margin-bottom:20px; }
+  .code-box { background:#0EBBBC; color:#fff; padding:18px; text-align:center; font-size:26px; font-weight:700; border-radius:6px; margin-bottom:25px; letter-spacing:2px; }
+  .instructions { font-size:15px; color:#444; line-height:1.6; margin-bottom:35px; }
+  .important-note { 
+    font-size:15px; 
+    color:#222; 
+    background:#EFFFFB; 
+    border-left:4px solid #0EBBBC; 
+    padding:12px 15px; 
+    margin-bottom:25px;
+  }
+  .footer { text-align:center; font-size:13px; color:#666; margin-top:20px; }
+   a { color:#0EBBBC; text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="brand">Prostrikers</div>
+
+  <div class="headline">You’ve Received a Gift Card</div>
+
+  <div class="message">
+    <a href="mailto:${sender}">Prostrikers User</a> has sent you a Black Friday gift card from Prostrikers.
+    Use it anytime on Prostrikers Shop <a href="https://shop.prostrikers.com">shop.prostrikers.com</a> during checkout.
+  </div>
+
+  <div class="amount">Value: <strong>${amount}</strong></div>
+
+  <div class="code-box">${giftCode}</div>
+
+  <div class="instructions">
+    Apply this code during checkout to redeem your gift card balance.
+    Enter it exactly as shown above.
+  </div>
+
+  <div class="important-note">
+    This gift card will be active from <strong>December 8th, 2025</strong> 
+    and will remain valid for the next <strong>6 months</strong>.
+  </div>
+
+  <div class="footer">
+    Enjoy your gift!<br>
+    <a href="https://prostrikers.com">prostrikers.com</a>
+  </div>
+
+</div>
+</body>
+</html>
+`,
+  });
+
+  return;
+};
+
 export const sendFeedbackEmail = async ({
   name,
   email,

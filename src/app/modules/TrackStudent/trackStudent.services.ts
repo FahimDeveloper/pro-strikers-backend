@@ -33,7 +33,6 @@ const attendanceIntoDB = async (payload: { email: string; phone: string }) => {
   const startOfDay = moment().tz('America/Los_Angeles').startOf('day').toDate();
   const endOfDay = moment().tz('America/Los_Angeles').endOf('day').toDate();
 
-  // 3️⃣ Get latest record for today
   const lastRecord = await TrackStudentModel.findOne({
     $or: [
       ...(email ? [{ email }] : []),
