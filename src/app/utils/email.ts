@@ -64,7 +64,7 @@ export const sendFacilityGiftCardToBuyer = ({
   <div class="code-box">${giftCode}</div>
 
   <div class="instructions">
-    Apply this code as a voucher to redeem your gift card balance.
+    Apply this code as a voucher to redeem your gift card balance from <a href="https://prostrikers.com">prostrikers.com</a> during checkout as voucher.
     Enter it exactly as shown above.
   </div>
 
@@ -136,8 +136,8 @@ export const sendFacilityGiftCardToRecipient = ({
   <div class="headline">You’ve Received a Gift Card</div>
 
   <div class="message">
-    ${sender} has sent you a Black Friday gift card from Prostrikers.
-    Use it anytime during checkout.
+    ${sender} has sent you a Black Friday gift card from <a href="https://prostrikers.com">prostrikers.com</a>.
+    Use it anytime during checkout as a voucher.
   </div>
 
   <div class="amount">Value: <strong>$${amount}</strong></div>
