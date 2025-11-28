@@ -59,7 +59,7 @@ export const sendFacilityGiftCardToBuyer = ({
 
   <div class="headline">Your Black Friday Gift Card Has Arrived</div>
 
-  <div class="amount">Value: <strong>${amount}</strong></div>
+  <div class="amount">Value: <strong>$${amount}</strong></div>
 
   <div class="code-box">${giftCode}</div>
 
@@ -136,11 +136,11 @@ export const sendFacilityGiftCardToRecipient = ({
   <div class="headline">You’ve Received a Gift Card</div>
 
   <div class="message">
-    <a href="mailto:${sender}">Prostrikers User</a> has sent you a Black Friday gift card from Prostrikers.
+    ${sender} has sent you a Black Friday gift card from Prostrikers.
     Use it anytime during checkout.
   </div>
 
-  <div class="amount">Value: <strong>${amount}</strong></div>
+  <div class="amount">Value: <strong>$${amount}</strong></div>
 
   <div class="code-box">${giftCode}</div>
 
@@ -213,7 +213,7 @@ export const sendShopifyGiftCardToBuyer = ({
 
   <div class="headline">Your Black Friday Gift Card Has Arrived</div>
 
-  <div class="amount">Value: <strong>${amount}</strong></div>
+  <div class="amount">Value: <strong>$${amount}</strong></div>
 
   <div class="code-box">${giftCode}</div>
 
@@ -291,11 +291,11 @@ export const sendShopifyGiftCardToRecipient = ({
   <div class="headline">You’ve Received a Gift Card</div>
 
   <div class="message">
-    <a href="mailto:${sender}">Prostrikers User</a> has sent you a Black Friday gift card from Prostrikers.
+    ${sender} has sent you a Black Friday gift card from Prostrikers.
     Use it anytime on Prostrikers Shop <a href="https://shop.prostrikers.com">shop.prostrikers.com</a> during checkout.
   </div>
 
-  <div class="amount">Value: <strong>${amount}</strong></div>
+  <div class="amount">Value: <strong>$${amount}</strong></div>
 
   <div class="code-box">${giftCode}</div>
 

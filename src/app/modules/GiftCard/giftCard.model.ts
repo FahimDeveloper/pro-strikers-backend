@@ -11,9 +11,9 @@ const GiftCardRedeemSchema = new Schema<IGiftCardRedeem>(
 
 const GiftCardSchema = new Schema<IGiftCard>(
   {
-    uses: {
+    use_for: {
       type: String,
-      enum: ['PRO_SHOPPING', 'PRO_FACILITY'],
+      enum: ['shop', 'facility'],
       required: true,
     },
     code: { type: String, required: true, unique: true },
@@ -25,6 +25,7 @@ const GiftCardSchema = new Schema<IGiftCard>(
     },
     redeemList: [GiftCardRedeemSchema],
     gift_for: { type: String, required: true },
+    sender_name: { type: String },
     gift_by: { type: String, required: true },
   },
   {

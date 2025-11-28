@@ -27,7 +27,7 @@ const purchaseGiftCard = async (payload: {
     await GiftCard.create([createPayload], { session });
     await session.commitTransaction();
     session.endSession();
-    if (gift_info?.uses === 'PRO_SHOPPING') {
+    if (gift_info?.use_for === 'shop') {
       if (gift_info?.gift_by === gift_info?.gift_for) {
         sendShopifyGiftCardToBuyer({
           email: gift_info.gift_for,
@@ -39,10 +39,10 @@ const purchaseGiftCard = async (payload: {
           email: gift_info.gift_for,
           giftCode: gift_info.code,
           amount: gift_info.amount,
-          sender: gift_info.gift_by,
+          sender: gift_info.sender_name!,
         });
       }
-    } else if (gift_info?.uses === 'PRO_FACILITY') {
+    } else if (gift_info?.use_for === 'facility') {
       if (gift_info?.gift_by === gift_info?.gift_for) {
         sendFacilityGiftCardToBuyer({
           email: gift_info.gift_for,
@@ -54,7 +54,7 @@ const purchaseGiftCard = async (payload: {
           email: gift_info.gift_for,
           giftCode: gift_info.code,
           amount: gift_info.amount,
-          sender: gift_info.gift_by,
+          sender: gift_info.sender_name!,
         });
       }
     }

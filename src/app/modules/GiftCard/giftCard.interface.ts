@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
 
 export interface IGiftCard {
-  uses: 'PRO_SHOPPING' | 'PRO_FACILITY';
+  use_for: 'shop' | 'facility';
   code: string;
   amount: number;
   payment: mongoose.Types.ObjectId;
   redeemList: Array<IGiftCardRedeem>;
   gift_for: string;
+  sender_name?: string;
   gift_by: string;
 }
 
