@@ -144,10 +144,33 @@ export const createOrUpdateMembershipSubscription = async (payload: {
   plan: 'monthly' | 'yearly' | 'quarterly';
   membership: any;
   amount?: number;
+  isBlackFriday?: boolean;
 }) => {
-  const { email, membership, plan, amount } = payload;
+  const { email, membership, plan, amount, isBlackFriday = false } = payload;
 
-  const priceId = getPriceId(membership, plan);
+  let discountPriceId;
+  let regularPriceId;
+
+  if (isBlackFriday) {
+    if (plan === 'monthly') {
+      if (membership === 'individual_pro') {
+        discountPriceId = 'price_1SYs8YLPaDIMVHMry62AxKrZ';
+      } else if (membership === 'individual_pro_unlimited') {
+        discountPriceId = 'price_1SYrJNLPaDIMVHMrATr3JeV7';
+      }
+    } else if (plan === 'quarterly') {
+      if (membership === 'individual_pro') {
+        discountPriceId = 'price_1SYs9oLPaDIMVHMrzLsGQiiS';
+      } else if (membership === 'individual_pro_unlimited') {
+        discountPriceId = 'price_1SYsBeLPaDIMVHMrUcuJcRMF';
+      }
+    }
+    regularPriceId = getPriceId(membership, plan);
+  }
+
+  const priceId = isBlackFriday
+    ? discountPriceId
+    : getPriceId(membership, plan);
   if (!priceId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -186,67 +209,89 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     }
 
     if (existingSubscription.status === 'active') {
-      const subscriptionItemId = existingSubscription.items.data[0]?.id;
       const currentPriceId = existingSubscription.items.data[0]?.price.id;
-
       if (currentPriceId === priceId) {
         return {
           message: 'You already have this membership active.',
           requiresPayment: false,
-          transaction_id: user.subscription_id,
         };
       }
 
-      const updatedSubscription = await stripe.subscriptions.update(
-        user.subscription_id,
-        {
-          items: [{ id: subscriptionItemId, price: priceId }],
-          proration_behavior: 'create_prorations',
-          billing_cycle_anchor: 'now',
-          expand: ['latest_invoice.payment_intent'],
-        },
-      );
+      // For Black Friday, cancel and create a new schedule
+      if (isBlackFriday) {
+        await stripe.subscriptions.cancel(user.subscription_id);
+      } else {
+        const updatedSubscription = await stripe.subscriptions.update(
+          user.subscription_id,
+          {
+            items: [
+              { id: existingSubscription.items.data[0]?.id, price: priceId },
+            ],
+            proration_behavior: 'create_prorations',
+            billing_cycle_anchor: 'now',
+            expand: ['latest_invoice.payment_intent'],
+          },
+        );
 
-      const invoice = updatedSubscription.latest_invoice as Stripe.Invoice;
-      let paymentIntent: Stripe.PaymentIntent | null = null;
-      let requiresPayment = false;
+        const invoice = updatedSubscription.latest_invoice as Stripe.Invoice;
+        let paymentIntent: Stripe.PaymentIntent | null = null;
+        let requiresPayment = false;
 
-      if (invoice?.payment_intent) {
-        if (typeof invoice.payment_intent === 'string') {
-          paymentIntent = await stripe.paymentIntents.retrieve(
-            invoice.payment_intent,
-          );
-        } else {
-          paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+        if (invoice?.payment_intent) {
+          if (typeof invoice.payment_intent === 'string') {
+            paymentIntent = await stripe.paymentIntents.retrieve(
+              invoice.payment_intent,
+            );
+          } else {
+            paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+          }
+          if (invoice.amount_due > 0 && invoice.status === 'open') {
+            await stripe.invoices.pay(invoice.id);
+          }
+          requiresPayment = paymentIntent?.status !== 'succeeded';
         }
 
-        if (invoice.amount_due > 0 && invoice.status === 'open') {
-          await stripe.invoices.pay(invoice.id);
-        }
+        user.subscription_plan = plan;
+        user.subscription = membership;
+        await user.save();
 
-        requiresPayment = paymentIntent?.status !== 'succeeded';
+        return {
+          requiresPayment,
+          clientSecret: paymentIntent?.client_secret || null,
+        };
       }
-
-      user.subscription_plan = plan;
-      user.subscription = membership;
-      await user.save();
-
-      return {
-        requiresPayment,
-        clientSecret: paymentIntent?.client_secret || null,
-      };
     }
   }
 
-  const subscription = await stripe.subscriptions.create({
-    customer: user.customer_id,
-    items: [{ price: priceId }],
-    payment_behavior: 'default_incomplete',
-    expand: ['latest_invoice.payment_intent'],
-  });
+  // Create new subscription or schedule
+  let subscription, subscriptionSchedule;
+  if (isBlackFriday && discountPriceId && regularPriceId) {
+    subscriptionSchedule = await stripe.subscriptionSchedules.create({
+      customer: user.customer_id,
+      start_date: 'now',
+      end_behavior: 'release',
+      phases: [
+        {
+          items: [{ price: discountPriceId, quantity: 1 }],
+          iterations: 1,
+        },
+        {
+          items: [{ price: regularPriceId, quantity: 1 }],
+          iterations: 999,
+        },
+      ],
+    });
+    subscription = subscriptionSchedule.subscription;
+  } else {
+    subscription = await stripe.subscriptions.create({
+      customer: user.customer_id,
+      items: [{ price: priceId }],
+      payment_behavior: 'default_incomplete',
+      expand: ['latest_invoice.payment_intent'],
+    });
+  }
 
   const invoice = subscription.latest_invoice as Stripe.Invoice;
-
   let paymentIntent: Stripe.PaymentIntent | null = null;
   let requiresPayment = false;
 
@@ -320,13 +365,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       email: customer.email,
     });
 
-    const issueDate = moment().toISOString();
-    const expiryDate =
-      customer.subscription_plan === 'monthly'
-        ? moment().add(1, 'month').toISOString()
-        : customer.subscription_plan === 'quarterly'
-          ? moment().add(4, 'months').toISOString()
-          : moment().add(1, 'year').toISOString();
+    const issueDate = moment(invoice.period_start * 1000).toISOString();
+    const expiryDate = moment(invoice.period_end * 1000).toISOString();
+
     const membershipCredit =
       membershipsCredits[
         customer.subscription as keyof typeof membershipsCredits
@@ -527,14 +568,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       return { statusCode: 200 };
     }
 
-    const issueDate = moment().toISOString();
-    const expiryDate =
-      customer.subscription_plan === 'monthly'
-        ? moment().add(1, 'month').toISOString()
-        : customer.subscription_plan === 'quarterly'
-          ? moment().add(3, 'months').toISOString()
-          : moment().add(1, 'year').toISOString();
-
     await User.findOneAndUpdate(
       { email: customer.email },
       {
@@ -551,8 +584,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       amount: invoice.amount_due / 100,
       subscription: customer.subscription.split('_').join(' '),
       subscription_plan: customer.subscription_plan,
-      issue_date: issueDate,
-      expiry_date: expiryDate,
     });
 
     await sendSms({

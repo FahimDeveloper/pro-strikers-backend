@@ -2109,8 +2109,6 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
   amount: number;
   subscription: string;
   subscription_plan: string;
-  issue_date: string;
-  expiry_date: string;
 }) => {
   await transporter.sendMail({
     from: `ProStrikers <${config.notify_email}>`,
