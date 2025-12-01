@@ -277,7 +277,7 @@ export const createOrUpdateMembershipSubscription = async (payload: {
         },
         {
           items: [{ price: regularPriceId, quantity: 1 }],
-          iterations: 999,
+          iterations: 36,
         },
       ],
     });
