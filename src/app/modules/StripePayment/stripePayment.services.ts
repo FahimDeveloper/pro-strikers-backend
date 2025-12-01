@@ -151,9 +151,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
   let discountPriceId;
   let regularPriceId;
 
-  // ------------------------------------
-  // BLACK FRIDAY DISCOUNT PRICE IDS
-  // ------------------------------------
+  // ----------------------------------------------
+  // BLACK FRIDAY DISCOUNT MAPPING
+  // ----------------------------------------------
   if (isBlackFriday) {
     if (plan === 'monthly') {
       if (membership === 'individual_pro') {
@@ -183,9 +183,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     );
   }
 
-  // ------------------------------------
-  // FETCH OR CREATE STRIPE USER
-  // ------------------------------------
+  // ----------------------------------------------
+  // GET OR CREATE STRIPE CUSTOMER
+  // ----------------------------------------------
   let user = await StripePayment.findOne({ email });
 
   if (!user) {
@@ -196,15 +196,16 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     });
   }
 
-  // ------------------------------------
-  // EXISTING SUBSCRIPTION LOGIC
-  // ------------------------------------
+  // ----------------------------------------------
+  // EXISTING SUBSCRIPTION HANDLING
+  // ----------------------------------------------
   if (user.subscription_id) {
-    const existing = await stripe.subscriptions.retrieve(user.subscription_id, {
-      expand: ['latest_invoice.payment_intent'],
-    });
+    const existingSubscription = await stripe.subscriptions.retrieve(
+      user.subscription_id,
+      { expand: ['latest_invoice.payment_intent'] },
+    );
 
-    // Pay extra before switching (upgrade logic)
+    // If user must pay additional before updating
     if (amount && amount > 0) {
       const paymentIntent = await stripe.paymentIntents.create({
         customer: user.customer_id,
@@ -219,9 +220,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
       };
     }
 
-    // user already on same plan
-    if (existing.status === 'active') {
-      const currentPriceId = existing.items.data[0]?.price.id;
+    if (existingSubscription.status === 'active') {
+      const currentPriceId = existingSubscription.items.data[0]?.price.id;
+
       if (currentPriceId === priceId) {
         return {
           message: 'You already have this membership active.',
@@ -229,15 +230,17 @@ export const createOrUpdateMembershipSubscription = async (payload: {
         };
       }
 
-      // Black Friday → cancel old → recreate
       if (isBlackFriday) {
+        // cancel old subscription → recreate new
         await stripe.subscriptions.cancel(user.subscription_id);
       } else {
-        // Normal update
+        // NORMAL UPDATE
         const updated = await stripe.subscriptions.update(
           user.subscription_id,
           {
-            items: [{ id: existing.items.data[0]?.id, price: priceId }],
+            items: [
+              { id: existingSubscription.items.data[0]?.id, price: priceId },
+            ],
             proration_behavior: 'create_prorations',
             billing_cycle_anchor: 'now',
             expand: ['latest_invoice.payment_intent'],
@@ -245,7 +248,7 @@ export const createOrUpdateMembershipSubscription = async (payload: {
         );
 
         const invoice = updated.latest_invoice as Stripe.Invoice;
-        let paymentIntent = null;
+        let paymentIntent: Stripe.PaymentIntent | null = null;
         let requiresPayment = false;
 
         if (invoice?.payment_intent) {
@@ -273,44 +276,41 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     }
   }
 
-  // ------------------------------------
-  // NEW SUBSCRIPTION FLOW
-  // ------------------------------------
+  // ----------------------------------------------
+  // NEW SUBSCRIPTION (NORMAL OR BLACK FRIDAY)
+  // ----------------------------------------------
   let subscription;
 
   if (isBlackFriday && discountPriceId && regularPriceId) {
-    // 1️⃣ Create subscription first to generate invoice + payment intent
+    // STEP 1 — Create subscription with DISCOUNT, to generate paymentIntent
     subscription = await stripe.subscriptions.create({
       customer: user.customer_id,
       items: [{ price: discountPriceId }],
       payment_behavior: 'default_incomplete',
-      expand: ['latest_invoice.payment_intent', 'schedule'],
+      expand: ['latest_invoice.payment_intent'],
     });
 
-    // 2️⃣ Retrieve the auto-created schedule
-    const scheduleId = (subscription as any).schedule;
-    if (!scheduleId) {
-      throw new Error(
-        'Stripe did not automatically create a subscription schedule.',
-      );
-    }
-
-    // 3️⃣ Update the schedule phases
-    await stripe.subscriptionSchedules.update(scheduleId, {
+    // STEP 2 — Create empty schedule referencing this subscription
+    const schedule = await stripe.subscriptionSchedules.create({
+      from_subscription: subscription.id,
       end_behavior: 'release',
+    });
+
+    // STEP 3 — Update schedule with discount → regular phases
+    await stripe.subscriptionSchedules.update(schedule.id, {
       phases: [
         {
           items: [{ price: discountPriceId }],
-          iterations: 1, // First cycle at discount
+          iterations: 1, // 1 cycle at discount
         },
         {
           items: [{ price: regularPriceId }],
-          iterations: 36, // Afterwards → normal price
+          iterations: 36, // then 36 cycles at regular price
         },
       ],
     });
   } else {
-    // Normal subscription
+    // NORMAL PURCHASE FLOW
     subscription = await stripe.subscriptions.create({
       customer: user.customer_id,
       items: [{ price: priceId }],
@@ -319,11 +319,11 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     });
   }
 
-  // ------------------------------------
-  // HANDLE PAYMENT INTENT
-  // ------------------------------------
+  // ----------------------------------------------
+  // HANDLE PAYMENT INTENT FOR INITIAL CHARGE
+  // ----------------------------------------------
   const invoice = subscription.latest_invoice as Stripe.Invoice;
-  let paymentIntent = null;
+  let paymentIntent: Stripe.PaymentIntent | null = null;
   let requiresPayment = false;
 
   if (invoice?.payment_intent) {
@@ -335,9 +335,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     requiresPayment = paymentIntent?.status !== 'succeeded';
   }
 
-  // ------------------------------------
-  // SAVE SUB IN DATABASE
-  // ------------------------------------
+  // ----------------------------------------------
+  // SAVE SUBSCRIPTION TO DATABASE
+  // ----------------------------------------------
   user.subscription_id = subscription.id;
   user.subscription_plan = plan;
   user.subscription = membership;
