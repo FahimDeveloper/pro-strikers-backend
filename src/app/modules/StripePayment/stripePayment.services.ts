@@ -151,6 +151,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
   let discountPriceId;
   let regularPriceId;
 
+  // -------------------------
+  // BLACK FRIDAY PRICE IDS
+  // -------------------------
   if (isBlackFriday) {
     if (plan === 'monthly') {
       if (membership === 'individual_pro') {
@@ -165,12 +168,14 @@ export const createOrUpdateMembershipSubscription = async (payload: {
         discountPriceId = 'price_1SYsBeLPaDIMVHMrUcuJcRMF';
       }
     }
+
     regularPriceId = getPriceId(membership, plan);
   }
 
   const priceId = isBlackFriday
     ? discountPriceId
     : getPriceId(membership, plan);
+
   if (!priceId) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -178,6 +183,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     );
   }
 
+  // -------------------------
+  // FETCH / CREATE STRIPE USER
+  // -------------------------
   let user = await StripePayment.findOne({ email });
 
   if (!user) {
@@ -188,12 +196,15 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     });
   }
 
+  // -------------------------
+  // EXISTING SUBSCRIPTION
+  // -------------------------
   if (user.subscription_id) {
-    const existingSubscription = await stripe.subscriptions.retrieve(
-      user.subscription_id,
-      { expand: ['latest_invoice.payment_intent'] },
-    );
+    const current = await stripe.subscriptions.retrieve(user.subscription_id, {
+      expand: ['latest_invoice.payment_intent'],
+    });
 
+    // If user must pay additional amount before upgrading
     if (amount && amount > 0) {
       const paymentIntent = await stripe.paymentIntents.create({
         customer: user.customer_id,
@@ -208,8 +219,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
       };
     }
 
-    if (existingSubscription.status === 'active') {
-      const currentPriceId = existingSubscription.items.data[0]?.price.id;
+    // Already active on same price
+    if (current.status === 'active') {
+      const currentPriceId = current.items.data[0]?.price.id;
       if (currentPriceId === priceId) {
         return {
           message: 'You already have this membership active.',
@@ -217,37 +229,34 @@ export const createOrUpdateMembershipSubscription = async (payload: {
         };
       }
 
-      // For Black Friday, cancel and create a new schedule
+      // For Black Friday, cancel & create new subscription
       if (isBlackFriday) {
         await stripe.subscriptions.cancel(user.subscription_id);
       } else {
-        const updatedSubscription = await stripe.subscriptions.update(
+        const updated = await stripe.subscriptions.update(
           user.subscription_id,
           {
-            items: [
-              { id: existingSubscription.items.data[0]?.id, price: priceId },
-            ],
+            items: [{ id: current.items.data[0]?.id, price: priceId }],
             proration_behavior: 'create_prorations',
             billing_cycle_anchor: 'now',
             expand: ['latest_invoice.payment_intent'],
           },
         );
 
-        const invoice = updatedSubscription.latest_invoice as Stripe.Invoice;
-        let paymentIntent: Stripe.PaymentIntent | null = null;
+        const invoice = updated.latest_invoice as Stripe.Invoice;
+        let paymentIntent = null;
         let requiresPayment = false;
 
         if (invoice?.payment_intent) {
-          if (typeof invoice.payment_intent === 'string') {
-            paymentIntent = await stripe.paymentIntents.retrieve(
-              invoice.payment_intent,
-            );
-          } else {
-            paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
-          }
+          paymentIntent =
+            typeof invoice.payment_intent === 'string'
+              ? await stripe.paymentIntents.retrieve(invoice.payment_intent)
+              : invoice.payment_intent;
+
           if (invoice.amount_due > 0 && invoice.status === 'open') {
             await stripe.invoices.pay(invoice.id);
           }
+
           requiresPayment = paymentIntent?.status !== 'succeeded';
         }
 
@@ -263,29 +272,37 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     }
   }
 
-  // Create new subscription or schedule
-  let subscription, subscriptionSchedule;
+  // ---------------------------------------------------
+  // NEW USER OR CANCELLED USER — CREATE SUBSCRIPTION
+  // ---------------------------------------------------
+  let subscription;
+
   if (isBlackFriday && discountPriceId && regularPriceId) {
-    subscriptionSchedule = await stripe.subscriptionSchedules.create({
+    // 1️⃣ Create FIRST cycle as a normal subscription → ensures invoice + paymentIntent
+    subscription = await stripe.subscriptions.create({
       customer: user.customer_id,
-      start_date: 'now',
+      items: [{ price: discountPriceId }],
+      payment_behavior: 'default_incomplete',
+      expand: ['latest_invoice.payment_intent'],
+    });
+
+    // 2️⃣ Attach a schedule for renewal to regular price
+    await stripe.subscriptionSchedules.create({
+      from_subscription: subscription.id,
       end_behavior: 'release',
       phases: [
         {
-          items: [{ price: discountPriceId, quantity: 1 }],
+          items: [{ price: discountPriceId }],
           iterations: 1,
         },
         {
-          items: [{ price: regularPriceId, quantity: 1 }],
+          items: [{ price: regularPriceId }],
           iterations: 36,
         },
       ],
-      default_settings: {
-        payment_behavior: 'default_incomplete',
-      },
     });
-    subscription = subscriptionSchedule.subscription;
   } else {
+    // Normal subscription
     subscription = await stripe.subscriptions.create({
       customer: user.customer_id,
       items: [{ price: priceId }],
@@ -294,21 +311,23 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     });
   }
 
+  // ---------------------------------------------------
+  // PAYMENT INTENT & RESPONSE
+  // ---------------------------------------------------
   const invoice = subscription.latest_invoice as Stripe.Invoice;
   let paymentIntent: Stripe.PaymentIntent | null = null;
   let requiresPayment = false;
 
   if (invoice?.payment_intent) {
-    if (typeof invoice.payment_intent === 'string') {
-      paymentIntent = await stripe.paymentIntents.retrieve(
-        invoice.payment_intent,
-      );
-    } else {
-      paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
-    }
+    paymentIntent =
+      typeof invoice.payment_intent === 'string'
+        ? await stripe.paymentIntents.retrieve(invoice.payment_intent)
+        : invoice.payment_intent;
+
     requiresPayment = paymentIntent?.status !== 'succeeded';
   }
 
+  // Save subscription
   user.subscription_id = subscription.id;
   user.subscription_plan = plan;
   user.subscription = membership;
