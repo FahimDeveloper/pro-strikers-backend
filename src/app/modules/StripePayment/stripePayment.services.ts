@@ -293,7 +293,7 @@ export const createOrUpdateMembershipSubscription = async (payload: {
 
   const invoice = subscription.latest_invoice as Stripe.Invoice;
   let paymentIntent: Stripe.PaymentIntent | null = null;
-  let requiresPayment = false;
+  let requiresPayment = true;
 
   if (invoice?.payment_intent) {
     if (typeof invoice.payment_intent === 'string') {
