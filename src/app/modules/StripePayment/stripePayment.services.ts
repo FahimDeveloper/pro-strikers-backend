@@ -293,11 +293,11 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     // STEP 2 — Create empty schedule referencing this subscription
     const schedule = await stripe.subscriptionSchedules.create({
       from_subscription: subscription.id,
-      end_behavior: 'release',
     });
 
     // STEP 3 — Update schedule with discount → regular phases
     await stripe.subscriptionSchedules.update(schedule.id, {
+      end_behavior: 'release',
       phases: [
         {
           items: [{ price: discountPriceId }],
