@@ -280,6 +280,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
           iterations: 36,
         },
       ],
+      default_settings: {
+        payment_behavior: 'default_incomplete',
+      },
     });
     subscription = subscriptionSchedule.subscription;
   } else {
@@ -293,7 +296,7 @@ export const createOrUpdateMembershipSubscription = async (payload: {
 
   const invoice = subscription.latest_invoice as Stripe.Invoice;
   let paymentIntent: Stripe.PaymentIntent | null = null;
-  let requiresPayment = true;
+  let requiresPayment = false;
 
   if (invoice?.payment_intent) {
     if (typeof invoice.payment_intent === 'string') {
