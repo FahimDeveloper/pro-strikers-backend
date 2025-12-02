@@ -35,3 +35,18 @@ export const membershipsCredits = {
   },
   // youth_training_membership: { session_credit: '4' },
 };
+
+const couponId: any = {
+  individual_pro: {
+    monthly: config.monthly_coupon,
+    quarterly: config.pro_quarterly_coupon,
+  },
+  individual_pro_unlimited: {
+    monthly: config.monthly_coupon,
+    quarterly: config.pro_unlimited_quarterly_coupon,
+  },
+} as const;
+
+export const getCouponId = (membership: Membership, plan: string) => {
+  return couponId[membership][plan];
+};

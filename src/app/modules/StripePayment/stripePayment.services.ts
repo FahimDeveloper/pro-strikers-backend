@@ -2,7 +2,11 @@ import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { StripePayment } from './stripePayment.modal';
-import { getPriceId, membershipsCredits } from './stripePayment.constant';
+import {
+  getCouponId,
+  getPriceId,
+  membershipsCredits,
+} from './stripePayment.constant';
 import { User } from '../User/user.model';
 import moment from 'moment';
 import MembershipPayment from '../MembershipPayment/membershipPayment.model';
@@ -141,7 +145,7 @@ const createCustomMembershipSubscription = async (payload: {
 
 export const createOrUpdateMembershipSubscription = async (payload: {
   email: string;
-  plan: 'monthly' | 'yearly' | 'quarterly';
+  plan: 'monthly' | 'quarterly';
   membership: 'individual_pro' | 'individual_pro_unlimited';
   amount?: number;
   isBlackFriday?: boolean;
@@ -156,15 +160,7 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     );
   }
 
-  // Only apply Black Friday for quarterly plan
-  let couponId: string | undefined;
-  if (isBlackFriday && plan === 'quarterly') {
-    if (membership === 'individual_pro') {
-      couponId = 'sH7FtadW'; // Replace with actual Stripe coupon ID
-    } else if (membership === 'individual_pro_unlimited') {
-      couponId = 't9AFPtUX'; // Replace with actual Stripe coupon ID
-    }
-  }
+  let couponId = getCouponId(membership, plan);
 
   let user = await StripePayment.findOne({ email });
 
@@ -330,7 +326,12 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     });
 
     const issueDate = moment(invoice.period_start * 1000).toISOString();
-    const expiryDate = moment(invoice.period_end * 1000).toISOString();
+    const expiryDate =
+      customer.subscription_plan === 'monthly'
+        ? moment().add(1, 'month').toISOString()
+        : customer.subscription_plan === 'quarterly'
+          ? moment().add(4, 'months').toISOString()
+          : moment().add(1, 'year').toISOString();
 
     const membershipCredit =
       membershipsCredits[
