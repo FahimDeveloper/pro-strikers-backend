@@ -532,6 +532,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     });
 
     if (!customer) {
+      console.log('❌ Customer not found for upcoming invoice', customerId);
       new AppError(httpStatus.NOT_FOUND, 'Customer not found');
     }
 
