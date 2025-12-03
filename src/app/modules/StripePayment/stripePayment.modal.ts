@@ -8,6 +8,10 @@ const StripePaymentSchema = new Schema<IStripePayment>(
     subscription_id: { type: String },
     subscription_plan: { type: String },
     invoice_count: { type: Number, default: 0 },
+    is_offer_subscription: {
+      applied: { type: Boolean, default: false },
+      coupon: { type: String },
+    },
     subscription: { type: String },
   },
   {

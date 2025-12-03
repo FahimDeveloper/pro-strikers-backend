@@ -272,6 +272,10 @@ export const createOrUpdateMembershipSubscription = async (payload: {
   user.subscription_id = subscription.id;
   user.subscription_plan = plan;
   user.subscription = membership;
+  user.is_offer_subscription = {
+    applied: isBlackFriday,
+    coupon: plan === 'monthly' ? getMonthlyCouponId(membership, plan) : null,
+  };
   await user.save();
 
   return {
@@ -533,18 +537,15 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       customer_id: customerId,
     });
 
-    console.log('Upcoming invoice event received for customer:', customer);
-
     if (!customer) {
-      console.error('❌ Customer not found for recurring payment', customerId);
       return { statusCode: 200 };
     }
 
     if ((customer.invoice_count || 0) === 1) {
-      const couponId = getMonthlyCouponId(
-        customer.subscription as string,
-        customer.subscription_plan,
-      );
+      const couponId = customer.is_offer_subscription.applied
+        ? customer.is_offer_subscription.coupon
+        : undefined;
+
       if (couponId) {
         await stripe.invoices.update(invoice.id, {
           discounts: [{ coupon: couponId }],
