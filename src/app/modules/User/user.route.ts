@@ -38,6 +38,12 @@ route.get(
 // );
 
 route.post(
+  '/add-credit/:id',
+  authMiddleware(ROLE.user),
+  UserControllers.addCredit,
+);
+
+route.post(
   '/create',
   upload.single('image'),
   //authMiddleware(ROLE.user, ROLE.superAdmin, ROLE.admin),

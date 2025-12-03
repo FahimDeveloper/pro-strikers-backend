@@ -9,6 +9,11 @@ const createUser = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'User is created succesfully');
 });
 
+const addCredit = catchAsync(async (req, res) => {
+  await UserServices.addCreditOnUserAccount(req.body, req.params.id);
+  sendResponse(res, httpStatus.OK, 'Credit added successfully');
+});
+
 const updateUser = catchAsync(async (req, res) => {
   const file = req.file;
   const result = await UserServices.updateUserIntoDB(
@@ -72,4 +77,5 @@ export const UserControllers = {
   getUsresEmail,
   updateUser,
   deleteUser,
+  addCredit,
 };
