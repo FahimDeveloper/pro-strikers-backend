@@ -216,23 +216,26 @@ const createFacilityReservationByUserIntoDB = async (
       const sessionCredit = user.credit_balance.session_credit;
 
       if (machineCredit !== 'unlimited' && sessionCredit !== 'unlimited') {
-        let newMachineCredit: string;
+        let newMachineCredit = machineCredit;
         let newSessionCredit: string;
         if (facility?.duration == 60) {
-          newMachineCredit = Math.max(
-            Number(machineCredit) - facility_data?.addons[0].hours,
-            0,
-          ).toString();
-
+          if (facility_data?.addons && facility_data.addons.length > 0) {
+            newMachineCredit = Math.max(
+              Number(machineCredit) - facility_data?.addons[0].hours,
+              0,
+            ).toString();
+          }
           newSessionCredit = Math.max(
             Number(sessionCredit) - facility_data?.bookings.length,
             0,
           ).toString();
         } else {
-          newMachineCredit = Math.max(
-            Number(machineCredit) - facility_data?.addons[0].hours,
-            0,
-          ).toString();
+          if (facility_data?.addons && facility_data.addons.length > 0) {
+            newMachineCredit = Math.max(
+              Number(machineCredit) - facility_data?.addons[0].hours,
+              0,
+            ).toString();
+          }
 
           newSessionCredit = Math.max(
             Number(sessionCredit) - facility_data?.bookings.length / 2,

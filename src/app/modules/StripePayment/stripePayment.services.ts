@@ -3,9 +3,10 @@ import config from '../../config';
 import AppError from '../../errors/AppError';
 import { StripePayment } from './stripePayment.modal';
 import {
-  getCouponId,
+  getQuarterlyCouponId,
   getPriceId,
   membershipsCredits,
+  getMonthlyCouponId,
 } from './stripePayment.constant';
 import { User } from '../User/user.model';
 import moment from 'moment';
@@ -160,7 +161,7 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     );
   }
 
-  let couponId = getCouponId(membership, plan);
+  const couponId = isBlackFriday ? getQuarterlyCouponId(membership) : undefined;
 
   let user = await StripePayment.findOne({ email });
 
@@ -516,6 +517,31 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
         message: `Your subscription for ${customer.subscription.split('_').join(' ')} has been successfully renewed. Enjoy your membership!`,
       });
     }
+    return { statusCode: 200 };
+  }
+
+  if (event.type === 'invoice.upcoming') {
+    const invoice = event.data.object;
+    const customerId = invoice.customer;
+
+    const customer = await StripePayment.findOne({
+      customer_id: customerId,
+    });
+
+    if (!customer) {
+      new AppError(httpStatus.NOT_FOUND, 'Customer not found');
+    }
+
+    const couponId = getMonthlyCouponId(customer?.subscription!);
+
+    const cycleNumber = invoice.subscription_details?.cycle_number || 1;
+
+    if (cycleNumber === 2) {
+      await stripe.invoices.update(invoice.id, {
+        discounts: [{ coupon: couponId }],
+      });
+    }
+
     return { statusCode: 200 };
   }
 

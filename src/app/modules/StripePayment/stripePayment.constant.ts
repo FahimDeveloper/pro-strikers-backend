@@ -36,17 +36,20 @@ export const membershipsCredits = {
   // youth_training_membership: { session_credit: '4' },
 };
 
-const couponId: any = {
-  individual_pro: {
-    monthly: config.monthly_coupon,
-    quarterly: config.pro_quarterly_coupon,
-  },
-  individual_pro_unlimited: {
-    monthly: config.monthly_coupon,
-    quarterly: config.pro_unlimited_quarterly_coupon,
-  },
+const quarterly: any = {
+  individual_pro: config.pro_quarterly_coupon,
+  individual_pro_unlimited: config.pro_unlimited_quarterly_coupon,
 } as const;
 
-export const getCouponId = (membership: Membership, plan: string) => {
-  return couponId[membership][plan];
+const montly: any = {
+  individual_pro: config.monthly_coupon,
+  individual_pro_unlimited: config.monthly_coupon,
+};
+
+export const getQuarterlyCouponId = (membership: Membership) => {
+  return quarterly[membership];
+};
+
+export const getMonthlyCouponId = (membership: string) => {
+  return montly[membership];
 };
