@@ -523,6 +523,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
   }
 
   if (event.type === 'invoice.upcoming') {
+    console.log('🔔 Invoice upcoming event received');
     const invoice = event.data.object;
     const customerId = invoice.customer;
 
@@ -537,6 +538,11 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     const couponId = getMonthlyCouponId(
       customer?.subscription!,
       customer?.subscription_plan!,
+    );
+
+    console.log(
+      '⏳ Applying coupon for upcoming invoice if applicable',
+      couponId,
     );
 
     const cycleNumber = invoice.subscription_details?.cycle_number || 1;
