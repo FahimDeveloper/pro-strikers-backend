@@ -533,6 +533,8 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       customer_id: customerId,
     });
 
+    console.log('Upcoming invoice event received for customer:', customer);
+
     if (!customer) {
       console.error('❌ Customer not found for recurring payment', customerId);
       return { statusCode: 200 };
