@@ -161,7 +161,9 @@ export const createOrUpdateMembershipSubscription = async (payload: {
     );
   }
 
-  const couponId = isBlackFriday ? getQuarterlyCouponId(membership) : undefined;
+  const couponId = isBlackFriday
+    ? getQuarterlyCouponId(membership, plan)
+    : undefined;
 
   let user = await StripePayment.findOne({ email });
 
@@ -532,13 +534,16 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       new AppError(httpStatus.NOT_FOUND, 'Customer not found');
     }
 
-    const couponId = getMonthlyCouponId(customer?.subscription!);
+    const couponId = getMonthlyCouponId(
+      customer?.subscription!,
+      customer?.subscription_plan!,
+    );
 
     const cycleNumber = invoice.subscription_details?.cycle_number || 1;
 
     if (cycleNumber === 2) {
       await stripe.invoices.update(invoice.id, {
-        discounts: [{ coupon: couponId }],
+        discounts: couponId ? [{ coupon: couponId }] : [],
       });
     }
 

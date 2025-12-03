@@ -46,10 +46,12 @@ const montly: any = {
   individual_pro_unlimited: config.monthly_coupon,
 };
 
-export const getQuarterlyCouponId = (membership: Membership) => {
+export const getQuarterlyCouponId = (membership: Membership, plan: string) => {
+  if (plan !== 'quarterly') return undefined;
   return quarterly[membership];
 };
 
-export const getMonthlyCouponId = (membership: string) => {
+export const getMonthlyCouponId = (membership: string, plan: string) => {
+  if (plan !== 'monthly') return undefined;
   return montly[membership];
 };
