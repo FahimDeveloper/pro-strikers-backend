@@ -7,6 +7,7 @@ const StripePaymentSchema = new Schema<IStripePayment>(
     customer_id: { type: String, required: true },
     subscription_id: { type: String },
     subscription_plan: { type: String },
+    invoice_count: { type: Number, default: 0 },
     subscription: { type: String },
   },
   {

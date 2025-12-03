@@ -308,6 +308,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       return { statusCode: 200 };
     }
 
+    customer.invoice_count = (customer.invoice_count || 0) + 1;
+    await customer.save();
+
     if (invoice.billing_reason === 'subscription_create' && paymentIntentId) {
       const paymentIntent = await stripe.paymentIntents.retrieve(
         paymentIntentId as string,
@@ -523,7 +526,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
   }
 
   if (event.type === 'invoice.upcoming') {
-    console.log('🔔 Invoice upcoming event received');
     const invoice = event.data.object;
     const customerId = invoice.customer;
 
@@ -532,26 +534,20 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     });
 
     if (!customer) {
-      console.log('❌ Customer not found for upcoming invoice', customerId);
-      new AppError(httpStatus.NOT_FOUND, 'Customer not found');
+      console.error('❌ Customer not found for recurring payment', customerId);
+      return { statusCode: 200 };
     }
 
-    const couponId = getMonthlyCouponId(
-      customer?.subscription!,
-      customer?.subscription_plan!,
-    );
-
-    console.log(
-      '⏳ Applying coupon for upcoming invoice if applicable',
-      couponId,
-    );
-
-    const cycleNumber = invoice.subscription_details?.cycle_number || 1;
-
-    if (cycleNumber === 2) {
-      await stripe.invoices.update(invoice.id, {
-        discounts: couponId ? [{ coupon: couponId }] : [],
-      });
+    if ((customer.invoice_count || 0) === 1) {
+      const couponId = getMonthlyCouponId(
+        customer.subscription as string,
+        customer.subscription_plan,
+      );
+      if (couponId) {
+        await stripe.invoices.update(invoice.id, {
+          discounts: [{ coupon: couponId }],
+        });
+      }
     }
 
     return { statusCode: 200 };
