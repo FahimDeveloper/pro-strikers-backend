@@ -312,10 +312,9 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       return { statusCode: 200 };
     }
 
-    customer.invoice_count = (customer.invoice_count || 0) + 1;
-    await customer.save();
-
     if (invoice.billing_reason === 'subscription_create' && paymentIntentId) {
+      customer.invoice_count = (customer.invoice_count || 0) + 1;
+      await customer.save();
       const paymentIntent = await stripe.paymentIntents.retrieve(
         paymentIntentId as string,
       );
@@ -363,12 +362,8 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
           issue_date: issueDate,
           expiry_date: expiryDate,
           credit_balance: {
-            session_credit:
-              Number(membershipCredit.session_credit) +
-              Number(user.credit_balance.session_credit),
-            machine_credit:
-              Number(membershipCredit.machine_credit) +
-              Number(user.credit_balance.machine_credit || '0'),
+            session_credit: Number(membershipCredit.session_credit),
+            machine_credit: Number(membershipCredit.machine_credit),
           },
         },
       );
