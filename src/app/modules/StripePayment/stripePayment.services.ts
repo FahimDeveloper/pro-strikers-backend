@@ -365,6 +365,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
             session_credit: Number(membershipCredit.session_credit),
             machine_credit: Number(membershipCredit.machine_credit),
           },
+          credit_month: new Date(),
         },
       );
     } else {
@@ -378,6 +379,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
           issue_date: issueDate,
           expiry_date: expiryDate,
           credit_balance: membershipCredit,
+          credit_month: new Date(),
         },
       );
     }

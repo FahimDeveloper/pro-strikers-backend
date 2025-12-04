@@ -99,6 +99,9 @@ const userSchema = new Schema<IUser, UserModel>(
         session_credit: { type: String },
       },
     },
+    credit_date: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

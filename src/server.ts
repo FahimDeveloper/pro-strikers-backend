@@ -6,6 +6,8 @@ import { Server as SocketIOServer } from 'socket.io';
 import { NotificationServices } from './app/modules/Notification/notification.services';
 import {
   startMembershipCronJob,
+  startMonthlyCreditCron,
+  startProvideCreditForExistingUsersCron,
   startTempFacilityReservationCronJob,
 } from './app/utils/cronJob';
 
@@ -30,6 +32,8 @@ async function dbConnection() {
     await mongoose.connect(url as string);
     startMembershipCronJob();
     startTempFacilityReservationCronJob();
+    startProvideCreditForExistingUsersCron();
+    startMonthlyCreditCron();
     server.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });

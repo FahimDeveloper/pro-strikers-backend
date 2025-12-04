@@ -28,6 +28,7 @@ export interface IUser {
   package_name?: string;
   plan?: string;
   credit_balance?: ICredit;
+  credit_date?: Date;
 }
 
 export interface ICredit {
