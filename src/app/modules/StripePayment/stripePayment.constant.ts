@@ -14,7 +14,7 @@ export const priceIds = {
   youth_training_membership: {
     monthly: config.youth_training_month,
     yearly: config.ind_pro_unlimited_year,
-    quarterly: config.ind_pro_unlimited_quarterly,
+    quarterly: config.youth_training_quarterly,
   },
 } as const;
 

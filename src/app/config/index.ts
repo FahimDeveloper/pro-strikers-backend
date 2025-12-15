@@ -42,6 +42,7 @@ export default {
   ind_pro_unlimited_quarterly: process.env.IND_PRO_UNLIMITED_QUARTERLY,
   ind_pro_unlimited_year: process.env.IND_PRO_UNLIMITED_YEAR,
   youth_training_month: process.env.YOUTH_TRAINING_MONTH,
+  youth_training_quarterly: process.env.YOUTH_TRAINING_QUARTERLY,
   pro_quarterly_coupon: process.env.PRO_QUARTERLY_COUPON,
   pro_unlimited_quarterly_coupon: process.env.PRO_UNLIMITED_QUARTERLY_COUPON,
   monthly_coupon: process.env.MONTHLY_COUPON,
