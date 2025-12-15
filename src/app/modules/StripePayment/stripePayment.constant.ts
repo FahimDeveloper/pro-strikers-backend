@@ -13,6 +13,8 @@ export const priceIds = {
   },
   youth_training_membership: {
     monthly: config.youth_training_month,
+    yearly: config.ind_pro_unlimited_year,
+    quarterly: config.ind_pro_unlimited_quarterly,
   },
 } as const;
 
@@ -33,7 +35,7 @@ export const membershipsCredits = {
     machine_credit: 'unlimited',
     session_credit: 'unlimited',
   },
-  // youth_training_membership: { session_credit: '4' },
+  youth_training_membership: { session_credit: '4' },
 };
 
 const quarterly: any = {

@@ -9,8 +9,8 @@ export interface IFacilitySchedule {
   description: string;
   price: number;
   ini_price: number;
+  // open_arena_price?: number;
   lanes: Array<string>;
-  // open_area?: IOpenArea;
   schedules: Array<IFacilityDaySchedule>;
 }
 

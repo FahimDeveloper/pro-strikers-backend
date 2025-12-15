@@ -61,6 +61,7 @@ const monthlyCredit = async () => {
 
     const today = new Date();
     if (today < nextCreditDate) continue;
+
     if (user.package_name === 'individual pro') {
       user.credit_balance = {
         session_credit: '4',
@@ -74,6 +75,13 @@ const monthlyCredit = async () => {
         machine_credit: 'unlimited',
       };
     }
+
+    if (user.package_name === 'youth training membership') {
+      user.credit_balance = {
+        session_credit: '4',
+      };
+    }
+
     user.credit_date = today;
 
     await user.save();

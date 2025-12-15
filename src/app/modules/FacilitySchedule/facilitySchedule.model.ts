@@ -25,23 +25,23 @@ const facilityScheduleDaySchema = new Schema<IFacilityDaySchedule>(
   { _id: false, versionKey: false },
 );
 
-const openAreaSchema = new Schema<IOpenArea>(
-  {
-    active: {
-      type: Boolean,
-    },
-    durations: {
-      type: Number,
-    },
-    ini_price: {
-      type: Number,
-    },
-    price: {
-      type: Number,
-    },
-  },
-  { _id: false, versionKey: false },
-);
+// const openAreaSchema = new Schema<IOpenArea>(
+//   {
+//     active: {
+//       type: Boolean,
+//     },
+//     durations: {
+//       type: Number,
+//     },
+//     ini_price: {
+//       type: Number,
+//     },
+//     price: {
+//       type: Number,
+//     },
+//   },
+//   { _id: false, versionKey: false },
+// );
 
 const facilityScheduleSchema = new Schema<IFacilitySchedule>(
   {
@@ -73,7 +73,9 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
       type: Number,
       required: true,
     },
-    // open_area: openAreaSchema,
+    // open_arena_price: {
+    //   type: Number,
+    // },
     lanes: {
       type: [String],
       required: true,

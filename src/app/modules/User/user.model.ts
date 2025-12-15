@@ -95,8 +95,8 @@ const userSchema = new Schema<IUser, UserModel>(
     },
     credit_balance: {
       type: {
-        machine_credit: { type: String },
         session_credit: { type: String },
+        machine_credit: { type: String },
       },
     },
     credit_date: {

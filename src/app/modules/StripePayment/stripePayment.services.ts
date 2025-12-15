@@ -147,7 +147,10 @@ const createCustomMembershipSubscription = async (payload: {
 export const createOrUpdateMembershipSubscription = async (payload: {
   email: string;
   plan: 'monthly' | 'quarterly';
-  membership: 'individual_pro' | 'individual_pro_unlimited';
+  membership:
+    | 'individual_pro'
+    | 'individual_pro_unlimited'
+    | 'youth_training_membership';
   amount?: number;
   isBlackFriday?: boolean;
 }) => {
@@ -361,10 +364,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
           package_name: customer.subscription.split('_').join(' '),
           issue_date: issueDate,
           expiry_date: expiryDate,
-          credit_balance: {
-            session_credit: Number(membershipCredit.session_credit),
-            machine_credit: Number(membershipCredit.machine_credit),
-          },
+          credit_balance: membershipCredit,
           credit_month: new Date(),
         },
       );

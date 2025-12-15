@@ -361,16 +361,22 @@ const getUserFacilitiesReservationsFromDB = async (
   };
 };
 
-const getFacilityReservationSlotsFromDB = async (
-  query: Record<string, unknown>,
-) => {
+const getFacilityReservationSlotsFromDB = async (query: any) => {
   const { date, lane } = query;
-  const result = await FacilityReservation.aggregate([
+  let laneCondition;
+
+  if (lane === 'Open Arena') {
+    laneCondition = { $in: ['Open Arena', 'Lane 1', 'Lane 2', 'Lane 3'] };
+  } else {
+    laneCondition = { $in: [lane, 'Open Arena'] };
+  }
+
+  return FacilityReservation.aggregate([
     { $unwind: '$bookings' },
     {
       $match: {
         'bookings.date': date,
-        'bookings.lane': lane,
+        'bookings.lane': laneCondition,
       },
     },
     {
@@ -382,8 +388,31 @@ const getFacilityReservationSlotsFromDB = async (
       },
     },
   ]);
-  return result;
 };
+
+// const getFacilityReservationSlotsFromDB = async (
+//   query: Record<string, unknown>,
+// ) => {
+//   const { date, lane } = query;
+//   const result = await FacilityReservation.aggregate([
+//     { $unwind: '$bookings' },
+//     {
+//       $match: {
+//         'bookings.date': date,
+//         'bookings.lane': lane,
+//       },
+//     },
+//     {
+//       $project: {
+//         _id: 0,
+//         date: '$bookings.date',
+//         time_slot: '$bookings.time_slot',
+//         lane: '$bookings.lane',
+//       },
+//     },
+//   ]);
+//   return result;
+// };
 
 const getSingleFacilityReservationFromDB = async (id: string) => {
   const result = await FacilityReservation.findById(id);
