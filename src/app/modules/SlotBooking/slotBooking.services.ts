@@ -132,7 +132,7 @@ const createSlotBookingIntoDB = async (payload: ISlotBooking) => {
 };
 
 const getSlotBookingsFromDB = async (query: any) => {
-  const { date, lane } = query;
+  const { date, lane, training } = query;
 
   let laneCondition;
 
@@ -144,6 +144,7 @@ const getSlotBookingsFromDB = async (query: any) => {
 
   const result = await SlotBooking.find({
     date,
+    training,
     lane: laneCondition,
   });
 
