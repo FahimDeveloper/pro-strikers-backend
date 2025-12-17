@@ -1717,7 +1717,7 @@ export const sendMembershipPurchasedConfirmationEmail = async ({
       <div class="mobile-details">
         <div class="mobile-card">
           <h4>Package Name:</h4>
-          <p>${subscription}</p>
+          <p>${subscription === 'youth traning membership' ? 'Academy Membership' : subscription}</p>
           <h4>Plan:</h4>
           <p>${subscription_plan}</p>
           <h4>Issue Date:</h4>
@@ -2050,7 +2050,7 @@ export const sendMembershipChangeConfirmationEmail = async ({
           </thead>
           <tbody>
             <tr>
-              <td>${subscription}</td>
+            <td>${subscription === 'youth traning membership' ? 'Academy Membership' : subscription}</td>
               <td>${subscription_plan}</td>
               <td>${moment(issue_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
               <td>${moment(expiry_date).tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
@@ -2063,7 +2063,7 @@ export const sendMembershipChangeConfirmationEmail = async ({
       <div class="mobile-details">
         <div class="mobile-card">
           <h4>Package Name:</h4>
-          <p>${subscription}</p>
+          <p>${subscription === 'youth traning membership' ? 'Academy Membership' : subscription}</p>
           <h4>Plan:</h4>
           <p>${subscription_plan}</p>
           <h4>Issue Date:</h4>
@@ -2139,7 +2139,7 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
                     </thead>
                     <tbody>
                       <tr>
-                        <td style="text-align:center;">${subscription}</td>
+                        <td style="text-align:center;">${subscription === 'youth traning membership' ? 'Academy Membership' : subscription}</td>
                         <td style="text-align:center;">${subscription_plan}</td>
                         <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
                       </tr>
@@ -2191,7 +2191,7 @@ export const sendMembershipRenewFailedNotifyEmail = async ({
                     </thead>
                     <tbody>
                       <tr>
-                        <td style="text-align:center;">${subscription}</td>
+                        <td style="text-align:center;">${subscription === 'youth traning membership' ? 'Academy Membership' : subscription}</td>
                         <td style="text-align:center;">${subscription_plan}</td>
                         <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
                       </tr>
@@ -2257,7 +2257,7 @@ export const sendMembershipRenewSuccessNotifyEmail = async ({
                     </thead>
                     <tbody>
                       <tr>
-                        <td style="text-align:center;">${subscription}</td>
+                        <td style="text-align:center;">${subscription === 'youth traning membership' ? 'Academy Membership' : subscription}</td>
                         <td style="text-align:center;">${subscription_plan}</td>
                         <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
                       </tr>
@@ -2309,7 +2309,7 @@ export const sendMembershipRenewSuccessNotifyEmail = async ({
                     </thead>
                     <tbody>
                       <tr>
-                        <td style="text-align:center;">${subscription}</td>
+                        <td style="text-align:center;">${subscription === 'youth traning membership' ? 'Academy Membership' : subscription}</td>
                         <td style="text-align:center;">${subscription_plan}</td>
                         <td style="text-align:center;">${moment().tz('America/Los_Angeles').format('ddd, MMM Do YY')}</td>
                       </tr>

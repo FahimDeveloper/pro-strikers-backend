@@ -63,6 +63,10 @@ const createClassReservationByUserIntoDB = async (
   const { class_data, payment_info } = payload;
   try {
     session.startTransaction();
+    const user = await User.findById(class_data?.user);
+    if (!user) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'User not found');
+    }
     const date = new Date(class_data.class_date);
     const kidsClass = await ClassSchedule.findById(class_data.class);
     if (!kidsClass) {
@@ -81,6 +85,19 @@ const createClassReservationByUserIntoDB = async (
       payment: payment[0]._id,
     };
     await ClassReservation.create([createPayload], { session });
+    if (
+      user?.membership &&
+      user?.package_name === 'youth training membership' &&
+      user?.credit_balance
+    ) {
+      const sessionCredit = user.credit_balance.session_credit;
+      const newSessionCredit = Math.max(Number(sessionCredit) - 1).toString();
+      await User.findByIdAndUpdate(user?._id, {
+        credit_balance: {
+          session_credit: newSessionCredit,
+        },
+      });
+    }
     await Notification.create(
       [
         {

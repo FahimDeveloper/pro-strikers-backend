@@ -58,6 +58,7 @@ const createAppointmentOneOnOneReservationByUserIntoDB = async (
   payload: IAppointmentOneOnOneReservationRequest,
 ) => {
   const { appointment_data, payment_info } = payload;
+  const user = await User.findById(id);
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
@@ -68,6 +69,23 @@ const createAppointmentOneOnOneReservationByUserIntoDB = async (
       },
       session,
     );
+    if (
+      user?.membership &&
+      user?.package_name === 'youth training membership' &&
+      user?.credit_balance
+    ) {
+      let newSessionCredit: string;
+      const sessionCredit = user.credit_balance.session_credit;
+      newSessionCredit = Math.max(
+        Number(sessionCredit) - appointment_data?.bookings?.length,
+        0,
+      ).toString();
+      await User.findByIdAndUpdate(id, {
+        credit_balance: {
+          session_credit: newSessionCredit,
+        },
+      });
+    }
     const payment = await AppointmentPayment.create([payment_info], {
       session,
     });

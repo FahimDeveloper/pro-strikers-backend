@@ -211,7 +211,11 @@ const createFacilityReservationByUserIntoDB = async (
   ).select('duration');
   try {
     session.startTransaction();
-    if (user?.credit_balance) {
+    if (
+      user?.membership &&
+      user?.package_name !== 'youth training membership' &&
+      user?.credit_balance
+    ) {
       const machineCredit = user.credit_balance.machine_credit;
       const sessionCredit = user.credit_balance.session_credit;
 
