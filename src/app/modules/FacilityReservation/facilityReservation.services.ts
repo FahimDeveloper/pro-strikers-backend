@@ -246,13 +246,18 @@ const createFacilityReservationByUserIntoDB = async (
             0,
           ).toString();
         }
-
-        await User.findByIdAndUpdate(id, {
-          credit_balance: {
-            machine_credit: newMachineCredit,
-            session_credit: newSessionCredit,
+        await User.findByIdAndUpdate(
+          user?._id,
+          {
+            $set: {
+              'general_membership.credit_balance.session_credit':
+                newSessionCredit,
+              'general_membership.credit_balance.machine_credit':
+                newMachineCredit,
+            },
           },
-        });
+          { new: true, session },
+        );
       }
     }
     await SlotBooking.deleteMany(

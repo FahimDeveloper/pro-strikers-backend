@@ -92,11 +92,16 @@ const createClassReservationByUserIntoDB = async (
       const sessionCredit =
         user?.academy_membership?.credit_balance.session_credit;
       const newSessionCredit = Math.max(Number(sessionCredit) - 1).toString();
-      await User.findByIdAndUpdate(user?._id, {
-        credit_balance: {
-          session_credit: newSessionCredit,
+      await User.findByIdAndUpdate(
+        user?._id,
+        {
+          $set: {
+            'academy_membership.credit_balance.session_credit':
+              newSessionCredit,
+          },
         },
-      });
+        { new: true, session },
+      );
     }
     await Notification.create(
       [

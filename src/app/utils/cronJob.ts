@@ -50,6 +50,8 @@ const checkMembershipStatus = async () => {
 // };
 
 const monthlyCredit = async () => {
+  const today = new Date();
+
   const users = await User.find({ membership: true });
 
   for (const user of users) {
@@ -57,34 +59,33 @@ const monthlyCredit = async () => {
      * -------- GENERAL MEMBERSHIP --------
      */
     if (
-      user.general_membership?.status === true &&
+      user.general_membership?.status &&
       user.general_membership.credit_date
     ) {
       const issueDate = new Date(user.general_membership.credit_date);
       const nextCreditDate = new Date(issueDate);
       nextCreditDate.setMonth(nextCreditDate.getMonth() + 1);
-      nextCreditDate.setDate(nextCreditDate.getDate() + 1);
 
-      const today = new Date();
       if (today >= nextCreditDate) {
+        const update: any = {
+          'general_membership.credit_date': today,
+        };
+
         if (user.general_membership.package_name === 'individual pro') {
-          user.general_membership.credit_balance = {
-            session_credit: '4',
-            machine_credit: '4',
-          };
+          update['general_membership.credit_balance.session_credit'] = '4';
+          update['general_membership.credit_balance.machine_credit'] = '4';
         }
 
         if (
           user.general_membership.package_name === 'individual pro unlimited'
         ) {
-          user.general_membership.credit_balance = {
-            session_credit: 'unlimited',
-            machine_credit: 'unlimited',
-          };
+          update['general_membership.credit_balance.session_credit'] =
+            'unlimited';
+          update['general_membership.credit_balance.machine_credit'] =
+            'unlimited';
         }
 
-        user.general_membership.credit_date = today;
-        await user.save();
+        await User.updateOne({ _id: user._id }, { $set: update });
         continue;
       }
     }
@@ -93,26 +94,25 @@ const monthlyCredit = async () => {
      * -------- ACADEMY MEMBERSHIP --------
      */
     if (
-      user.academy_membership?.status === true &&
+      user.academy_membership?.status &&
       user.academy_membership.credit_date
     ) {
       const issueDate = new Date(user.academy_membership.credit_date);
       const nextCreditDate = new Date(issueDate);
       nextCreditDate.setMonth(nextCreditDate.getMonth() + 1);
-      nextCreditDate.setDate(nextCreditDate.getDate() + 1);
 
-      const today = new Date();
       if (today >= nextCreditDate) {
+        const update: any = {
+          'academy_membership.credit_date': today,
+        };
+
         if (
           user.academy_membership.package_name === 'youth training membership'
         ) {
-          user.academy_membership.credit_balance = {
-            session_credit: '4',
-          };
+          update['academy_membership.credit_balance.session_credit'] = '4';
         }
 
-        user.academy_membership.credit_date = today;
-        await user.save();
+        await User.updateOne({ _id: user._id }, { $set: update });
       }
     }
   }

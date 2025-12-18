@@ -133,11 +133,11 @@ const addGeneralCreditOnUserAccount = async (payload: any, id: string) => {
     await User.findByIdAndUpdate(
       id,
       {
-        general_membership: {
-          credit_balance: credit_info,
+        $set: {
+          'general_membership.credit_balance': credit_info,
         },
       },
-      { session },
+      { new: true, session },
     );
     await CreditPayment.create([payment_info], { session });
     await session.commitTransaction();
@@ -160,11 +160,11 @@ const addAcademyCreditOnUserAccount = async (payload: any, id: string) => {
     await User.findByIdAndUpdate(
       id,
       {
-        academy_membership: {
-          credit_balance: credit_info,
+        $set: {
+          'academy_membership.credit_balance': credit_info,
         },
       },
-      { session },
+      { new: true, session },
     );
     await CreditPayment.create([payment_info], { session });
     await session.commitTransaction();
