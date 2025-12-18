@@ -25,6 +25,7 @@ import { generateRandomPassword } from '../../utils/generateRandomPassword';
 import Stripe from 'stripe';
 import { GeneralMembership } from '../GeneralMembership/generalMembership.modal';
 import { AcademyMembership } from '../AcademyMembership/academyMembership.modal';
+import { getOrCreateStripeCustomer } from '../../utils/stripeHelper';
 
 const sk_key = config.stripe_sk_key;
 const stripe = require('stripe')(sk_key);
@@ -306,7 +307,7 @@ const createOrUpdateGeneralMembershipSubscription = async (payload: {
   let user = await GeneralMembership.findOne({ email });
 
   if (!user) {
-    const stripeCustomer = await stripe.customers.create({ email });
+    const stripeCustomer = await getOrCreateStripeCustomer(email);
     user = await GeneralMembership.create({
       email,
       customer_id: stripeCustomer.id,
@@ -389,6 +390,9 @@ const createOrUpdateGeneralMembershipSubscription = async (payload: {
     customer: user.customer_id,
     items: [{ price: priceId }],
     payment_behavior: 'default_incomplete',
+    metadata: {
+      membership_type: 'general',
+    },
     expand: ['latest_invoice.payment_intent'],
   });
 
@@ -436,7 +440,7 @@ const createOrUpdateAcademyMembershipSubscription = async (payload: {
   let user = await AcademyMembership.findOne({ email });
 
   if (!user) {
-    const stripeCustomer = await stripe.customers.create({ email });
+    const stripeCustomer = await getOrCreateStripeCustomer(email);
     user = await AcademyMembership.create({
       email,
       customer_id: stripeCustomer.id,
@@ -519,6 +523,9 @@ const createOrUpdateAcademyMembershipSubscription = async (payload: {
     customer: user.customer_id,
     items: [{ price: priceId }],
     payment_behavior: 'default_incomplete',
+    metadata: {
+      membership_type: 'academy',
+    },
     expand: ['latest_invoice.payment_intent'],
   });
 
@@ -561,7 +568,10 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
   }
   const invoice = event.data.object;
 
-  const subscriptionId = invoice.subscription as string;
+  const subscriptionId =
+    (invoice.subscription as string) ??
+    invoice.parent?.subscription_details?.subscription ??
+    invoice.lines?.data?.[0]?.parent?.subscription_item_details?.subscription;
 
   let customer = await GeneralMembership.findOne({
     subscription_id: subscriptionId,
@@ -574,7 +584,7 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
   } else {
     customer = await AcademyMembership.findOne({
       subscription_id: subscriptionId,
-    }).lean();
+    });
     if (customer) membershipType = 'academy';
   }
 
@@ -583,7 +593,10 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
     return { statusCode: 200 };
   }
 
-  if (event.type === 'invoice.payment_succeeded') {
+  if (
+    event.type === 'invoice.payment_succeeded' ||
+    event.type === 'invoice.paid'
+  ) {
     const paymentIntentId = invoice.payment_intent;
     const customerId = invoice.customer;
 
@@ -656,11 +669,6 @@ export const reCurringProccess = async (body: Buffer, headers: any) => {
       );
     }
     if (invoice.billing_reason === 'subscription_create') {
-      const subscriptionId =
-        invoice.subscription ??
-        invoice.parent?.subscription_details?.subscription ??
-        invoice.lines?.data?.[0]?.parent?.subscription_item_details
-          ?.subscription;
       const subscription = await stripe.subscriptions.retrieve(
         subscriptionId as string,
       );
