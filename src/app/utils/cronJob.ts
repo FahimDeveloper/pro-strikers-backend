@@ -21,70 +21,100 @@ const checkMembershipStatus = async () => {
     console.error('Error checking membership status:', error);
   }
 };
-const provideMembershipCreditForExistingUsers = async () => {
-  try {
-    const users = await User.find({ membership: true });
 
-    for (const user of users) {
-      if (user.status === true && !user.credit_balance) {
-        if (user.package_name === 'individual pro') {
-          user.credit_balance = {
-            session_credit: '4',
-            machine_credit: '4',
-          };
-        } else if (user.package_name === 'individual pro unlimited') {
-          user.credit_balance = {
-            session_credit: 'unlimited',
-            machine_credit: 'unlimited',
-          };
-        }
+// const provideMembershipCreditForExistingUsers = async () => {
+//   try {
+//     const users = await User.find({ membership: true });
 
-        user.credit_date = new Date();
-        await user.save();
-      }
-    }
-  } catch (error) {
-    console.error('Error providing membership credit:', error);
-  }
-};
+//     for (const user of users) {
+//       if (user.status === true && !user.credit_balance) {
+//         if (user.package_name === 'individual pro') {
+//           user.credit_balance = {
+//             session_credit: '4',
+//             machine_credit: '4',
+//           };
+//         } else if (user.package_name === 'individual pro unlimited') {
+//           user.credit_balance = {
+//             session_credit: 'unlimited',
+//             machine_credit: 'unlimited',
+//           };
+//         }
+
+//         user.credit_date = new Date();
+//         await user.save();
+//       }
+//     }
+//   } catch (error) {
+//     console.error('Error providing membership credit:', error);
+//   }
+// };
 
 const monthlyCredit = async () => {
   const users = await User.find({ membership: true });
 
   for (const user of users) {
-    if (user?.status !== true) continue;
-    if (!user.credit_date) continue;
-    const issueDate = new Date(user.credit_date);
-    const nextCreditDate = new Date(issueDate);
-    nextCreditDate.setMonth(nextCreditDate.getMonth() + 1);
-    nextCreditDate.setDate(nextCreditDate.getDate() + 1);
+    /**
+     * -------- GENERAL MEMBERSHIP --------
+     */
+    if (
+      user.general_membership?.status === true &&
+      user.general_membership.credit_date
+    ) {
+      const issueDate = new Date(user.general_membership.credit_date);
+      const nextCreditDate = new Date(issueDate);
+      nextCreditDate.setMonth(nextCreditDate.getMonth() + 1);
+      nextCreditDate.setDate(nextCreditDate.getDate() + 1);
 
-    const today = new Date();
-    if (today < nextCreditDate) continue;
+      const today = new Date();
+      if (today >= nextCreditDate) {
+        if (user.general_membership.package_name === 'individual pro') {
+          user.general_membership.credit_balance = {
+            session_credit: '4',
+            machine_credit: '4',
+          };
+        }
 
-    if (user.package_name === 'individual pro') {
-      user.credit_balance = {
-        session_credit: '4',
-        machine_credit: '4',
-      };
+        if (
+          user.general_membership.package_name === 'individual pro unlimited'
+        ) {
+          user.general_membership.credit_balance = {
+            session_credit: 'unlimited',
+            machine_credit: 'unlimited',
+          };
+        }
+
+        user.general_membership.credit_date = today;
+        await user.save();
+        continue;
+      }
     }
 
-    if (user.package_name === 'individual pro unlimited') {
-      user.credit_balance = {
-        session_credit: 'unlimited',
-        machine_credit: 'unlimited',
-      };
+    /**
+     * -------- ACADEMY MEMBERSHIP --------
+     */
+    if (
+      user.academy_membership?.status === true &&
+      user.academy_membership.credit_date
+    ) {
+      const issueDate = new Date(user.academy_membership.credit_date);
+      const nextCreditDate = new Date(issueDate);
+      nextCreditDate.setMonth(nextCreditDate.getMonth() + 1);
+      nextCreditDate.setDate(nextCreditDate.getDate() + 1);
+
+      const today = new Date();
+      if (today >= nextCreditDate) {
+        if (
+          user.academy_membership.package_name === 'youth training membership'
+        ) {
+          user.academy_membership.credit_balance = {
+            session_credit: '4',
+          };
+        }
+
+        user.academy_membership.credit_date = today;
+        await user.save();
+      }
     }
-
-    if (user.package_name === 'youth training membership') {
-      user.credit_balance = {
-        session_credit: '4',
-      };
-    }
-
-    user.credit_date = today;
-
-    await user.save();
   }
 };
 
@@ -135,17 +165,17 @@ const startTempFacilityReservationCronJob = () => {
   );
 };
 
-const startProvideCreditForExistingUsersCron = () => {
-  new CronJob(
-    '0 0 * * *',
-    async () => {
-      await provideMembershipCreditForExistingUsers();
-    },
-    null,
-    true,
-    'UTC',
-  );
-};
+// const startProvideCreditForExistingUsersCron = () => {
+//   new CronJob(
+//     '0 0 * * *',
+//     async () => {
+//       await provideMembershipCreditForExistingUsers();
+//     },
+//     null,
+//     true,
+//     'UTC',
+//   );
+// };
 
 const startMonthlyCreditCron = () => {
   new CronJob(
@@ -162,6 +192,6 @@ const startMonthlyCreditCron = () => {
 export {
   startMembershipCronJob,
   startTempFacilityReservationCronJob,
-  startProvideCreditForExistingUsersCron,
+  // startProvideCreditForExistingUsersCron,
   startMonthlyCreditCron,
 };

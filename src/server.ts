@@ -7,10 +7,8 @@ import { NotificationServices } from './app/modules/Notification/notification.se
 import {
   startMembershipCronJob,
   startMonthlyCreditCron,
-  startProvideCreditForExistingUsersCron,
   startTempFacilityReservationCronJob,
 } from './app/utils/cronJob';
-import { User } from './app/modules/User/user.model';
 
 const port = process.env.PORT || config.port;
 
@@ -109,7 +107,7 @@ async function dbConnection() {
     await mongoose.connect(url as string);
     startMembershipCronJob();
     startTempFacilityReservationCronJob();
-    startProvideCreditForExistingUsersCron();
+    // startProvideCreditForExistingUsersCron();
     startMonthlyCreditCron();
     // migrateUsersToNewMembershipSchema();
     server.listen(port, () => {

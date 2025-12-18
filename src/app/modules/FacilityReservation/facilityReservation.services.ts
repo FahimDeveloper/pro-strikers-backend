@@ -206,18 +206,18 @@ const createFacilityReservationByUserIntoDB = async (
   const session = await mongoose.startSession();
   const { facility_data, payment_info } = payload;
   const user = await User.findById(id);
+  if (!user) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User not found');
+  }
   const facility = await FacilitySchedule.findById(
     facility_data?.facility,
   ).select('duration');
   try {
     session.startTransaction();
-    if (
-      user?.membership &&
-      user?.package_name !== 'youth training membership' &&
-      user?.credit_balance
-    ) {
-      const machineCredit = user.credit_balance.machine_credit;
-      const sessionCredit = user.credit_balance.session_credit;
+    const { general_membership } = user;
+    if (general_membership?.membership && general_membership?.credit_balance) {
+      const machineCredit = general_membership?.credit_balance.machine_credit;
+      const sessionCredit = general_membership?.credit_balance.session_credit;
 
       if (machineCredit !== 'unlimited' && sessionCredit !== 'unlimited') {
         let newMachineCredit = machineCredit;

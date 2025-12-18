@@ -86,11 +86,11 @@ const createClassReservationByUserIntoDB = async (
     };
     await ClassReservation.create([createPayload], { session });
     if (
-      user?.membership &&
-      user?.package_name === 'youth training membership' &&
-      user?.credit_balance
+      user?.academy_membership?.membership &&
+      user?.academy_membership?.credit_balance
     ) {
-      const sessionCredit = user.credit_balance.session_credit;
+      const sessionCredit =
+        user?.academy_membership?.credit_balance.session_credit;
       const newSessionCredit = Math.max(Number(sessionCredit) - 1).toString();
       await User.findByIdAndUpdate(user?._id, {
         credit_balance: {

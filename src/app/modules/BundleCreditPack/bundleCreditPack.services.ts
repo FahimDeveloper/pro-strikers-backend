@@ -28,12 +28,9 @@ const purchaseBundleCreditPackageIntoDB = async (
     };
     await BundleCreditPackage.create([createPayload], { session });
     const result = await User.findById(bundle.user).session(session);
-    if (
-      result?.credit_balance &&
-      result.credit_balance.session_credit !== 'unlimited'
-    ) {
-      const session_credit = result.credit_balance.session_credit;
-      const machine_credit = result.credit_balance.machine_credit;
+    if (result?.pass_pack) {
+      const session_credit = result.pass_pack.session_credit;
+      const machine_credit = result.pass_pack.machine_credit;
       const newSessionCredit = Number(session_credit) + bundle.hours;
       const newMachineCredit =
         Number(machine_credit) + (bundle.piching_machine ? bundle.hours : 0);
@@ -46,11 +43,11 @@ const purchaseBundleCreditPackageIntoDB = async (
         { credit_balance: creditBalance },
         { session, _id: false },
       );
-    } else if (result?.credit_balance?.session_credit !== 'unlimited') {
+    } else {
       await User.findByIdAndUpdate(
         bundle.user,
         {
-          credit_balance: {
+          pass_pack: {
             session_credit: bundle.hours.toString(),
             machine_credit: bundle.piching_machine
               ? bundle.hours.toString()
