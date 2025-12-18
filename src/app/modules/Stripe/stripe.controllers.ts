@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { StripePaymentServices } from './stripePayment.services';
+import { StripePaymentServices } from './stripe.services';
 
 const createPaymentIntent = catchAsync(async (req, res) => {
   const { amount } = req.body;
@@ -21,12 +21,27 @@ const createCustomSubscription = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'Setup intent created', result);
 });
 
-const createOrUpdateMembershipSubscription = catchAsync(async (req, res) => {
-  const result =
-    await StripePaymentServices.createOrUpdateMembershipSubscription(req.body);
+const createOrUpdateGeneralMembershipSubscription = catchAsync(
+  async (req, res) => {
+    const result =
+      await StripePaymentServices.createOrUpdateGeneralMembershipSubscription(
+        req.body,
+      );
 
-  sendResponse(res, httpStatus.OK, 'Setup intent created', result);
-});
+    sendResponse(res, httpStatus.OK, 'Setup intent created', result);
+  },
+);
+
+const createOrUpdateAcademyMembershipSubscription = catchAsync(
+  async (req, res) => {
+    const result =
+      await StripePaymentServices.createOrUpdateAcademyMembershipSubscription(
+        req.body,
+      );
+
+    sendResponse(res, httpStatus.OK, 'Setup intent created', result);
+  },
+);
 
 const stripeWebhook = catchAsync(async (req, res) => {
   await StripePaymentServices.reCurringProccess(req.body, req.headers);
@@ -35,7 +50,8 @@ const stripeWebhook = catchAsync(async (req, res) => {
 
 export const StripePaymentControllers = {
   createPaymentIntent,
-  createOrUpdateMembershipSubscription,
+  createOrUpdateAcademyMembershipSubscription,
+  createOrUpdateGeneralMembershipSubscription,
   stripeWebhook,
   createCustomSubscription,
 };

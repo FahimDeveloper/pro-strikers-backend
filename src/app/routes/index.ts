@@ -21,7 +21,7 @@ import { EventGroupReservationRoutes } from '../modules/EventGroupReservation/ev
 import { SlotRoutes } from '../modules/SlotBooking/slotBooking.route';
 import { OneAppointmentRoutes } from '../modules/OneAppointmentSchedule/oneAppointmentSchedule.route';
 import { AuthenticationRoutes } from '../modules/Authentication/Authentication.route';
-import { StripePaymentRoutes } from '../modules/StripePayment/stripePayment.route';
+import { StripePaymentRoutes } from '../modules/Stripe/stripe.route';
 import { AddonRoutes } from '../modules/Addon/addon.route';
 import { BrandRoutes } from '../modules/Brand/brand.route';
 import { MembershipCancellationRoutes } from '../modules/MembershipCancellation/membershipCancellation.route';

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { NextFunction, Request, Response } from 'express';
-import { UserControllers } from './user.controller';
+import { UserControllers } from './user.controllers';
 import authMiddleware from '../../middlewares/authMiddleware';
 import { ROLE } from '../../utils/role';
 import validateRequest from '../../middlewares/validateRequest';
@@ -38,9 +38,15 @@ route.get(
 // );
 
 route.post(
-  '/add-credit/:id',
+  '/add-general-credit/:id',
   authMiddleware(ROLE.user),
-  UserControllers.addCredit,
+  UserControllers.addGeneralCredit,
+);
+
+route.post(
+  '/add-academy-credit/:id',
+  authMiddleware(ROLE.user),
+  UserControllers.addAcademyCredit,
 );
 
 route.post(

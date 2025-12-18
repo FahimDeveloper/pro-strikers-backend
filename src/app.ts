@@ -8,9 +8,9 @@ import { sendFeedbackEmail } from './app/utils/email';
 import sendResponse from './app/utils/sendResponse';
 import httpStatus from 'http-status';
 import { limiter } from './app/utils/limiter';
-import { StripePaymentRoutes } from './app/modules/StripePayment/stripePayment.route';
-import { StripePaymentControllers } from './app/modules/StripePayment/stripePayment.controllers';
-import { UserControllers } from './app/modules/User/user.controller';
+import { StripePaymentRoutes } from './app/modules/Stripe/stripe.route';
+import { StripePaymentControllers } from './app/modules/Stripe/stripe.controllers';
+import { UserControllers } from './app/modules/User/user.controllers';
 
 export const app: Application = express();
 

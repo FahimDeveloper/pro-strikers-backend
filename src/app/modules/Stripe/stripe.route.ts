@@ -1,5 +1,5 @@
 import express from 'express';
-import { StripePaymentControllers } from './stripePayment.controllers';
+import { StripePaymentControllers } from './stripe.controllers';
 
 const route = express.Router();
 
@@ -9,8 +9,13 @@ route.post(
 );
 
 route.post(
-  '/create-subscription',
-  StripePaymentControllers.createOrUpdateMembershipSubscription,
+  '/create-general-subscription',
+  StripePaymentControllers.createOrUpdateGeneralMembershipSubscription,
+);
+
+route.post(
+  '/create-academy-subscription',
+  StripePaymentControllers.createOrUpdateAcademyMembershipSubscription,
 );
 
 route.post(

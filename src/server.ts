@@ -10,6 +10,7 @@ import {
   startProvideCreditForExistingUsersCron,
   startTempFacilityReservationCronJob,
 } from './app/utils/cronJob';
+import { User } from './app/modules/User/user.model';
 
 const port = process.env.PORT || config.port;
 
@@ -25,7 +26,83 @@ const io = new SocketIOServer(server, {
   },
 });
 
+// const migrateUsersToNewMembershipSchema = async () => {
+//   const users = await User.find({}).lean();
+
+//   let updatedCount = 0;
+
+//   for (const user of users) {
+//     const updateData: any = {};
+
+//     // Default empty memberships
+//     updateData.general_membership = {
+//       membership: false,
+//     };
+
+//     updateData.academy_membership = {
+//       membership: false,
+//     };
+
+//     // Detect membership type
+//     if (
+//       user.package_name === 'individual pro' ||
+//       user.package_name === 'individual pro unlimited'
+//     ) {
+//       updateData.general_membership = {
+//         membership: user.membership ?? false,
+//         status: user.status,
+//         issue_date: user.issue_date,
+//         expiry_date: user.expiry_date,
+//         package_name: user.package_name,
+//         plan: user.plan,
+//         credit_balance: user.credit_balance,
+//         credit_date: user.credit_date,
+//       };
+//     }
+
+//     if (user.package_name === 'youth training membership') {
+//       updateData.academy_membership = {
+//         membership: user.membership ?? false,
+//         status: user.status,
+//         issue_date: user.issue_date,
+//         expiry_date: user.expiry_date,
+//         package_name: user.package_name,
+//         plan: user.plan,
+//         credit_balance: {
+//           session_credit: user.credit_balance?.session_credit,
+//         },
+//         credit_date: user.credit_date,
+//       };
+//     }
+
+//     // Remove old flat membership fields
+//     updateData.$unset = {
+//       membership: '',
+//       status: '',
+//       issue_date: '',
+//       expiry_date: '',
+//       package_name: '',
+//       plan: '',
+//       credit_balance: '',
+//       credit_date: '',
+//     };
+
+//     await User.updateOne(
+//       { _id: user._id },
+//       {
+//         $set: updateData,
+//         $unset: updateData.$unset,
+//       },
+//     );
+
+//     updatedCount++;
+//   }
+
+//   console.log(`✅ Migration completed. Updated users: ${updatedCount}`);
+// };
+
 // Database connection
+
 async function dbConnection() {
   const url = config.database_url;
   try {
@@ -34,6 +111,7 @@ async function dbConnection() {
     startTempFacilityReservationCronJob();
     startProvideCreditForExistingUsersCron();
     startMonthlyCreditCron();
+    // migrateUsersToNewMembershipSchema();
     server.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });

@@ -9,8 +9,13 @@ const createUser = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.CREATED, 'User is created succesfully');
 });
 
-const addCredit = catchAsync(async (req, res) => {
-  await UserServices.addCreditOnUserAccount(req.body, req.params.id);
+const addGeneralCredit = catchAsync(async (req, res) => {
+  await UserServices.addGeneralCreditOnUserAccount(req.body, req.params.id);
+  sendResponse(res, httpStatus.OK, 'Credit added successfully');
+});
+
+const addAcademyCredit = catchAsync(async (req, res) => {
+  await UserServices.addAcademyCreditOnUserAccount(req.body, req.params.id);
   sendResponse(res, httpStatus.OK, 'Credit added successfully');
 });
 
@@ -77,5 +82,6 @@ export const UserControllers = {
   getUsresEmail,
   updateUser,
   deleteUser,
-  addCredit,
+  addAcademyCredit,
+  addGeneralCredit,
 };

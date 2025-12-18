@@ -125,7 +125,7 @@ const waiverSignWebhook = async (req: any, res: any) => {
   return { received: true };
 };
 
-const addCreditOnUserAccount = async (payload: any, id: string) => {
+const addGeneralCreditOnUserAccount = async (payload: any, id: string) => {
   const { credit_info, payment_info } = payload;
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -133,7 +133,36 @@ const addCreditOnUserAccount = async (payload: any, id: string) => {
     await User.findByIdAndUpdate(
       id,
       {
-        credit_balance: credit_info,
+        general_membership: {
+          credit_balance: credit_info,
+        },
+      },
+      { session },
+    );
+    await CreditPayment.create([payment_info], { session });
+    await session.commitTransaction();
+    session.endSession();
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Unable to add credit',
+    );
+  }
+};
+
+const addAcademyCreditOnUserAccount = async (payload: any, id: string) => {
+  const { credit_info, payment_info } = payload;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await User.findByIdAndUpdate(
+      id,
+      {
+        academy_membership: {
+          credit_balance: credit_info,
+        },
       },
       { session },
     );
@@ -159,5 +188,6 @@ export const UserServices = {
   getSingleUserFromDB,
   deleteUserFromDB,
   waiverSignWebhook,
-  addCreditOnUserAccount,
+  addAcademyCreditOnUserAccount,
+  addGeneralCreditOnUserAccount,
 };
