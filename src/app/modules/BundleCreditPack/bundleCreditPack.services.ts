@@ -40,8 +40,8 @@ const purchaseBundleCreditPackageIntoDB = async (
       };
       await User.findByIdAndUpdate(
         bundle.user,
-        { credit_balance: creditBalance },
-        { session, _id: false },
+        { pass_pack: creditBalance },
+        { session },
       );
     } else {
       await User.findByIdAndUpdate(
@@ -54,7 +54,7 @@ const purchaseBundleCreditPackageIntoDB = async (
               : '0',
           },
         },
-        { _id: false, session },
+        { session },
       );
     }
     await sendBundleCreditPackPurchasedConfirmationEmail({

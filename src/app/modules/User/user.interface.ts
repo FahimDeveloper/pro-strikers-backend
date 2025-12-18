@@ -37,8 +37,6 @@ export interface IUser {
   pass_pack?: {
     machine_credit: string;
     session_credit: string;
-    issue_date: string;
-    expiry_date: string;
   };
   street_address?: string;
   zip_code?: string;

@@ -33,6 +33,18 @@ const generalMembershipSchema = new Schema(
   { _id: false },
 );
 
+const passPackSchema = new Schema(
+  {
+    session_credit: {
+      type: String,
+    },
+    machine_credit: {
+      type: String,
+    },
+  },
+  { _id: false, timestamps: true },
+);
+
 const academyMembershipSchema = new Schema(
   {
     membership: { type: Boolean, required: true, default: false },
@@ -81,19 +93,32 @@ const userSchema = new Schema<IUser, UserModel>(
       required: true,
       default: 'email with password',
     },
-
     verified: { type: Boolean, required: true, default: false },
     waiver_signed: { type: Boolean, required: true, default: false },
-
-    phone: String,
-    date_of_birth: String,
-    street_address: String,
-    zip_code: String,
-    city: String,
-    state: String,
-    country: String,
-    nationality: String,
-
+    phone: {
+      type: String,
+    },
+    date_of_birth: {
+      type: String,
+    },
+    street_address: {
+      type: String,
+    },
+    zip_code: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    nationality: {
+      type: String,
+    },
     general_membership: {
       type: generalMembershipSchema,
       required: true,
@@ -107,10 +132,7 @@ const userSchema = new Schema<IUser, UserModel>(
     },
 
     pass_pack: {
-      session_credit: String,
-      machine_credit: String,
-      issue_date: String,
-      expiry_date: String,
+      type: passPackSchema,
     },
   },
   {
