@@ -4,103 +4,113 @@ import { Schema, model } from 'mongoose';
 import config from '../../config';
 import { IUser, UserModel } from './user.interface';
 
+const generalCreditSchema = new Schema(
+  {
+    session_credit: String,
+    machine_credit: String,
+  },
+  { _id: false },
+);
+
+const academyCreditSchema = new Schema(
+  {
+    session_credit: String,
+  },
+  { _id: false },
+);
+
+const generalMembershipSchema = new Schema(
+  {
+    membership: { type: Boolean, required: true, default: false },
+    status: Boolean,
+    issue_date: String,
+    expiry_date: String,
+    package_name: String,
+    plan: { type: String, enum: ['monthly', 'quarterly', 'yearly'] },
+    credit_balance: generalCreditSchema,
+    credit_date: Date,
+  },
+  { _id: false },
+);
+
+const academyMembershipSchema = new Schema(
+  {
+    membership: { type: Boolean, required: true, default: false },
+    status: Boolean,
+    issue_date: String,
+    expiry_date: String,
+    package_name: String,
+    plan: { type: String, enum: ['monthly', 'quarterly', 'yearly'] },
+    credit_balance: academyCreditSchema,
+    credit_date: Date,
+  },
+  { _id: false },
+);
+
 const userSchema = new Schema<IUser, UserModel>(
   {
-    first_name: {
-      type: String,
-    },
-    last_name: {
-      type: String,
-    },
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+
     image: {
       type: String,
-      required: true,
       default: 'https://avatar.iran.liara.run/public/boy',
     },
-    gender: {
-      type: String,
-      enum: ['male', 'female'],
-    },
+
+    gender: { type: String, enum: ['male', 'female'] },
+
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
     },
-    verified: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    waiver_signed: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    password: {
-      type: String,
-      required: true,
-      select: false,
-    },
+
+    password: { type: String, required: true, select: false },
+
     role: {
       type: String,
       enum: ['user'],
+      required: true,
       default: 'user',
     },
+
     provider: {
       type: String,
+      enum: ['email with password', 'google', 'facebook'],
       required: true,
       default: 'email with password',
     },
-    phone: {
-      type: String,
+
+    verified: { type: Boolean, required: true, default: false },
+    waiver_signed: { type: Boolean, required: true, default: false },
+
+    phone: String,
+    date_of_birth: String,
+    street_address: String,
+    zip_code: String,
+    city: String,
+    state: String,
+    country: String,
+    nationality: String,
+
+    general_membership: {
+      type: generalMembershipSchema,
+      required: true,
+      default: () => ({ membership: false }),
     },
-    date_of_birth: {
-      type: String,
+
+    academy_membership: {
+      type: academyMembershipSchema,
+      required: true,
+      default: () => ({ membership: false }),
     },
-    city: {
-      type: String,
-    },
-    state: {
-      type: String,
-    },
-    country: {
-      type: String,
-    },
-    street_address: {
-      type: String,
-    },
-    zip_code: {
-      type: String,
-    },
-    membership: {
-      type: Boolean,
-      default: false,
-    },
-    status: {
-      type: Boolean,
-    },
-    issue_date: {
-      type: String,
-    },
-    expiry_date: {
-      type: String,
-    },
-    package_name: {
-      type: String,
-    },
-    plan: {
-      type: String,
-      enum: ['monthly', 'yearly'],
-    },
-    credit_balance: {
-      type: {
-        session_credit: { type: String },
-        machine_credit: { type: String },
-      },
-    },
-    credit_date: {
-      type: Date,
+
+    pass_pack: {
+      session_credit: String,
+      machine_credit: String,
+      issue_date: String,
+      expiry_date: String,
     },
   },
   {
@@ -115,7 +125,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// set '' after saving password
 userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();

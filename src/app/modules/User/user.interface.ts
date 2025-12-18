@@ -14,6 +14,32 @@ export interface IUser {
   provider: 'email with password' | 'google' | 'facebook';
   verified: boolean;
   waiver_signed: boolean;
+  general_membership: {
+    membership: boolean;
+    status?: boolean;
+    issue_date?: string;
+    expiry_date?: string;
+    package_name?: string;
+    plan?: string;
+    credit_balance?: ICreditGeneral;
+    credit_date?: Date;
+  };
+  academy_membership: {
+    membership: boolean;
+    status?: boolean;
+    issue_date?: string;
+    expiry_date?: string;
+    package_name?: string;
+    plan?: string;
+    credit_balance?: ICreditAcademy;
+    credit_date?: Date;
+  };
+  pass_pack?: {
+    machine_credit: string;
+    session_credit: string;
+    issue_date: string;
+    expiry_date: string;
+  };
   street_address?: string;
   zip_code?: string;
   city?: string;
@@ -21,19 +47,15 @@ export interface IUser {
   country?: string;
   nationality?: string;
   date_of_birth?: string;
-  membership?: boolean;
-  status?: boolean;
-  issue_date?: string;
-  expiry_date?: string;
-  package_name?: string;
-  plan?: string;
-  credit_balance?: ICredit;
-  credit_date?: Date;
 }
 
-export interface ICredit {
-  machine_credit?: string;
-  session_credit?: string;
+export interface ICreditGeneral {
+  machine_credit: string;
+  session_credit: string;
+}
+
+export interface ICreditAcademy {
+  session_credit: string;
 }
 
 export interface UserModel extends Model<IUser> {
