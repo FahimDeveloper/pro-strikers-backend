@@ -73,9 +73,9 @@ const facilityScheduleSchema = new Schema<IFacilitySchedule>(
       type: Number,
       required: true,
     },
-    // open_arena_price: {
-    //   type: Number,
-    // },
+    open_arena_price: {
+      type: Number,
+    },
     lanes: {
       type: [String],
       required: true,

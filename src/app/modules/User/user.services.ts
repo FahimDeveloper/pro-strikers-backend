@@ -82,9 +82,30 @@ const getUsersEmailFromDB = async () => {
   return result;
 };
 
-const getMembershipUsersFromDB = async (query: Record<string, unknown>) => {
+const getGeneralMembershipUsersFromDB = async (
+  query: Record<string, unknown>,
+) => {
   const userQuery = new QueryBuilder(
-    User.find({ membership: true }).select('-password'),
+    User.find({
+      general_membership: { membership: true, status: query?.status },
+    }).select('-password'),
+    query,
+  )
+    .search(['email', 'first_name', 'last_name'])
+    .filter()
+    .paginate();
+  const result = await userQuery?.modelQuery;
+  const count = await userQuery?.countTotal();
+  return { result, count };
+};
+
+const getAcademyMembershipUsersFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const userQuery = new QueryBuilder(
+    User.find({
+      academy_membership: { membership: true, status: query?.status },
+    }).select('-password'),
     query,
   )
     .search(['email', 'first_name', 'last_name'])
@@ -184,7 +205,8 @@ export const UserServices = {
   updateUserIntoDB,
   getAllUsersFromDB,
   getUsersEmailFromDB,
-  getMembershipUsersFromDB,
+  getGeneralMembershipUsersFromDB,
+  getAcademyMembershipUsersFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,
   waiverSignWebhook,

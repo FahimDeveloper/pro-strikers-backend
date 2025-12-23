@@ -50,8 +50,21 @@ const getSingleUser = catchAsync(async (req, res) => {
   sendResponse(res, httpStatus.OK, 'User is retrieved succesfully', result);
 });
 
-const getMembershipUsers = catchAsync(async (req, res) => {
-  const { result, count } = await UserServices.getMembershipUsersFromDB(
+const getAcademyMembershipUsers = catchAsync(async (req, res) => {
+  const { result, count } = await UserServices.getAcademyMembershipUsersFromDB(
+    req.query,
+  );
+  sendResponse(
+    res,
+    httpStatus.OK,
+    'Users are retrieved succesfully',
+    result,
+    count,
+  );
+});
+
+const getGeneralMembershipUsers = catchAsync(async (req, res) => {
+  const { result, count } = await UserServices.getGeneralMembershipUsersFromDB(
     req.query,
   );
   sendResponse(
@@ -75,7 +88,8 @@ const waiverSignWebhook = catchAsync(async (req, res) => {
 
 export const UserControllers = {
   createUser,
-  getMembershipUsers,
+  getAcademyMembershipUsers,
+  getGeneralMembershipUsers,
   waiverSignWebhook,
   getAllUsers,
   getSingleUser,

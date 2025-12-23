@@ -15,9 +15,14 @@ route.get(
   UserControllers.getAllUsers,
 );
 route.get(
-  '/membership',
+  '/general-membership',
   //authMiddleware(ROLE.superAdmin, ROLE.admin),
-  UserControllers.getMembershipUsers,
+  UserControllers.getGeneralMembershipUsers,
+);
+route.get(
+  '/academy-membership',
+  //authMiddleware(ROLE.superAdmin, ROLE.admin),
+  UserControllers.getGeneralMembershipUsers,
 );
 route.get(
   '/email',

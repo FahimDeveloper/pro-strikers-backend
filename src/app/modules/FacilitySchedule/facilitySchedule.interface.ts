@@ -9,7 +9,7 @@ export interface IFacilitySchedule {
   description: string;
   price: number;
   ini_price: number;
-  // open_arena_price?: number;
+  open_arena_price?: number;
   lanes: Array<string>;
   schedules: Array<IFacilityDaySchedule>;
 }
