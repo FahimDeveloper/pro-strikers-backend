@@ -10,6 +10,10 @@ const TrackStudentSchema = new Schema<ITrackStudent>(
     phone: {
       type: String,
     },
+    // booking: {
+    //   type: String,
+    //   required: true,
+    // },
     attendance_date: {
       type: Date,
       required: true,
